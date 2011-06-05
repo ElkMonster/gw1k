@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="gw1k" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="libgw1k" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Debug/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="libgw1k" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="include" />
+			<Add directory="../" />
+			<Add directory="/usr/include/freetype2" />
+		</Compiler>
+		<Linker>
+			<Add library="../geometry/bin/Debug/libgeometry.so" />
+		</Linker>
+		<ExtraCommands>
+			<Add before="touch include/listeners/SliderListener.h" />
+		</ExtraCommands>
+		<Unit filename="include/Color4i.h" />
+		<Unit filename="include/Exception.h" />
+		<Unit filename="include/FTGLFontManager.h" />
+		<Unit filename="include/GLErrorCheck.h" />
+		<Unit filename="include/GLFWAdapter.h" />
+		<Unit filename="include/GuiObject.h" />
+		<Unit filename="include/Gw1kConstants.h" />
+		<Unit filename="include/Helpers.h" />
+		<Unit filename="include/Math.h" />
+		<Unit filename="include/Point.h" />
+		<Unit filename="include/Rect.h" />
+		<Unit filename="include/Render.h" />
+		<Unit filename="include/Renderable.h" />
+		<Unit filename="include/WManager.h" />
+		<Unit filename="include/WindowStack.h" />
+		<Unit filename="include/listeners/KeyListener.h" />
+		<Unit filename="include/listeners/MouseListener.h" />
+		<Unit filename="include/listeners/SliderListener.h" />
+		<Unit filename="include/widgets/Box.h" />
+		<Unit filename="include/widgets/ClippingBox.h" />
+		<Unit filename="include/widgets/Label.h" />
+		<Unit filename="include/widgets/ScrollPane.h" />
+		<Unit filename="include/widgets/Slider.h" />
+		<Unit filename="include/widgets/Text.h" />
+		<Unit filename="include/widgets/WiBox.h" />
+		<Unit filename="src/FTGLFontManager.cpp" />
+		<Unit filename="src/GuiObject.cpp" />
+		<Unit filename="src/Point.cpp" />
+		<Unit filename="src/Rect.cpp" />
+		<Unit filename="src/Render.cpp" />
+		<Unit filename="src/Renderable.cpp" />
+		<Unit filename="src/WManager.cpp" />
+		<Unit filename="src/WindowStack.cpp" />
+		<Unit filename="src/widgets/Box.cpp" />
+		<Unit filename="src/widgets/ClippingBox.cpp" />
+		<Unit filename="src/widgets/Label.cpp" />
+		<Unit filename="src/widgets/ScrollPane.cpp" />
+		<Unit filename="src/widgets/Slider.cpp" />
+		<Unit filename="src/widgets/Text.cpp" />
+		<Unit filename="src/widgets/WiBox.cpp" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
