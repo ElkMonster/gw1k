@@ -3,6 +3,7 @@
 #include <GL/gl.h>
 
 #include "Helpers.h"
+#include "ThemeManager.h"
 
 //#define GW1K_ENABLE_GL_ERROR_CHECKS
 #include "gw1k/include/GLErrorCheck.h"
@@ -12,14 +13,16 @@ namespace gw1k
 {
 
 
-Renderable::Renderable()
+Renderable::Renderable(const char* colorScheme)
 :   fgCol_(0),
     bgCol_(0),
     hoveredFgCol_(0),
     hoveredBgCol_(0),
     clickedFgCol_(0),
     clickedBgCol_(0)
-{}
+{
+    setColors(colorScheme);
+}
 
 
 Renderable::~Renderable()
@@ -159,6 +162,13 @@ Renderable::setClickedBgColor(const gw1k::Color4i* col)
 {
     setColor(col, clickedBgCol_);
     return *this;
+}
+
+
+void
+Renderable::setColors(const char* colorScheme)
+{
+    ThemeManager::getInstance()->setColors(this, colorScheme, 0);
 }
 
 

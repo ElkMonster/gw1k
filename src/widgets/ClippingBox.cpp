@@ -1,6 +1,8 @@
 #include "widgets/ClippingBox.h"
 
 #include "WManager.h"
+#include "ThemeManager.h"
+
 #include <GL/gl.h>
 #include <iostream>
 

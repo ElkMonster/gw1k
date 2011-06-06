@@ -14,7 +14,7 @@ class Renderable : public GuiObject
 
 public:
 
-    Renderable();
+    Renderable(const char* colorScheme = 0);
 
     virtual ~Renderable();
 
@@ -33,6 +33,8 @@ public:
     Renderable& setClickedFgColor(const gw1k::Color4i* col);
 
     Renderable& setClickedBgColor(const gw1k::Color4i* col);
+
+    virtual void setColors(const char* colorScheme);
 
 protected:
 

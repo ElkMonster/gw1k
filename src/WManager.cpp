@@ -11,14 +11,14 @@ namespace gw1k
 
 
 /*static*/
-WManager* WManager::pInstance(0);
+WManager* WManager::pInstance_(0);
 
 
 /*static*/
 WManager*
 WManager::getInstance()
 {
-    return pInstance ? pInstance : (pInstance = new WManager());
+    return pInstance_ ? pInstance_ : (pInstance_ = new WManager());
 }
 
 

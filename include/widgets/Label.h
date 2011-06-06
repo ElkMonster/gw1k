@@ -21,7 +21,8 @@ public:
           const Point& size,
           const std::string& text,
           int faceSize = -1,
-          const std::string& fontname = "arial.ttf");
+          const std::string& fontname = "arial.ttf",
+          const char* colorScheme = 0);
 
     virtual ~Label();
 
@@ -45,6 +46,8 @@ public:
     virtual void mouseClicked(MouseButton b,
                               StateEvent ev,
                               GuiObject* target);
+
+    void setColors(const char* colorScheme);
 
 private:
 

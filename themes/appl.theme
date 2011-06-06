@@ -51,3 +51,13 @@ ScrollPane = {
     ScrollBar = Slider
 }
 
+
+CustomWidget = {
+    Box1 = {
+        
+    },
+    
+    Control1 = {
+    }
+
+}

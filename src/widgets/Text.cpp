@@ -3,6 +3,7 @@
 
 #include "Helpers.h"
 #include "WManager.h"
+#include "ThemeManager.h"
 
 #include <GL/gl.h>
 
@@ -12,8 +13,9 @@ namespace gw1k
 {
 
 
-Text::Text()
-:   font_(0),
+Text::Text(const char* colorScheme)
+:   Renderable(colorScheme),
+    font_(0),
     layout_(new FTSimpleLayout()),
     textLength_(0),
     text_(0)
@@ -23,8 +25,9 @@ Text::Text()
 }
 
 
-Text::Text(const std::string& text)
-:   font_(0),
+Text::Text(const std::string& text, const char* colorScheme)
+:   Renderable(colorScheme),
+    font_(0),
     layout_(new FTSimpleLayout()),
     textLength_(0),
     text_(0)
@@ -167,6 +170,13 @@ Text::updateBBox()
 {
     ftBB_ = layout_->BBox(text_);
     bBBoxUpdateNeeded_ = false;
+}
+
+
+void
+Text::setColors(const char* colorScheme)
+{
+    setFgColor(ThemeManager::getInstance()->getFgColor(colorScheme, "Text"));
 }
 
 

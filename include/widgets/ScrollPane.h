@@ -17,7 +17,10 @@ class ScrollPane : public WiBox, public SliderListener
 
 public:
 
-    ScrollPane(const Point& pos, const Point& size, bool autoSize = true);
+    ScrollPane(const Point& pos,
+               const Point& size,
+               bool autoSize = true,
+               const char* colorScheme = 0);
 
     ~ScrollPane();
 
@@ -32,6 +35,8 @@ public:
     virtual void sliderValueChanged(Slider* slider, float newVal, float delta);
 
     void refreshLayout();
+
+    virtual void setColors(const char* colorScheme);
 
 protected:
 

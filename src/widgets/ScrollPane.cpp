@@ -1,11 +1,16 @@
 #include "widgets/ScrollPane.h"
 #include "widgets/Label.h"
+#include "ThemeManager.h"
 
 namespace gw1k
 {
 
 
-ScrollPane::ScrollPane(const Point& pos, const Point& size, bool autoSize)
+ScrollPane::ScrollPane(
+    const Point& pos,
+    const Point& size,
+    bool autoSize,
+    const char* colorScheme)
 :   WiBox(pos, size),
     pane_(Point(0, 0), Point(size.x - 20, size.y - 20), autoSize),
     hSlider_(Point(0, size.y - 20), Point(size.x - 20, 20)),
@@ -26,6 +31,8 @@ ScrollPane::ScrollPane(const Point& pos, const Point& size, bool autoSize)
     hSlider_.addListener(this);
 
     updateSliders();
+
+    setColors(colorScheme);
 }
 
 
@@ -94,6 +101,18 @@ ScrollPane::refreshLayout()
     updateSliders();
 }
 
+
+void
+ScrollPane::setColors(const char* colorScheme)
+{
+    ThemeManager* t = ThemeManager::getInstance();
+
+    std::string baseName(colorScheme ? colorScheme : "ScrollPane");
+    t->setColors(this, colorScheme, "ScrollPane");
+    hSlider_.setColors((baseName + ".HSlider").c_str());
+    vSlider_.setColors((baseName + ".VSlider").c_str());
+
+}
 
 void
 ScrollPane::updateSliders()

@@ -4,6 +4,7 @@
 #include "Math.h"
 #include "WManager.h"
 #include "Color4i.h"
+#include "ThemeManager.h"
 
 #include <iostream>
 
@@ -17,8 +18,9 @@ Label::Label(
     const Point& size,
     const std::string& text,
     int faceSize,
-    const std::string& fontName)
-:   WiBox(pos, size),
+    const std::string& fontName,
+    const char* colorScheme)
+:   WiBox(pos, size, colorScheme),
     textProps_(0)
 {
     text_.setFont(fontName, (faceSize < 0 ? size.y : faceSize));
@@ -208,6 +210,17 @@ Label::updateVerticalAlignment()
     //text_.setPosition(text_.getPosition().x, y);
     text_.setPos(x, y);
     //text_.setSize()
+}
+
+
+void
+Label::setColors(const char* colorScheme)
+{
+    ThemeManager* t = ThemeManager::getInstance();
+
+    std::string baseName(colorScheme ? colorScheme : "Label");
+    t->setColors(this, colorScheme, "Label");
+    text_.setColors((baseName + ".Text").c_str());
 }
 
 

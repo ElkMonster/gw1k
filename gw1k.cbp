@@ -58,6 +58,7 @@
 		<Unit filename="include/Rect.h" />
 		<Unit filename="include/Render.h" />
 		<Unit filename="include/Renderable.h" />
+		<Unit filename="include/ThemeManager.h" />
 		<Unit filename="include/WManager.h" />
 		<Unit filename="include/WindowStack.h" />
 		<Unit filename="include/listeners/KeyListener.h" />
@@ -76,6 +77,7 @@
 		<Unit filename="src/Rect.cpp" />
 		<Unit filename="src/Render.cpp" />
 		<Unit filename="src/Renderable.cpp" />
+		<Unit filename="src/ThemeManager.cpp" />
 		<Unit filename="src/WManager.cpp" />
 		<Unit filename="src/WindowStack.cpp" />
 		<Unit filename="src/widgets/Box.cpp" />

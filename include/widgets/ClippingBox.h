@@ -22,7 +22,9 @@ public:
      * If autoSize is false, the "real size" is set to the same size as the
      * "window" and must be managed manually (via setRealSize()).
      */
-    ClippingBox(const Point& pos, const Point& size, bool autoSize = true);
+    ClippingBox(const Point& pos,
+                const Point& size,
+                bool autoSize = true);
 
     ~ClippingBox();
 
@@ -86,6 +88,7 @@ private:
      */
     bool autoSize_;
 };
+
 
 } // namespace gw1k
 

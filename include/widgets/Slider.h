@@ -29,7 +29,10 @@ class Slider : public WiBox, public MouseListener
 
 public:
 
-    Slider(const Point& pos, const Point& size, bool vertical = false);
+    Slider(const Point& pos,
+           const Point& size,
+           bool vertical = false,
+           const char* colorScheme = 0);
 
     ~Slider();
 
@@ -53,6 +56,8 @@ public:
     void addListener(SliderListener* sl);
 
     void removeListener(SliderListener* sl);
+
+    virtual void setColors(const char* colorScheme);
 
 protected:
 

@@ -11,6 +11,7 @@
 namespace gw1k
 {
 
+
 class WManager
 {
 
@@ -24,7 +25,7 @@ private:
 
     WManager();
 
-    WManager(const WManager& other) {};
+    WManager(const WManager&) {};
 
     ~WManager();
 
@@ -80,7 +81,7 @@ private:
 
 private:
 
-    static WManager* pInstance;
+    static WManager* pInstance_;
 
     /** GUI element hovered by mouse the last time feedMouseMove() was called */
     GuiObject* hoveredObject_;

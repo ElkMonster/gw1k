@@ -19,9 +19,9 @@ public:
 
     friend class Label;
 
-    Text();
+    Text(const char* colorScheme = 0);
 
-    Text(const std::string& text);
+    Text(const std::string& text, const char* colorScheme = 0);
 
     virtual ~Text();
 
@@ -42,6 +42,8 @@ public:
     virtual void renderBg(const Point& offset) const;
 
     virtual bool containsMouse(const Point& p) const;
+
+    virtual void setColors(const char* colorScheme);
 
 protected:
 

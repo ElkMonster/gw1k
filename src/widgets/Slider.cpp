@@ -3,6 +3,7 @@
 #include "Math.h"
 #include "WManager.h"
 #include "Color4i.h"
+#include "ThemeManager.h"
 
 #include <algorithm>
 #include <iostream>
@@ -18,7 +19,11 @@ namespace gw1k
 {
 
 
-Slider::Slider(const Point& pos, const Point& size, bool vertical)
+Slider::Slider(
+    const Point& pos,
+    const Point& size,
+    bool vertical,
+    const char* colorScheme)
 :   WiBox(pos, size),
 #if DEBUG_SLIDER
     handle_(Point(1, 1), vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2), "0", 12),
@@ -52,6 +57,8 @@ Slider::Slider(const Point& pos, const Point& size, bool vertical)
             << ", size is " << getSize() << ")"
             << std::endl;
     }
+
+    setColors(colorScheme);
 }
 
 
@@ -212,6 +219,17 @@ Slider::removeListener(SliderListener* sl)
     {
         listeners_.erase(i);
     }
+}
+
+
+void
+Slider::setColors(const char* colorScheme)
+{
+    ThemeManager* t = ThemeManager::getInstance();
+
+    std::string baseName(colorScheme ? colorScheme : "Slider");
+    t->setColors(this, colorScheme, "Slider");
+    handle_.setColors((baseName + ".Handle").c_str());
 }
 
 
