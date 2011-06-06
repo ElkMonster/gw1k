@@ -1,6 +1,12 @@
 #include "ThemeManager.h"
 #include "Exception.h"
 
+extern "C" {
+#include <lauxlib.h>
+#include <lualib.h>
+}
+#include <iostream>
+
 
 namespace gw1k
 {
@@ -19,6 +25,7 @@ ThemeManager::getInstance()
 
 
 ThemeManager::ThemeManager(const char* themeName)
+:   l_(0)
 {
     if (!loadTheme(themeName) && !loadTheme("default"))
     {
@@ -34,7 +41,24 @@ ThemeManager::~ThemeManager()
 bool
 ThemeManager::loadTheme(const char* themeName)
 {
+    if (!l_ && !loadLua())
+    {
+        //throw Exception("Error creating Lua state");
+        return false;
+    }
 
+    int error;
+
+    lual_loadfile(l_, ".themetmp/CreateTheme.lua");
+
+    lua_pushstring(l_, themeName);
+    lua_setglobal(l_, "theme_name");
+
+    error = lua_pcall(l_, 0, 0, 0);
+
+    readTheme();
+
+    return true;
 }
 
 
@@ -53,7 +77,7 @@ ThemeManager::getFgColor(
     const char* colorScheme,
     const char* fallbackScheme)
 {
-    return getKey("fg", colorScheme, fallbackScheme);
+    return getColor("fg", colorScheme, fallbackScheme);
 }
 
 
@@ -62,7 +86,7 @@ ThemeManager::getBgColor(
     const char* colorScheme,
     const char* fallbackScheme)
 {
-    return getKey("bg", colorScheme, fallbackScheme);
+    return getColor("bg", colorScheme, fallbackScheme);
 }
 
 
@@ -71,7 +95,7 @@ ThemeManager::getHoveredFgColor(
     const char* colorScheme,
     const char* fallbackScheme)
 {
-    return getKey("hfg", colorScheme, fallbackScheme);
+    return getColor("hfg", colorScheme, fallbackScheme);
 }
 
 
@@ -80,7 +104,7 @@ ThemeManager::getHoveredBgColor(
     const char* colorScheme,
     const char* fallbackScheme)
 {
-    return getKey("hbg", colorScheme, fallbackScheme);
+    return getColor("hbg", colorScheme, fallbackScheme);
 }
 
 
@@ -89,7 +113,7 @@ ThemeManager::getClickedFgColor(
     const char* colorScheme,
     const char* fallbackScheme)
 {
-    return getKey("cfg", colorScheme, fallbackScheme);
+    return getColor("cfg", colorScheme, fallbackScheme);
 }
 
 
@@ -98,12 +122,12 @@ ThemeManager::getClickedBgColor(
     const char* colorScheme,
     const char* fallbackScheme)
 {
-    return getKey("cbg", colorScheme, fallbackScheme);
+    return getColor("cbg", colorScheme, fallbackScheme);
 }
 
 
 const Color4i*
-ThemeManager::getKey(
+ThemeManager::getColor(
     const char* modespec,
     const char* colorScheme,
     const char* fallbackScheme)
@@ -123,5 +147,70 @@ ThemeManager::getKey(
     }
 }
 
+
+bool
+ThemeManager::loadLua()
+{
+    l_ = lua_open();
+    lual_openlibs(l_);
+
+    return true;
+}
+
+
+void
+ThemeManager::luaError()
+{
+    std::cout << "Lua error: " << lua_tostring(l_, -1) << std::endl;
+}
+
+
+void
+ThemeManager::readTheme()
+{
+    // Push key-value pairs table onto the stack and read its size
+    lua_getglobal(l_, "themeTable");
+    int numEntries = lua_objlen(l_, -1);
+
+    // Now traverse all of themeTable's entries
+    // Push nil as the first key
+    lua_pushnil(l_);
+
+    // lua_next() pops key and pushes new key-value pair; -2 is the index of
+    // themeTable, key is at -1; after lua_next(), key is at -3, while -2 and -1
+    // contain the new key and value
+    while (lua_next(l_, -2) != 0)
+    {
+        int rgba[4];
+
+        // Top of the stack is a Color object of our Lua Color class, push
+        // its rgba field and then all four values
+        lua_getfield(l_, -1, "rgba");
+        for (int i = 1; i <= 4; ++i)
+        {
+            // Push index of rgba we want to read, and push and read
+            // rgba[index] (gettable() replaces index with value at index)
+            lua_pushinteger(l_, i);
+            lua_gettable(l_, -2);
+            rgba[i - 1] = lua_tointeger(l_, -1);
+
+            // Pop rgba[index] value
+            lua_pop(l_, 1);
+        }
+
+        // Pop rgba table and current themeTable value
+        lua_pop(l_, 2);
+
+        // Read key, but leave it on the stack as the next lua_next() call is
+        // going to use it
+        std::string key = lua_tostring(l_, -1);
+
+        colorMap_[key] = new Color4i(rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+
+    // Finally, pop themeTable
+    lua_pop(l_, 1);
+
+}
 
 } // namespace

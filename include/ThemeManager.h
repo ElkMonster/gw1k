@@ -3,6 +3,9 @@
 
 #include "Renderable.h"
 
+extern "C" {
+#include <lua.h>
+}
 #include <map>
 #include <string>
 
@@ -28,7 +31,7 @@ private:
 
 public:
 
-    void loadTheme(const char* themeName);
+    bool loadTheme(const char* themeName);
 
     void setColors(const Renderable* r,
                    const char* colorScheme,
@@ -54,15 +57,23 @@ public:
 
 private:
 
-    const Color4i* getKey(const char* modespec,
+    const Color4i* getColor(const char* modespec,
                           const char* colorScheme,
                           const char* fallbackScheme);
+
+    bool loadLua();
+
+    void readTheme();
+
+    void luaError();
 
 private:
 
     static ThemeManager* pInstance_;
 
     std::map<std::string, Color4i*> colorMap_;
+
+    lua_State* l_;
 };
 
 

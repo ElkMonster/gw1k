@@ -29,13 +29,13 @@ Label = {
 
 Slider = {
     -- normal
-    nil, Color(80),
+    nil, 80,
     -- hovered / clicked
     nil, nil, nil, nil,
     
     Handle = {
         -- normal
-        nil, Color(160),
+        nil, 160,
         -- hovered / clicked
         nil, nil, nil, nil,
     }
@@ -44,7 +44,7 @@ Slider = {
 
 ScrollPane = {
     -- normal
-    Color(40), Black,
+    40, Black,
     -- hovered / clicked
     nil, nil, nil, nil,
 
@@ -60,4 +60,53 @@ CustomWidget = {
     Control1 = {
     }
 
+}
+
+
+
+--------------------------------------------------------------------------------
+---------------- short variant -------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- Global background color, drawn at places where nothing else is on screen
+GlobalBackground = Black
+
+-- Foreground color only, rest will be ignored (text widget is non-interactive)
+Text = { Gray192 }
+
+-- Foreground color, background color, hovered fg/bg, clicked fg/bg
+WiBox = { 
+    -- normal
+    NoColor, Black
+}
+
+
+
+Label = {
+    Text = {
+        -- normal
+        White,
+    },
+
+    -- Same as WiBox for the rest (normal/hovered/clicked fg/bg)
+    WiBox
+}
+
+
+Slider = {
+    -- normal
+    NoColor, 80,
+    
+    Handle = {
+        -- normal
+        NoColor, 160,
+    }
+}
+
+
+ScrollPane = {
+    -- normal
+    40, Black,
+
+    ScrollBar = Slider
 }
