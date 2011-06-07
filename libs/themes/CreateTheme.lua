@@ -1,6 +1,7 @@
 local theme_name = "default"
 
 local tmp_dir_name = "themetmp"
+local code = "";
 
 local function prepare_files()
 
@@ -33,10 +34,6 @@ local function prepare_files()
 
     local theme_module_header_file, err_msg = io.open(theme_module_header_filename)
 
-    if theme_module_header_file == nil then
-        print(err_msg)
-        return false
-    end
 
 
     local theme_module_file, err_msg = io.open(theme_module_filename, "w")
@@ -52,6 +49,7 @@ local function prepare_files()
     end
     for line in theme_file:lines() do
         theme_module_file:write(string.gsub(line, "#", "_nocolor") .. "\n")
+        code = code .. string.gsub(line, "#", "_nocolor") .. "\n"
     end
     theme_module_file:write("\n\n-- Theme File End ---------------------------")
     theme_module_file:write("-----------------------------------\n")
@@ -79,7 +77,65 @@ setmetatable(themeTable, {
 })
 themeDef = {}
 
+
+
+local function build_theme_def()
+    
+    -- Redirect all variable definitions made in the theme file to our themeDef
+    -- table
+    local mt = {
+        __index = function(t, key)
+            return Color.Color[key]
+        end,
+        __newindex = function(t, key, value)
+            themeDef[key] = value
+        end
+    }
+    local old_mt = getmetatable(_G)
+    setmetatable(_G, mt)
+
+    -- Define dummy value for the "no color" setting ("#" in theme file, 
+    -- replaced by "_nocolor" below)
+    local _nocolor = {}
+    
+    local theme_file, err_msg = io.open("themes/"..theme_name .. ".theme", "r")
+
+    if theme_file == nil then
+        print(err_msg)
+        return false
+    end
+
+    local line_iter_func = theme_file:lines()
+    
+    -- Load theme file, replacing occurrences of "#" by "_nocolor", and execute
+    -- the loaded code
+    assert(load(
+        function()
+            -- Find a non-empty line (load() takes empty strings as the end of 
+            -- the code chunk), or EOF
+            local line = ""
+            while line == "" do
+                line = line_iter_func()
+                if line == nil then break end
+                line = string.gsub(line, "#", "_nocolor")
+            end
+            print("read: " .. (line or "(EOF)"))
+            return line
+        end
+    ))()
+    
+    theme_file:close()
+    print(err)
+
+    -- Restore metatable to what it was initially
+    setmetatable(_G, old_mt)
+    
+    return true
+end
+
+
 local selectors = { ".fg", ".bg", ".hfg", ".hbg", ".cfg", ".cbg" }
+
 
 local function to_color(key, value, idx)
 
@@ -126,7 +182,7 @@ end
 
 
 
-function build_theme_table()
+local function build_theme_table()
 
     -- Take all entries made in the theme file and build the theme table from it
     for k,v in pairs(themeDef) do
@@ -146,22 +202,7 @@ end
 
 prepare_files()
 
-local mt = {
-    __index = function(t, key)
-        return Color.Color[key]
-    end,
-    __newindex = function(t, key, value)
-        themeDef[key] = value
-    end
-}
-
-local old_mt = getmetatable(_G)
-setmetatable(_G, mt)
-
-dofile(tmp_dir_name .. "/GW1KTheme.lua")
---require(tmp_dir_name .. "/GW1KTheme")
-
-setmetatable(_G, old_mt)
+build_theme_def()
 
 
 
