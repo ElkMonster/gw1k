@@ -1,3 +1,9 @@
+local type = type
+local pairs = pairs
+local setmetatable = setmetatable
+local tostring = tostring
+local print = print
+
 module("Color")
 
 -- Returns a copy of the given table
@@ -13,7 +19,7 @@ end
 -- Returns true if table t only contains numbers, false otherwise
 local function only_numbers(t)
     for i = 1,#t do
-        if not isnumber(t[i]) then
+        if type(t[i]) ~= "number" then
             return false
         end
     end
@@ -30,12 +36,18 @@ Color = {
         __metatable = nil,
     
         __index = function(t, key)
-            if key == alpha then return t:alpha()
+            if key == alpha then return t:alpha() end
         end,
         
         -- Prevent messing around with our class
         __newindex = function(t, key, value)
             error("Color does not allow changes to its table structure")
+        end,
+        
+        __tostring = function(c)
+            local str = "Color( "
+            for i = 1,3 do str = str .. c.rgba[i] .. ", " end
+            return  str .. c.rgba[4] .. ")"
         end
     },
 
@@ -45,14 +57,18 @@ Color = {
         -- This is our new instance; rgba will hold the actual color values
         local obj = { rgba = {} }
 
-        if arg.n == 1 and istable(arg[1]) then
+        -- Deal with nested tables (e.g., Color.new({127, 255, 0}) )
+        if #arg == 1 and type(arg[1]) == "table" then
             arg = arg[1]
-            arg.n = #arg
         end
         
         -- Color.new(127) equals Color.new(127, 127, 127, 255)
-        if arg.n == 1 and isnumber(arg[1]) then 
+        if #arg == 1 and type(arg[1]) == "number" then 
             obj.rgba = { arg[1], arg[1], arg[1], 255 } 
+        
+        -- Color.new(127, 64) equals Color.new(127, 127, 127, 64)
+        elseif #arg == 2 and only_numbers(arg) then
+            obj.rgba = { arg[1], arg[1], arg[1], arg[2] }
             
         elseif arg.n == 3 and only_numbers(arg) then
             obj.rgba = copytable(arg)
@@ -66,8 +82,8 @@ Color = {
             return nil
         end
 
-        setmetatable(obj, mt)
-        
+        setmetatable(obj, Color.mt)
+        print("returning new color" .. tostring(obj))
         return obj
     end,
     
@@ -78,8 +94,6 @@ Color = {
         newCol.rgba[4] = a
         return newCol
     end,
-    
-    
 
 
 }
@@ -91,8 +105,9 @@ Color.Black = Color.new( 0, 0, 0 )
 Color.White = Color.new( 255, 255, 255 )
 Color.Red = Color.new( 255, 0, 0, 255 )
 Color.Green = Color.new( 0, 255, 0 )
-Color.Blue = Color.new(  0, 0, 255 )
-Color.Yellow = Color.new(  0, 255, 255 )
+Color.Blue = Color.new( 0, 0, 255 )
+Color.Yellow = Color.new( 0, 255, 255 )
+
 
 -- Redirect calls like "Color(255, 0, 0, 255)" to Color.new()
 setmetatable(_M, { __call = function(_, ...) return Color.new(...) end })

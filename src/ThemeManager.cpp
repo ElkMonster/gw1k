@@ -49,7 +49,7 @@ ThemeManager::loadTheme(const char* themeName)
 
     int error;
 
-    lual_loadfile(l_, ".themetmp/CreateTheme.lua");
+    luaL_loadfile(l_, ".themetmp/CreateTheme.lua");
 
     lua_pushstring(l_, themeName);
     lua_setglobal(l_, "theme_name");
@@ -152,7 +152,7 @@ bool
 ThemeManager::loadLua()
 {
     l_ = lua_open();
-    lual_openlibs(l_);
+    luaL_openlibs(l_);
 
     return true;
 }

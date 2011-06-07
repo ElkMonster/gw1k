@@ -7,9 +7,9 @@ Text = { Gray192 }
 -- Foreground color, background color, hovered fg/bg, clicked fg/bg
 WiBox = { 
     -- normal
-    nil, Black
+    #, Black,
     -- hovered / clicked 
-    nil, nil, nil, nil
+    #, #, #, #
 }
 
 
@@ -19,7 +19,7 @@ Label = {
         -- normal
         White,
         -- hovered / clicked
-        nil, nil
+        #, #
     },
 
     -- Same as WiBox for the rest (normal/hovered/clicked fg/bg)
@@ -29,15 +29,15 @@ Label = {
 
 Slider = {
     -- normal
-    nil, 80,
+    #, 80,
     -- hovered / clicked
-    nil, nil, nil, nil,
+    #, #, #, #,
     
     Handle = {
         -- normal
-        nil, 160,
+        #, 160,
         -- hovered / clicked
-        nil, nil, nil, nil,
+        #, #, #, #
     }
 }
 
@@ -46,7 +46,7 @@ ScrollPane = {
     -- normal
     40, Black,
     -- hovered / clicked
-    nil, nil, nil, nil,
+    #, #, #, #,
 
     ScrollBar = Slider
 }
