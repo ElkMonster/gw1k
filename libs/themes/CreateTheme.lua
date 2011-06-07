@@ -1,82 +1,19 @@
+require("libs/themes/Color")
+
 local theme_name = "default"
 
-local tmp_dir_name = "themetmp"
-local code = "";
 
-local function prepare_files()
-
-    -- Create a temporary directory for our files.
-    -- Afterwards, we assume that directory creation succeeded (or it already 
-    -- existed before), so we attempt to create some files in there (i.e., no error 
-    -- checks here)
-    os.execute("mkdir " .. tmp_dir_name)
-
-    -- This is the file that contains the theme definition; theme_name will be set 
-    -- from ThemeManager. The theme file content will be copied into a file that 
-    -- creates a Lua module of the theme definition. This module is then loaded by 
-    -- the actual theme program in order to create all color key-value pairs.
-    local theme_filename = "themes/" .. theme_name .. ".theme"
-
-    --
-    local theme_module_header_filename = "libs/themes/ThemeModuleHeader.lua"
-
-    -- This is the file name of the Lua module that is loaded by theme_prog 
-    local theme_module_filename = tmp_dir_name .. "/GW1KTheme.lua"
-
-        
-    local theme_file, err_msg = io.open(theme_filename, "r")
-
-    if theme_file == nil then
-        print(err_msg)
-        return false
-    end
-
-
-    local theme_module_header_file, err_msg = io.open(theme_module_header_filename)
-
-
-
-    local theme_module_file, err_msg = io.open(theme_module_filename, "w")
-
-    if theme_module_file == nil then
-        print(err_msg)
-        return false
-    end
-
-    -- Write module file
-    for line in theme_module_header_file:lines() do
-        theme_module_file:write(line .. "\n")
-    end
-    for line in theme_file:lines() do
-        theme_module_file:write(string.gsub(line, "#", "_nocolor") .. "\n")
-        code = code .. string.gsub(line, "#", "_nocolor") .. "\n"
-    end
-    theme_module_file:write("\n\n-- Theme File End ---------------------------")
-    theme_module_file:write("-----------------------------------\n")
-
-    theme_module_file:flush()
-    theme_module_file:close()
-    theme_module_header_file:close()
-    theme_file:close()
-
-    return true
-end -- prepare_files()
-
-
-local function count_numbers(t)
---    for k,_ in pairs(t)
-end
-
-require("libs/themes/Color")
 themeTable = {}
+
 setmetatable(themeTable, {
     __newindex = function(t, k, v)
         print("New theme table entry: " .. k .. " = " .. tostring(v))
         t[k] = v;
     end
 })
-themeDef = {}
 
+
+local themeDef = {}
 
 
 local function build_theme_def()
@@ -125,7 +62,6 @@ local function build_theme_def()
     ))()
     
     theme_file:close()
-    print(err)
 
     -- Restore metatable to what it was initially
     setmetatable(_G, old_mt)
@@ -200,10 +136,4 @@ end
 -- Main Program ----------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-prepare_files()
-
-build_theme_def()
-
-
-
-return build_theme_table()
+return build_theme_def() and build_theme_table()
