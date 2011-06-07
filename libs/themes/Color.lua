@@ -36,7 +36,7 @@ Color = {
         __metatable = nil,
     
         __index = function(t, key)
-            if key == alpha then return t:alpha() end
+            return Color[key]
         end,
         
         -- Prevent messing around with our class
@@ -83,7 +83,7 @@ Color = {
         end
 
         setmetatable(obj, Color.mt)
-        print("returning new color" .. tostring(obj))
+        --print("returning new color" .. tostring(obj))
         return obj
     end,
     
