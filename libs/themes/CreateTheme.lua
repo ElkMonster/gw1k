@@ -7,8 +7,9 @@ themeTable = {}
 
 setmetatable(themeTable, {
     __newindex = function(t, k, v)
-        print("New theme table entry: " .. k .. " = " .. tostring(v))
-        t[k] = v;
+        local action = t[k] and "Updating" or "New"
+        print(action .. " theme table entry: "  .. k .. " = " .. tostring(v))
+        rawset(t, k, v);
     end
 })
 
@@ -17,7 +18,8 @@ local themeDef = {}
 
 -- Define dummy value for the "no color" setting ("#" in theme file, 
 -- replaced by "_nocolor" in build_theme_def())
-local _nocolor = {}
+_nocolor = {}
+setmetatable(_nocolor, { __tostring = function() return "# [_nocolor]" end })
 
 
 local function build_theme_def()
@@ -26,13 +28,15 @@ local function build_theme_def()
     -- table
     local mt = {
         __index = function(t, key)
-            return Color.Color[key] or rawget(_G, key)
+            return Color.Color[key] or themeDef[key] or rawget(_G, key)
         end,
         __newindex = function(t, key, value)
-            print("themeDef: new entry: ", key, value)
+            local action = rawget(themeDef, key) and "Updating" or "New"
+            print("themeDef: " .. action .. " entry: ", key, value)
             themeDef[key] = value
         end
     }
+    
     local old_mt = getmetatable(_G)
     setmetatable(_G, mt)
     
@@ -66,151 +70,39 @@ local selectors = { ".fg", ".bg", ".hfg", ".hbg", ".cfg", ".cbg" }
 
 
 local function is_color(t)
-    return t.rgba == nil
+    return t.rgba ~= nil
 end
-
-
-
-local function handle_string(str_key, value, idx, level)
-    
-    idx = idx or 1
-    level = level or 0
-       
-    -- Case: Single int value
-    -- Ex: GlobalBackground = 0
-    if type(value) == "number" then
-        print(level, idx, "Case: Single int value")
-        
-        local newkey
-        if level == 0 then
-            newkey = key
-        else
-            newkey = key .. selectors[idx]
-        end
-        
-        themeTable[newkey] = Color(value)
-        
-        return idx + 1
-        
-    -- Case: Table value
-    -- Ex: Slider = { ... }
-    elseif type(value) == "table" then
-    
-        -- Case: Color value
-        if is_color(value) then
-        
-            print(level, idx, "Case: Color value")
-            
-            local newkey
-            if level == 0 then
-                newkey = key
-            else
-                newkey = key .. selectors[idx]
-            end
-            
-            themeTable[newkey] = Color(value)
-            
-            return idx + 1
-                    
-        -- Case: Non-Color table value
-        else
-    
-    
-end
-
-local function to_color(key, value, idx, level)
-
-    idx = idx or 1
-    level = level or 0
-    
-    -- Case: Single int value
-    -- Ex: GlobalBackground = 0
-    if type(value) == "number" then
-        print(level, idx, "Case: Single int value")
-        
-        local newkey
-        if level == 0 then
-            newkey = key
-        else
-            newkey = key .. selectors[idx]
-        end
-        
-        themeTable[newkey] = Color(value)
-        
-        return idx + 1
-        
-    -- Case: Table value
-    -- Ex: Slider = { ... }
-    elseif type(value) == "table" then
-    
-        -- Case: Color value
-        if is_color(value) then
-        
-            print(level, idx, "Case: Color value")
-            
-            local newkey
-            if level == 0 then
-                newkey = key
-            else
-                newkey = key .. selectors[idx]
-            end
-            
-            themeTable[newkey] = Color(value)
-            
-            return idx + 1
-                    
-        -- Case: Non-Color table value
-        else
-    
-            for k,v in pairs(value) do
-            
-                -- Case: String key
-                -- Ex: Slider = { Green, ... } or Slider = { Handle = { ... }, ... }
-                if type(k) == "string" then
-                
-                    -- Found sub-element, handle independently
-                    
-                    local nidx
-                    idx = to_color(key .. k, v, nil, level + 1)
-                
-                -- Case: Int key
-                -- Ex: Slider = { { 255, 127, 0 }, ... } or Slider = { Green, ... }
-                -- (Green is an internal table)
-                else
-                
-                end
-            
-            end
-        end
-        -- Case: 
-        
-        --for 
-    
-    end -- Case: Table
-
-end
-
 
 
 
 local function build_theme_table()
     
-    -- Take all entries made in the theme file and build the theme table from it
-    for k,v in pairs(themeDef) do
-        print(k, v)
-        if type(k) == "string" then
-            to_color(k, v)
-        else
-            print("Invalid key (" .. k .. "), ignoring")
-        end
-    end
-
-
 end
 
 
+--local do_debug = true
+
+local function debugprint(...)
+    if do_debug then
+        print(unpack(arg))
+    end
+end
+
+
+local function print_invalid_statement(path, key, value)
+    local p = (path and path ~= "" and path .. ".") or ""
+    print("Invalid statement: " .. p .. key .. " = " .. tostring(value))
+end
+
+
+local function print_empty_statement(path, key, value)
+    local p = (path and path ~= "" and path .. ".") or ""
+    print("Empty statement: " .. p .. key .. " = " .. tostring(value) .. ", ignoring")
+end
 
 local function f(path, key, value, level, idx)
+
+    debugprint("Entering f()", "path = ", path, "key = ", key, "value = ", value)
 
     path = path or ""
     level = level or 0
@@ -221,87 +113,138 @@ local function f(path, key, value, level, idx)
         return idx
     end
     
-    if type(key) = "string" then
+    if type(key) == "string" then
+    
+        debugprint(level, "found key ", key, " of type string")
     
         if type(value) == "number" then
         
+            debugprint(level, "found value ", value, " of type number")
+        
+            local p
             if level == 0 then
 
                 themeTable[path .. key] = Color(value)
                 
             else
             
-                local k = path .. key .. selectors[idx]
+                local k = path .. key .. selector[idx]
                 local increase_idx = (themeTable[k] == nil)
                 themeTable[k] = Color(value)
                 if increase_idx then idx = idx + 1 end
-                return idx
                 
             end
         
         elseif type(value) == "table" then
             
+            debugprint(level, "found value ", tostring(value), " of type table")
+            
             if is_color(value) then
             
-                themeTable[path .. key .. selectors[idx]] = value
+                debugprint(level, "table is color")
+                
+                local p
+                if level == 0 then 
+                
+                    themeTable[path .. key] = value
+                
+                else
+                
+                    themeTable[path .. key .. selectors[idx]] = value
+                    idx = idx + 1
+                    
+                end
+            
+            elseif value == _nocolor then
+            
+                debugprint(level, "table is nocolor")
+            
                 idx = idx + 1
-                return idx
-
+               
             else
                 
+                debugprint(level, "table specifies (sub)widget")
+                
                 -- (Sub)Widget specification
+                local subidx = 1
+                local count = 0;
                 for k,v in pairs(value) do
-                    local p = ((path and path .. ".") or "")
-                    f(p .. "." .. key, k, v, level + 1)
+                    local p = ((path and path ~= "" and path .. ".") or "")
+                    subidx = f(p .. key, k, v, level + 1, subidx)
+                    count = count + 1
                 end
+                if count == 0 then print_empty_statement(path, key, value) end
             
             end
         
         else
-        
-            print("invalid statement: " .. ((path and path .. ".") or "") .. key 
-                .. " = " .. tostring(value))
-            
+            print_invalid_statement(path, key, value)            
         end
         
     
     elseif type(key) == "number" then
     
+        debugprint(level, "found key", key, " of type number")
+    
         if type(value) == "table" then
         
+            debugprint(level, "found value ", tostring(value), " of type table")
+            
             if is_color(value) then
-                themeTable[key .. selectors[idx]] = value
-            else
+            
+                debugprint(level, "table is color")
                 
+                themeTable[path .. selectors[idx]] = value
+                idx = idx + 1
+                
+            elseif value == _nocolor then
+            
+                debugprint(level, "table is nocolor")
+            
+                idx = idx + 1
+            
+            else
+            
+                debugprint(level, "table specifies colors")
+                
+                local count = 0;
                 for k,v in pairs(value) do
                     idx = f(path, k, v, level, idx)
+                    count = count + 1
                 end
-                return idx
+                
+                if count == 0 then print_empty_statement(path, key, value) end
                 
             end
         
         else
-        
-            print("invalid statement: " .. ((path and path .. ".") or "") .. key 
-                .. " = " .. tostring(value))
-        
+            print_invalid_statement(path, key, value)
         end
     
     -- No key given, this should be the case in the initial (level 0) call
     -- (i.e., f(nil, themeDef))
     else
     
+        debugprint(level, "found key", tostring(key), " of type " .. type(key))
+    
         if type(value) == "table" then
-        
+  
+            debugprint(level, "found value ", tostring(value), " of type table")
+  
             for k,v in pairs(value) do
-                f(k, v)
+                f(path, k, v)
             end
         
         else
-            print("invalid value '" .. tostring(value) .. "' for key '" 
-                .. tostring(key) .. "'")
+
+            local p = ((path and path ~= "" and path .. ".") or "")
+            print("Invalid value '" .. tostring(value) .. "' for key '" 
+                .. p .. tostring(key) .. "'")
         end
     end
+
+    debugprint("Leaving f()", "idx = ", idx)
+    return idx
     
 end
 
@@ -311,4 +254,4 @@ end
 -- Main Program ----------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-return build_theme_def() and build_theme_table()
+return build_theme_def() and f(nil, nil, themeDef) --build_theme_table()

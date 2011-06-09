@@ -3,6 +3,7 @@ local pairs = pairs
 local setmetatable = setmetatable
 local tostring = tostring
 local print = print
+local error = error
 
 module("Color")
 
@@ -33,10 +34,11 @@ Color = {
     mt = {
         
         -- Mark as a metatable, protecting it against changes
-        __metatable = nil,
+        --__metatable = nil,
     
         __index = function(t, key)
-            return Color[key]
+            --print("Color: request for key ".. key)
+            return Color[key] or t[key]
         end,
         
         -- Prevent messing around with our class
@@ -57,7 +59,7 @@ Color = {
         -- This is our new instance; rgba will hold the actual color values
         local obj = { rgba = {} }
 
-        -- Deal with nested tables (e.g., Color.new({127, 255, 0}) )
+        -- Handle nested tables (e.g., Color.new({127, 255, 0}) )
         if #arg == 1 and type(arg[1]) == "table" then
             arg = arg[1]
         end
@@ -82,7 +84,9 @@ Color = {
             return nil
         end
 
+        --print("Creating Color (a): ", obj)
         setmetatable(obj, Color.mt)
+        --print("Creating Color (b): ", obj, ", metatable = ", Color.mt)
         --print("returning new color" .. tostring(obj))
         return obj
     end,
@@ -91,7 +95,14 @@ Color = {
     -- Creates a new color with the same color, but with a different alpha value
     alpha = function(self, a)
         local newCol = Color.new(self.rgba)
-        newCol.rgba[4] = a
+        if a > 0 and a < 1 then
+            newCol.rgba[4] = 255 * a
+        elseif a >= 0 and a <= 255 then
+            newCol.rgba[4] = a
+        else
+            print("Color: Invalid color value (" .. a .. "), using 255 instead")
+            newCol.rgba[4] = 255
+        end
         return newCol
     end,
 
@@ -101,8 +112,8 @@ Color = {
 
 
 
-Color.Black = Color.new( 0, 0, 0 )
-Color.White = Color.new( 255, 255, 255 )
+Color.Black = Color.new( 0 )
+Color.White = Color.new( 255 )
 Color.Red = Color.new( 255, 0, 0, 255 )
 Color.Green = Color.new( 0, 255, 0 )
 Color.Blue = Color.new( 0, 0, 255 )
