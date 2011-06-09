@@ -27,9 +27,9 @@ ThemeManager::getInstance()
 ThemeManager::ThemeManager(const char* themeName)
 :   l_(0)
 {
-    if (!loadTheme(themeName) && !loadTheme("default"))
+    if (!(themeName && loadTheme(themeName)) && !loadTheme("default"))
     {
-        throw Exception("Error loading theme; default fallback theme failed, too");
+            throw Exception("Error loading theme; default fallback theme failed, too");
     }
 }
 
@@ -47,14 +47,32 @@ ThemeManager::loadTheme(const char* themeName)
         return false;
     }
 
-    int error;
+    int err;
 
-    luaL_loadfile(l_, ".themetmp/CreateTheme.lua");
+    err = luaL_loadfile(l_, "libs/themes/CreateTheme.lua");
+    switch (err)
+    {
+    case LUA_ERRSYNTAX:
+        std::cout << "Lua: Syntax error" << std::endl;
+        break;
+    case LUA_ERRMEM:
+        std::cout << "Lua: Memory allocation error" << std::endl;
+        break;
+    case LUA_ERRFILE:
+        std::cout << "Lua: Could not open CreateTheme.lua" << std::endl;
+        break;
+    default:
+        break;
+    }
 
     lua_pushstring(l_, themeName);
     lua_setglobal(l_, "theme_name");
 
-    error = lua_pcall(l_, 0, 0, 0);
+    err = lua_pcall(l_, 0, 0, 0);
+    if (err)
+    {
+        luaError();
+    }
 
     readTheme();
 
@@ -161,7 +179,7 @@ ThemeManager::loadLua()
 void
 ThemeManager::luaError()
 {
-    std::cout << "Lua error: " << lua_tostring(l_, -1) << std::endl;
+    std::cout << "Lua error:\n" << lua_tostring(l_, -1) << std::endl;
 }
 
 
@@ -206,6 +224,8 @@ ThemeManager::readTheme()
         std::string key = lua_tostring(l_, -1);
 
         colorMap_[key] = new Color4i(rgba[0], rgba[1], rgba[2], rgba[3]);
+        std::cout << "ThemeManager: Added " << key << " = (" << rgba[0] << ", "
+            << rgba[1] << ", " << rgba[2] << ", " << rgba[3] << ")" << std::endl;
     }
 
     // Finally, pop themeTable

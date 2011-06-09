@@ -41,6 +41,7 @@
 		</Compiler>
 		<Linker>
 			<Add library="../geometry/bin/Debug/libgeometry.so" />
+			<Add library="lua" />
 		</Linker>
 		<ExtraCommands>
 			<Add before="touch include/listeners/SliderListener.h" />

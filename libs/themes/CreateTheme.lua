@@ -1,6 +1,6 @@
 require("libs/themes/Color")
 
-local theme_name = "default"
+local theme_name = "appl"
 
 
 themeTable = {}
@@ -121,7 +121,6 @@ local function f(path, key, value, level, idx)
         
             debugprint(level, "found value ", value, " of type number")
         
-            local p
             if level == 0 then
 
                 themeTable[path .. key] = Color(value)
@@ -185,8 +184,15 @@ local function f(path, key, value, level, idx)
     elseif type(key) == "number" then
     
         debugprint(level, "found key", key, " of type number")
-    
-        if type(value) == "table" then
+
+        if type(value) == "number" then
+        
+            debugprint(level, "found value ", value, " of type number")
+
+            themeTable[path .. selectors[idx]] = Color(value)
+            idx = idx + 1
+        
+        elseif type(value) == "table" then
         
             debugprint(level, "found value ", tostring(value), " of type table")
             
