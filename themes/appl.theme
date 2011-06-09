@@ -77,7 +77,7 @@ Text = { Gray192 }
 -- Foreground color, background color, hovered fg/bg, clicked fg/bg
 WiBox = { 
     -- normal
-    NoColor, Black
+    #, Black
 }
 
 
@@ -95,11 +95,11 @@ Label = {
 
 Slider = {
     -- normal
-    NoColor, 80,
+    #, 80,
     
     Handle = {
         -- normal
-        NoColor, 160,
+        #, 160,
     }
 }
 

@@ -1,6 +1,6 @@
 -- Global background color, drawn at places where nothing else is on screen
---GlobalBackground = { Black }
---GlobalBackground = { 0, 0, 0 } -- same as above
+--GlobalBackground = Black
+--GlobalBackground = Color(0, 0, 0) -- same as above
 GlobalBackground = 0 -- same as above
 
 -- Foreground color only, rest will be ignored (text widget is non-interactive)
