@@ -22,6 +22,7 @@ Text::Text(const char* colorScheme)
 {
     // Set to very large default such that we will end up
     setSize(99999, 99999);
+    setColors(colorScheme);
 }
 
 
@@ -34,6 +35,7 @@ Text::Text(const std::string& text, const char* colorScheme)
 {
     setSize(99999, 99999);
     setText(text);
+    setColors(colorScheme);
 }
 
 
@@ -166,17 +168,17 @@ Text::setSize(float width, float height)
 
 
 void
-Text::updateBBox()
+Text::setColors(const char* colorScheme)
 {
-    ftBB_ = layout_->BBox(text_);
-    bBBoxUpdateNeeded_ = false;
+    ThemeManager::getInstance()->setColors(this, colorScheme, "Text");
 }
 
 
 void
-Text::setColors(const char* colorScheme)
+Text::updateBBox()
 {
-    setFgColor(ThemeManager::getInstance()->getFgColor(colorScheme, "Text"));
+    ftBB_ = layout_->BBox(text_);
+    bBBoxUpdateNeeded_ = false;
 }
 
 

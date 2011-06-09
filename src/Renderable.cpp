@@ -90,7 +90,7 @@ Renderable::setColor(const gw1k::Color4i* col, gw1k::Color4i*& dest)
         delete dest;
         dest = 0;
     }
-    else
+    else if (col && dest)
     {
         *dest = *col;
     }

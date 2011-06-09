@@ -2,41 +2,50 @@
 GlobalBackground = Black
 
 -- Foreground color only, rest will be ignored (text widget is non-interactive)
-Text = { 192 }
+--Text = { 192 }
 
--- Foreground color, background color, hovered fg/bg, clicked fg/bg
+--[[ Foreground color, background color, hovered fg/bg, clicked fg/bg
 WiBox = { 
     -- normal
-    #, Black
-}
+    #, Black,
+    #, Green,
+    #, Red, x = #, y = #, z = #, a = #, b = #, c = #,
+}]]
 
 
 
 Label = {
     Text = {
         -- normal
-        White,
+        192, #,
+        Red
     },
-
+    
+    Blue,
+    fg = #,
+    
     -- Same as WiBox for the rest (normal/hovered/clicked fg/bg)
-    WiBox
+    --WiBox
 }
 
-
+--[[
 Slider = {
     -- normal
-    #, 80,
+    #, 60,
     
     Handle = {
         -- normal
-        #, 160,
+        #, 120,
+        160
     }
 }
 
 
 ScrollPane = {
     -- normal
-    40, Black,
+    10, 20,
 
-    ScrollBar = Slider
+    HSlider = Slider,
+    VSlider = Slider
 }
+]]

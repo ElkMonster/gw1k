@@ -20,7 +20,7 @@ Label::Label(
     int faceSize,
     const std::string& fontName,
     const char* colorScheme)
-:   WiBox(pos, size, colorScheme),
+:   WiBox(pos, size),
     textProps_(0)
 {
     text_.setFont(fontName, (faceSize < 0 ? size.y : faceSize));
@@ -29,11 +29,12 @@ Label::Label(
     setTextProperty(GW1K_ALIGN_VERT_CENTER);
     text_.setPos(0, 0);
     text_.setSize(size.x, size.y);
-    text_.setFgColor(gw1k::color::green);
 
     addSubObject(&text_);
 
     addMouseListener(this);
+
+    setColors(colorScheme);
 }
 
 

@@ -16,13 +16,6 @@ ScrollPane::ScrollPane(
     hSlider_(Point(0, size.y - 20), Point(size.x - 20, 20)),
     vSlider_(Point(size.x - 20, 0), Point(20, size.y - 20), true)
 {
-    setFgColor(color::blue);
-    pane_.setFgColor(color::green);
-    hSlider_.setFgColor(color::green);
-    hSlider_.setHoveredFgColor(color::red);
-    vSlider_.setFgColor(color::green);
-    vSlider_.setHoveredFgColor(color::red);
-
     GuiObject::addSubObject(&vSlider_);
     GuiObject::addSubObject(&hSlider_);
     GuiObject::addSubObject(&pane_);
@@ -111,7 +104,6 @@ ScrollPane::setColors(const char* colorScheme)
     t->setColors(this, colorScheme, "ScrollPane");
     hSlider_.setColors((baseName + ".HSlider").c_str());
     vSlider_.setColors((baseName + ".VSlider").c_str());
-
 }
 
 void

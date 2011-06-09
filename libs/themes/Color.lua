@@ -1,3 +1,9 @@
+--[[
+
+
+
+]]
+
 local type = type
 local pairs = pairs
 local setmetatable = setmetatable
@@ -28,16 +34,29 @@ local function only_numbers(t)
 end
 
 
+-- Returns the given value as an appropriate color value from the range [0..255].
+-- For arguments in the range (0..1), it returns value * 255; for arguments
+-- [0,1..255], it returns the argument; for arguments less than 0 or greater
+-- than 255, it returns 0 or 255, respectively.
+local function get_color_value(v)
+    if v > 0 and v < 1 then
+        return 255 * v
+    elseif v >= 0 and v <= 255 then
+        return v
+    else
+        local w = ((v < 0) and 0) or ((v > 255) and 255)
+        print("Color: Invalid color value (" .. w .. "), using 255 instead")
+        return w
+    end
+end
+
+
 -- global class object (or table, rather)
 Color = {
 
     mt = {
         
-        -- Mark as a metatable, protecting it against changes
-        --__metatable = nil,
-    
         __index = function(t, key)
-            --print("Color: request for key ".. key)
             return Color[key] or t[key]
         end,
         
@@ -55,15 +74,15 @@ Color = {
 
     -- Constructor
     new = function(...)
-        
+
         -- This is our new instance; rgba will hold the actual color values
         local obj = { rgba = {} }
-
-        -- Handle nested tables (e.g., Color.new({127, 255, 0}) )
-        if #arg == 1 and type(arg[1]) == "table" then
-            arg = arg[1]
-        end
         
+        -- Check for copy constructor use
+        if #arg == 1 and type(arg[1]) == "table" and arg[1].rgba then
+            arg = arg[1].rgba
+        end
+
         -- Color.new(127) equals Color.new(127, 127, 127, 255)
         if #arg == 1 and type(arg[1]) == "number" then 
             obj.rgba = { arg[1], arg[1], arg[1], 255 } 
@@ -72,22 +91,22 @@ Color = {
         elseif #arg == 2 and only_numbers(arg) then
             obj.rgba = { arg[1], arg[1], arg[1], arg[2] }
             
-        elseif arg.n == 3 and only_numbers(arg) then
+        elseif #arg == 3 and only_numbers(arg) then
             obj.rgba = copytable(arg)
             obj.rgba[4] = 255
             
-        elseif arg.n == 4 and only_numbers(arg) then
+        elseif #arg == 4 and only_numbers(arg) then
             obj.rgba = copytable(arg)
         
         else
-            error("Invalid argument ")
+            local m = ""
+            for _,v in pairs(arg) do m = m .. " " end
+            error("Color.new(): Invalid argument(s): " .. m)
             return nil
         end
 
-        --print("Creating Color (a): ", obj)
         setmetatable(obj, Color.mt)
-        --print("Creating Color (b): ", obj, ", metatable = ", Color.mt)
-        --print("returning new color" .. tostring(obj))
+
         return obj
     end,
     
@@ -95,17 +114,14 @@ Color = {
     -- Creates a new color with the same color, but with a different alpha value
     alpha = function(self, a)
         local newCol = Color.new(self.rgba)
-        if a > 0 and a < 1 then
-            newCol.rgba[4] = 255 * a
-        elseif a >= 0 and a <= 255 then
-            newCol.rgba[4] = a
-        else
-            print("Color: Invalid color value (" .. a .. "), using 255 instead")
-            newCol.rgba[4] = 255
-        end
+        newCol.rgba[4] = get_color_value(newCol.rgba[4])
         return newCol
     end,
-
+    
+    
+    a = function(self, a)
+        return self:alpha(a)
+    end
 
 }
 

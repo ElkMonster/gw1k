@@ -34,12 +34,8 @@ Slider::Slider(
     bEnabled_(true),
     value_(0.f)
 {
-    handle_.setFgColor(color::red);
-    handle_.setBgColor(color::green);
-    handle_.setHoveredFgColor(color::green);
 #if DEBUG_SLIDER
     handle_.getTextWidget().setInteractive(false);
-    handle_.getTextWidget().setFgColor(color::red);
 #endif
 
     addSubObject(&handle_);

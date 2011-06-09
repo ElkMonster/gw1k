@@ -82,11 +82,16 @@ ThemeManager::loadTheme(const char* themeName)
 
 void
 ThemeManager::setColors(
-    const Renderable* r,
+    Renderable* r,
     const char* colorScheme,
     const char* fallbackScheme)
 {
-
+    r->setFgColor(getFgColor(colorScheme, fallbackScheme));
+    r->setBgColor(getBgColor(colorScheme, fallbackScheme));
+    r->setHoveredFgColor(getHoveredFgColor(colorScheme, fallbackScheme));
+    r->setHoveredBgColor(getHoveredBgColor(colorScheme, fallbackScheme));
+    r->setClickedFgColor(getClickedFgColor(colorScheme, fallbackScheme));
+    r->setClickedBgColor(getClickedBgColor(colorScheme, fallbackScheme));
 }
 
 
@@ -156,6 +161,8 @@ ThemeManager::getColor(
     {
         std::string key(scheme);
         key.append(".").append(modespec);
+
+        std::cout << "ThemeManager: request for key " << key << (colorMap_[key] ? "(success)" : "(fail)") << std::endl;
 
         return colorMap_[key];
     }

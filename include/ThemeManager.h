@@ -33,7 +33,7 @@ public:
 
     bool loadTheme(const char* themeName);
 
-    void setColors(const Renderable* r,
+    void setColors(Renderable* r,
                    const char* colorScheme,
                    const char* fallbackScheme);
 
