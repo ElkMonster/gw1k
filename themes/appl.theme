@@ -1,19 +1,20 @@
 -- Global background color, drawn at places where nothing else is on screen
-GlobalBackground = Black
+GlobalBackground = #
 
 -- Foreground color only, rest will be ignored (text widget is non-interactive)
 --Text = { 192 }
 
---[[ Foreground color, background color, hovered fg/bg, clicked fg/bg
+-- Foreground color, background color, hovered fg/bg, clicked fg/bg
 WiBox = { 
     -- normal
     #, Black,
-    #, Green,
-    #, Red, x = #, y = #, z = #, a = #, b = #, c = #,
-}]]
+    --#, Green,
+    --#, Red --, #, #, #, a = #, b = #, c = #,
+}
 
 
 
+--[[
 Label = {
     Text = {
         -- normal
@@ -21,13 +22,10 @@ Label = {
         Red
     },
     
-    Blue,
-    fg = #,
-    
     -- Same as WiBox for the rest (normal/hovered/clicked fg/bg)
     --WiBox
 }
-
+]]
 --[[
 Slider = {
     -- normal

@@ -10,7 +10,7 @@ setmetatable(themeTable, {
     __newindex = function(t, k, v)
         local action
         if themeTable._t[k] then
-            action = "Warning: " .. ((v and "Updating") or "Deleting")
+            action = "Warning: " .. ((v and "Redefinition of") or "Deleting")
         else
             action = "New"
         end
@@ -156,15 +156,14 @@ local function f(path, key, value, level, idx)
         
             DEBUGPRINT(level, "found value ", value, " of type " .. ctype(value))
         
-            -- On level 0, allow assignment of arbitrary key - color pairs
-            if level == 0 then
-                themeTable[key] = Color(value)
-            
-            -- Allow direct addressing of widget properties. This will overwrite
-            -- a previous setting made for the property
+            -- On level 0, allow arbitrary key - color pairs; on all other
+            -- levels, allow only direct addressing of widget properties
+            -- (fg, bg, hfg, hbg, cfg, cbg). Using direct addressing will 
+            -- overwrite any previously read setting for the property. Since
+            -- the order of keys is undetermined for the pairs() iterator, so is
+            -- the result for multiple specifications of the same key.
             -- Ex: WiBox { fg = Red }
-            elseif is_selector(key) then
-
+            if level == 0 or is_selector(key) then
                 local p = ((path and path ~= "" and path .. ".") or "")            
                 
                 if value == _nocolor then
@@ -177,7 +176,7 @@ local function f(path, key, value, level, idx)
                 end
             
             else
-                print_invalid_statement(path, key, value)
+                print_invalid_statement(path, key, value)                
             end
         
         elseif type(value) == "table" then
@@ -204,55 +203,35 @@ local function f(path, key, value, level, idx)
     
         DEBUGPRINT(level, "found key", key, " of type number")
 
-        if type(value) == "number" then
+        if type(value) == "number" or is_color(value) or value == _nocolor then
         
-            DEBUGPRINT(level, "found value ", value, " of type number")
+            DEBUGPRINT(level, "found value ", value, " of type " .. ctype(value))
 
             if idx > 6 then
                 print_too_many_entries(path, idx, value)
+            elseif value == _nocolor then 
+
+                DEBUGPRINT(level, "table is nocolor")
+                
+                themeTable[path .. selectors[idx]] = nil
             else
                 themeTable[path .. selectors[idx]] = Color(value)
-                idx = idx + 1
             end
-        
+            idx = idx + 1
+            
         elseif type(value) == "table" then
         
             DEBUGPRINT(level, "found value ", tostring(value), " of type table")
+            DEBUGPRINT(level, "table specifies colors")
             
-            if is_color(value) then
-            
-                DEBUGPRINT(level, "table is color")
-                
-                if idx > 6 then
-                    print_too_many_entries(path, idx, value)
-                else
-                    themeTable[path .. selectors[idx]] = value
-                    idx = idx + 1
-                end
-                
-            elseif value == _nocolor then
-            
-                DEBUGPRINT(level, "table is nocolor")
-                if idx > 6 then
-                    print_too_many_entries(path, idx, value)
-                else
-                    idx = idx + 1
-                end
-            
-            else
-            
-                DEBUGPRINT(level, "table specifies colors")
-                
-                local count = 0;
-                for k,v in pairs(value) do
-                    idx = f(path, k, v, level, idx)
-                    count = count + 1
-                end
-                
-                if count == 0 then print_empty_statement(path, key, value) end
-                
+            local count = 0;
+            for k,v in pairs(value) do
+                idx = f(path, k, v, level, idx)
+                count = count + 1
             end
-        
+            
+            if count == 0 then print_empty_statement(path, key, value) end
+
         else
             print_invalid_statement(path, key, value)
         end
