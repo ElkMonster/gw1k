@@ -7,15 +7,15 @@ GlobalBackground = Black
 Text = { Color(10) }
 
 -- Foreground color, background color, hovered fg/bg, clicked fg/bg
-WiBox = { 
+WiBox = {
     -- normal
     Red,
     Red:alpha(0.1),
     -- hovered
     Green,
     Green:alpha(0.3),
-    -- clicked 
-    Green, 
+    -- clicked
+    Green,
     Green:alpha(0.6)
 }
 ]]
@@ -41,7 +41,7 @@ Label = {
 --[[
 Slider = {
     Handle = {
-    
+
     }
 }
 

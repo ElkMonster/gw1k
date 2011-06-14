@@ -5,7 +5,7 @@ GlobalBackground = #
 --Text = { 192 }
 
 -- Foreground color, background color, hovered fg/bg, clicked fg/bg
-WiBox = { 
+WiBox = {
     -- normal
     #, Black,
     --#, Green,
@@ -21,16 +21,17 @@ Label = {
         192, #,
         Red
     },
-    
-    -- Same as WiBox for the rest (normal/hovered/clicked fg/bg)
-    --WiBox
+
+    Blue,
+    fg = #,
+
 }
 ]]
 --[[
 Slider = {
     -- normal
     #, 60,
-    
+
     Handle = {
         -- normal
         #, 120,
