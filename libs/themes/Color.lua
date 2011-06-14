@@ -10,9 +10,14 @@ local setmetatable = setmetatable
 local tostring = tostring
 local print = print
 local error = error
+local math = math
 
 module("Color")
 
+
+local function round(v)
+    return math.floor(v + 0.5)
+end
 
 -- Returns the given value as an appropriate color value from the range [0..255].
 -- For arguments in the range (0..1), it returns value * 255; for arguments
@@ -20,7 +25,7 @@ module("Color")
 -- than 255, it returns 0 or 255, respectively.
 local function get_color_value(v)
     if v > 0 and v < 1 then
-        return 255 * v
+        return round(255 * v)
     elseif v >= 0 and v <= 255 then
         return v
     else
@@ -132,12 +137,13 @@ Color = {
 
 
 
-Color.Black = Color.new( 0 )
-Color.White = Color.new( 255 )
-Color.Red = Color.new( 255, 0, 0, 255 )
-Color.Green = Color.new( 0, 255, 0 )
-Color.Blue = Color.new( 0, 0, 255 )
-Color.Yellow = Color.new( 0, 255, 255 )
+Color.Black  = Color.new( 0 )
+Color.White  = Color.new( 255 )
+Color.Red    = Color.new( 255, 0,   0 )
+Color.Green  = Color.new( 0,   255, 0 )
+Color.Blue   = Color.new( 0,   0,   255 )
+Color.Yellow = Color.new( 0,   255, 255 )
+Color.Orange = Color.new( 255, 128, 0 )
 
 
 -- Redirect calls like "Color(255, 0, 0, 255)" to Color.new()
