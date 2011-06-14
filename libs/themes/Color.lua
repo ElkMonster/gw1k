@@ -13,26 +13,6 @@ local error = error
 
 module("Color")
 
--- Returns a copy of the given table
-local function copytable(t)
-    local t2 = {}
-    for k,v in pairs(t) do
-        t2[k] = v
-    end
-    return t2
-end
-
-
--- Returns true if table t only contains numbers, false otherwise
-local function only_numbers(t)
-    for i = 1,#t do
-        if type(t[i]) ~= "number" then
-            return false
-        end
-    end
-    return true
-end
-
 
 -- Returns the given value as an appropriate color value from the range [0..255].
 -- For arguments in the range (0..1), it returns value * 255; for arguments
@@ -51,20 +31,42 @@ local function get_color_value(v)
 end
 
 
+-- Returns a copy of the given table, applying get_color_value to all copied
+-- values
+local function copytable(t)
+    local t2 = {}
+    for k,v in pairs(t) do
+        t2[k] = get_color_value(v)
+    end
+    return t2
+end
+
+
+-- Returns true if table t only contains numbers, false otherwise
+local function only_numbers(t)
+    for i = 1,#t do
+        if type(t[i]) ~= "number" then
+            return false
+        end
+    end
+    return true
+end
+
+
 -- global class object (or table, rather)
 Color = {
 
     mt = {
-        
+
         __index = function(t, key)
             return Color[key] or t[key]
         end,
-        
+
         -- Prevent messing around with our class
         __newindex = function(t, key, value)
             error("Color does not allow changes to its table structure")
         end,
-        
+
         __tostring = function(c)
             local str = "Color( "
             for i = 1,3 do str = str .. c.rgba[i] .. ", " end
@@ -77,31 +79,33 @@ Color = {
 
         -- This is our new instance; rgba will hold the actual color values
         local obj = { rgba = {} }
-        
+
         -- Check for copy constructor use
         if #arg == 1 and type(arg[1]) == "table" and arg[1].rgba then
             arg = arg[1].rgba
         end
 
         -- Color.new(127) equals Color.new(127, 127, 127, 255)
-        if #arg == 1 and type(arg[1]) == "number" then 
-            obj.rgba = { arg[1], arg[1], arg[1], 255 } 
-        
+        if #arg == 1 and type(arg[1]) == "number" then
+            local n = get_color_value(arg[1])
+            obj.rgba = { n, n, n, 255 }
+
         -- Color.new(127, 64) equals Color.new(127, 127, 127, 64)
         elseif #arg == 2 and only_numbers(arg) then
-            obj.rgba = { arg[1], arg[1], arg[1], arg[2] }
-            
+            local n = get_color_value(arg[1])
+            obj.rgba = { n, n, n, get_color_value(arg[2]) }
+
         elseif #arg == 3 and only_numbers(arg) then
             obj.rgba = copytable(arg)
             obj.rgba[4] = 255
-            
+
         elseif #arg == 4 and only_numbers(arg) then
             obj.rgba = copytable(arg)
-        
+
         else
             local m = ""
-            for _,v in pairs(arg) do m = m .. " " end
-            error("Color.new(): Invalid argument(s): " .. m)
+            for _,v in pairs(arg) do m = m .. " '" .. tostring(v) .. "'" end
+            error("Color.new(): Invalid argument(s): " .. (m ~= "" and m) or "<none>")
             return nil
         end
 
@@ -109,16 +113,16 @@ Color = {
 
         return obj
     end,
-    
-    
+
+
     -- Creates a new color with the same color, but with a different alpha value
     alpha = function(self, a)
-        local newCol = Color.new(self.rgba)
+        local newCol = Color.new(self)
         newCol.rgba[4] = get_color_value(newCol.rgba[4])
         return newCol
     end,
-    
-    
+
+
     a = function(self, a)
         return self:alpha(a)
     end
