@@ -26,7 +26,8 @@ to be called from a base directory with the following structure:
 
 If anything goes wrong while reading or processing the theme file, or any other
 error occurs, this program prints an error message to the command line and
-returns false to the caller. Otherwise, it returns true.
+returns false to the caller. Otherwise, it returns true. (Note that internal
+errors coming from Lua itself will make the program fail)
 
 ]]
 
@@ -175,30 +176,44 @@ local function DEBUGPRINT(...)
 end
 
 
+-- This global variable can be read from outside in order to get the list of
+-- errors or warnings that occurred during theme processing
+CreateTheme_errors = ""
+
+
 local function print_invalid_value(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
-    print("Invalid value '" .. tostring(value) .. "' for key '" .. p
-        .. tostring(key) .. "'")
+    local s = "Invalid value '" .. tostring(value) .. "' for key '" .. p
+        .. tostring(key) .. "'"
+    print(s)
+    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
 end
 
 
 local function print_invalid_statement(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
-    print("Invalid statement: " .. p .. tostring(key) .. " = " .. tostring(value))
+    local s = "Invalid statement: " .. p .. tostring(key) .. " = "
+        .. tostring(value))
+    print(s)
+    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
 end
 
 
 local function print_empty_statement(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
-    print("Empty statement: " .. p .. tostring(key) .. " = " .. tostring(value)
-        .. ", ignoring")
+    local s = "Empty statement: " .. p .. tostring(key) .. " = " .. tostring(value)
+        .. ", ignoring"
+    print(s)
+    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
 end
 
 
 local function print_too_many_entries(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
-    print("Too many entries, skipping: " .. p .. tostring(key) .. " = "
-        .. tostring(value))
+    local s = "Too many entries, skipping: " .. p .. tostring(key) .. " = "
+        .. tostring(value)
+    print(s)
+    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
 end
 
 
