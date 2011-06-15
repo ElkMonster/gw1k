@@ -123,7 +123,7 @@ Color = {
     -- Creates a new color with the same color, but with a different alpha value
     alpha = function(self, a)
         local newCol = Color.new(self)
-        newCol.rgba[4] = get_color_value(newCol.rgba[4])
+        newCol.rgba[4] = get_color_value(a)
         return newCol
     end,
 
@@ -144,6 +144,8 @@ Color.Green  = Color.new( 0,   255, 0 )
 Color.Blue   = Color.new( 0,   0,   255 )
 Color.Yellow = Color.new( 0,   255, 255 )
 Color.Orange = Color.new( 255, 128, 0 )
+Color.Pink   = Color.new( 255, 0, 255 )
+Color.Violet = Color.new( 128, 0, 255 )
 
 
 -- Redirect calls like "Color(255, 0, 0, 255)" to Color.new()
