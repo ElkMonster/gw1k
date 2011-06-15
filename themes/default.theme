@@ -293,10 +293,17 @@ Label = {
     WiBox
 }
 
+-- Define a color so if we have to change it, we only need to in one place. This
+-- color definition will go into our theme color database, i.e., it will be
+-- available through the theme manager on the C++ side, but we will hardly ever
+-- notice it unless we look at the program logs.
 DarkGreen = Color(0, 128, 0)
+
 
 -- Slider widget
 -- =============
+-- Sliders have a Handle that one can click on and drag in order to change their
+-- position (and value).
 Slider = {
     fg = DarkGreen,
     hfg = Green,
@@ -312,8 +319,9 @@ Slider = {
 
 -- ScrollPane widget
 -- =================
+-- ScrollPanes have a
 ScrollPane = {
-    ScrollBar = Wibox,
+    #, 20,
     HSlider = Slider,
     VSlider = Slider
 }
