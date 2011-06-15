@@ -63,6 +63,9 @@ Color = {
 
     mt = {
 
+        -- Protect Colors' metatable against changes
+        __metatable = false,
+
         __index = function(t, key)
             return Color[key] or t[key]
         end,
