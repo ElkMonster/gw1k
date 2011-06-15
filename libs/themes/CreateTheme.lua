@@ -34,7 +34,7 @@ errors coming from Lua itself will make the program fail)
 -- This variable is normally set by the ThemeManager. Uncomment and set to a
 -- theme name in order use this program stand-alone. The given theme is expected
 -- to be a file named <theme_name>.theme in the themes/ directory.
-local theme_name = "appl"
+local theme_name = "default"
 
 -- If the global variable CreateTheme_verbose has been set before running this
 -- program, it will put out messages about what it is doing. Errors and warnings
@@ -193,7 +193,7 @@ end
 local function print_invalid_statement(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
     local s = "Invalid statement: " .. p .. tostring(key) .. " = "
-        .. tostring(value))
+        .. tostring(value)
     print(s)
     CreateTheme_errors = CreateTheme_errors .. s .. "\n"
 end
