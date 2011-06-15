@@ -27,7 +27,11 @@ to be called from a base directory with the following structure:
 If anything goes wrong while reading or processing the theme file, or any other
 error occurs, this program prints an error message to the command line and
 returns false to the caller. Otherwise, it returns true. (Note that internal
-errors coming from Lua itself will make the program fail)
+errors coming from Lua itself will make the program fail.)
+Error messages and warnings can also be queried from the C(++) side by reading
+the global variable 'CreateTheme_errors'.
+
+
 
 ]]
 
@@ -49,6 +53,17 @@ local function log(...)
 end
 
 
+-- This global variable can be read from outside in order to get the list of
+-- errors or warnings that occurred during theme processing
+CreateTheme_errors = ""
+
+
+-- Prints the given string and adds it to the CreateTheme_errors variable.
+local function log_and_keep(s)
+    log(s)
+    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
+end
+
 log("==== Theme Loader: Starting... =============================")
 
 
@@ -63,14 +78,20 @@ themeTable = { _t = {} }
 setmetatable(themeTable, {
 
     __newindex = function(t, k, v)
-        if verbose then
-            local action
-            if themeTable._t[k] then
-                action = "Warning: " .. ((v and "Redefinition of") or "Deleting")
-            else
-                action = "New"
-            end
-            print(action .. " theme table entry: "  .. k .. " = " .. tostring(v))
+        local action
+        local critical = false
+        if themeTable._t[k] then
+            critical = true
+            action = "Warning: " .. ((v and "Redefinition of") or "Deleting")
+        else
+            action = "New"
+        end
+
+        local s = action .. " theme table entry: "  .. k .. " = " .. tostring(v)
+        if critical then
+            log_and_keep(s)
+        else
+            log(s)
         end
         themeTable._t[k] = v
     end
@@ -78,7 +99,7 @@ setmetatable(themeTable, {
 })
 
 -- This table will be filled with everything that is defined in the theme file,
--- i.e.
+-- i.e. it will contain the raw table structure of the theme.
 local themeDef = {}
 
 -- Define dummy value for the "no color" setting ("#" in theme file,
@@ -91,6 +112,8 @@ setmetatable(_nocolor, { __tostring = function() return "# [_nocolor]" end })
 require("libs/themes/Color")
 
 -- This function reads the theme file, executes it as a Lua code chunk, and
+-- makes that all definitions made in the theme file go into the themeTable
+-- variable.
 local function build_theme_def()
 
     log("Reading theme file...")
@@ -111,12 +134,10 @@ local function build_theme_def()
         -- table
         __newindex = function(t, key, value)
             if value == nil then
-                print("Warning: Assigning undefined value to " .. key)
+                log_and_keep("Warning: Assigning undefined value to " .. key)
             end
-            if verbose then
-                local action = rawget(themeDef, key) and "Updating" or "New"
-                print("themeDef: " .. action .. " entry: ", key, value)
-            end
+            local action = (rawget(themeDef, key) and "Updating") or "New"
+            log("themeDef: " .. action .. " entry: ", key, value)
             themeDef[key] = value
         end
     }
@@ -127,7 +148,7 @@ local function build_theme_def()
     local theme_file, err_msg = io.open("themes/"..theme_name .. ".theme", "r")
 
     if theme_file == nil then
-        print(err_msg)
+        log(err_msg)
         return false
     end
 
@@ -152,7 +173,11 @@ local function build_theme_def()
 end
 
 
--- This table is used in
+-- This table is used to get the state selectors for a certain number (e.g., the
+-- first color definition in a scheme is the foreground color, so its selector
+-- is fg, the fourth color definition is the hovered background (hbg), etc.),
+-- and to get the index that is associated with a certain selector. (See
+-- process_theme() for details.)
 local selectors = {
     ".fg", ".bg", ".hfg", ".hbg", ".cfg", ".cbg",
     fg = 1, bg = 2, hfg = 3, hbg = 4, cfg = 5, cbg = 6
@@ -179,17 +204,11 @@ local function DEBUGPRINT(...)
 end
 
 
--- This global variable can be read from outside in order to get the list of
--- errors or warnings that occurred during theme processing
-CreateTheme_errors = ""
-
-
 local function print_invalid_value(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
     local s = "Invalid value '" .. tostring(value) .. "' for key '" .. p
         .. tostring(key) .. "'"
-    print(s)
-    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
+    log_and_keep(s)
 end
 
 
@@ -197,8 +216,7 @@ local function print_invalid_statement(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
     local s = "Invalid statement: " .. p .. tostring(key) .. " = "
         .. tostring(value)
-    print(s)
-    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
+    log_and_keep(s)
 end
 
 
@@ -206,8 +224,7 @@ local function print_empty_statement(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
     local s = "Empty statement: " .. p .. tostring(key) .. " = " .. tostring(value)
         .. ", ignoring"
-    print(s)
-    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
+    log_and_keep(s)
 end
 
 
@@ -215,8 +232,7 @@ local function print_too_many_entries(path, key, value)
     local p = (path and path ~= "" and path .. ".") or ""
     local s = "Too many entries, skipping: " .. p .. tostring(key) .. " = "
         .. tostring(value)
-    print(s)
-    CreateTheme_errors = CreateTheme_errors .. s .. "\n"
+    log_and_keep(s)
 end
 
 
