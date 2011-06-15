@@ -98,10 +98,8 @@ ScrollPane::refreshLayout()
 void
 ScrollPane::setColors(const char* colorScheme)
 {
-    ThemeManager* t = ThemeManager::getInstance();
-
     std::string baseName(colorScheme ? colorScheme : "ScrollPane");
-    t->setColors(this, colorScheme, "ScrollPane");
+    ThemeManager::getInstance()->setColors(this, colorScheme, "ScrollPane");
     hSlider_.setColors((baseName + ".HSlider").c_str());
     vSlider_.setColors((baseName + ".VSlider").c_str());
 }
