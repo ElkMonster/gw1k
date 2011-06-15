@@ -27,9 +27,17 @@ ThemeManager::getInstance()
 ThemeManager::ThemeManager(const char* themeName)
 :   l_(0)
 {
-    if (!(themeName && loadTheme(themeName)) && !loadTheme("default"))
+    if (themeName && !loadTheme(themeName))
     {
-            throw Exception("Error loading theme; default fallback theme failed, too");
+        std::cout
+            << "Error loading theme " << themeName
+            << ", trying default theme..."
+            << std::cout;
+
+        if (!loadTheme("default"))
+        {
+            throw Exception("Error loading default theme");
+        }
     }
 }
 
@@ -193,9 +201,10 @@ ThemeManager::luaError()
 void
 ThemeManager::readTheme()
 {
-    // Push key-value pairs table onto the stack and read its size
+    // Push key-value pairs table onto the stack and read its size; note that
+    // themeTable is a proxy table and _t contains the actual values
     lua_getglobal(l_, "themeTable");
-    int numEntries = lua_objlen(l_, -1);
+    lua_getfield(l_, -1, "_t");
 
     // Now traverse all of themeTable's entries
     // Push nil as the first key
@@ -235,8 +244,8 @@ ThemeManager::readTheme()
             << rgba[1] << ", " << rgba[2] << ", " << rgba[3] << ")" << std::endl;
     }
 
-    // Finally, pop themeTable
-    lua_pop(l_, 1);
+    // Finally, pop _t and themeTable
+    lua_pop(l_, 2);
 
 }
 

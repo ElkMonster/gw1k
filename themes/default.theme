@@ -5,8 +5,8 @@
 -- This is the gw1k default theme. It also serves as a tutorial of the theme
 -- syntax.
 --
--- Theme files actually contain source code of the Lua programming language. No
--- knowledge of Lua is required for editing theme files, though.
+-- Theme files actually contain source code of the Lua programming language.
+-- However, no Lua knowledge is required for editing theme files.
 --
 --
 -- Comments
@@ -33,12 +33,13 @@
 -- Color schemes
 -- =============
 --
--- The settings below make up the default theme for the default widgets in gw1k.
--- Derived widgets will automatically use the theme colors of their ancestor
--- widgets, given that a definition for them is found in the theme file. That
--- is, a widget that is derived from a Label will use the settings for Label.
--- The derived widget can also use its own colors either by overriding the
--- according methods or by specifying a certain custom-named scheme.
+-- The settings at the end of this file make up the default theme for the
+-- default widgets in gw1k. Derived widgets will automatically use the theme
+-- colors of their ancestor widgets, given that a definition for them is found
+-- in the theme file. That is, a widget that is derived from a Label will use
+-- the settings for Label. The derived widget can also use its own colors either
+-- by overriding the according parts in your widget implementation or by
+-- specifying a certain custom-named scheme.
 --
 -- We call a (color) scheme a number of statements that belong together,
 -- specifying the colors of a widget. For example, the following code makes up
@@ -46,12 +47,16 @@
 --
 --     WiBox = { Blue, White, Yellow, #, Red, # }
 --
+-- Color schemes can have arbitrary names and are not bound in any way to the
+-- widget names. The standard gw1k widgets use their names for scheme
+-- names, though.
+--
 --
 -- Widget states
 -- =============
 --
 -- Widgets have three different states: normal, hovered, and clicked, and two
--- colors for every state, forground color and background color. The foreground
+-- colors for every state, foreground color and background color. The foreground
 -- color is the one that is drawn to outline the shape, i.e., the widget
 -- borders, the background color is the one that is used to fill the shape with
 -- color. Normal, hovered, and clicked state colors are always specified in that
@@ -91,16 +96,21 @@
 --
 -- Here, we do not have to use the '#' sign as we directly assign the colors to
 -- the states, so the program processing the theme does not have to find out the
--- associations via logic (or counting, respectively).
+-- associations via logic or counting.
 -- It is also possible to write the state definitions separately with the "dot
--- notation", provided that the widget or scheme, respectively, has been
--- "initialized" beforehand:
+-- notation", provided that the widget or scheme has been "initialized"
+-- beforehand:
 --
---     WiBox = { fg = Blue }
---     WiBox.bg = Yellow
+--     WiBox.fg = Blue       -- error, need to initialize first
+--     WiBox = { fg = Blue } -- works
+--     WiBox.bg = Yellow     -- works now, too
 --
 -- In order to keep things clear, however, it is recommended to stick to the
 -- curly braces notation.
+-- Technically, it is possible to refer to a scheme that is not defined yet by
+-- initializing it as an empty theme and adding settings to it afterwards. This
+-- requires some Lua knowledge, though, and is not recommended as it makes
+-- themes more complicated and error prone.
 --
 --
 -- Specifying colors
@@ -116,15 +126,16 @@
 -- RGB way, and four numbers define a RGBA color.
 -- Number values must be in the range [0 .. 255]. Values in the range (0 .. 1),
 -- i.e., every number 0.x, are interpreted as a factor to multiply with 255, so
--- 0.5 will result in a value of 128.
+-- 0.5 will result in a value of 128. 0 and 1 are not included in this and will
+-- be left unchanged.
 -- Examples:
---                                   Color(R,   G,   B,  A)
---     Color(99)                -- = Color(99,  99,  99, 255)
---     Color(99, 128)           -- = Color(99,  99,  99, 128)
---     Color(255, 128, 0)       -- = Color(255, 128, 0,  255)
---     Color(255, 128, 0, 128)  -- = Color(255, 128, 0,  128)
---     Color(1, 0.5, 0, 0.5)    -- = Color(255, 128, 0,  128)
---     Color(1, 128, 0, 0.5)    -- = Color(255, 128, 0,  128)
+--                                    Color(R,   G,   B,  A)
+--     Color(99)                 -- = Color(99,  99,  99, 255)
+--     Color(99, 128)            -- = Color(99,  99,  99, 128)
+--     Color(255, 128, 0)        -- = Color(255, 128, 0,  255)
+--     Color(255, 128, 0, 128)   -- = Color(255, 128, 0,  128)
+--     Color(0.999, 0.5, 0, 0.5) -- = Color(255, 128, 0,  128)
+--     Color(1, 128, 0, 0.5)     -- = Color(1,   128, 0,  128)
 --
 -- On the top level, that is, outside of any curly braces, arbitrary definitions
 -- can be made. For example, a custom color can be defined and used in schemes:
@@ -138,6 +149,14 @@
 -- message, but do no further harm:
 --
 --     WiBox = { something = Red }
+--
+-- Refering to a non-defined value will not raise any error message, as Lua
+-- interprets this as an assignment of "nothing" ("nil" in Lua); the undefined
+-- value cannot even be noticed if is nested in braces. For statements outside
+-- of braces, at least a warning will be printed:
+--
+--     WiBox = { UndefinedName }   -- equals WiBox = {}, no error or warning
+--     GlobalBackground = Blackkk  -- gives a warning
 --
 --
 -- Sub-widget definitions
@@ -194,7 +213,7 @@
 -- Multiple definitions in any form are strongly discouraged. The theme
 -- processing program will print a warning in some, but not all cases. It is
 -- advisable to keep schemes in one place and to not mix up implicit and
--- explicit notation of colors (at least within schemes).
+-- explicit notation of colors (at least within one scheme).
 -- Part of the problem is that Lua does not provide a means to iterate over
 -- table entries in a determined way; this means that the order in which
 -- definitions are processed cannot be predicted, so in case of multiple
@@ -203,6 +222,12 @@
 --
 --     WiBox = { White, fg = Blue } -- both values define foreground color
 --     WiBox = { fg = White, Blue } -- both values define foreground color
+--
+-- Redefinitions of a whole scheme will be overwritten by the last occurrence:
+--
+--     WiBox = { fg = Blue, hfg = Yellow }
+--     ...
+--     WiBox = { Orange }  -- completely overwrites previous WiBox definition
 --
 --
 -- List of pre-defined colors:
@@ -214,34 +239,36 @@
 --------------------------------------------------------------------------------
 
 
+--------------------------------------------------------------------------------
+-- The following schemes suffice for all default gw1k widgets ------------------
+--------------------------------------------------------------------------------
+
+
 -- Global background color
 -- =======================
 -- This color is drawn at places where nothing else is on screen (or where the
 -- background shines through due to translucency)
 GlobalBackground = Black
 
---------------------------------------------------------------------------------
--- The following schemes suffice for all default gw1k widgets ------------------
---------------------------------------------------------------------------------
 
 -- Text widget
 -- ===========
 -- Needs foreground color only, rest will be ignored by gw1k (Text widget is
 -- non-interactive, i.e., it does not react to mouse actions)
-Text = { fg = 10 }
+Text = { fg = White }
 
 
 -- WiBox widget
 -- ============
 WiBox = {
     -- normal
-    Violet,
-    Red:alpha(0.1),
-    -- hovered
     Green,
+    Green:alpha(0.1),
+    -- hovered
+    Yellow,
     Green:alpha(0.3),
     -- clicked
-    Green,
+    Red,
     Green:alpha(0.6)
 }
 
@@ -255,24 +282,38 @@ Label = {
         -- normal
         White, #,
         -- hovered
-        Yellow, #,
+        Red, #,
         -- clicked
-        Red, #
+        Yellow, #
     },
+    -- We could also write: Text = Text, setting Label.Text to the same value as
+    -- the Text widget
+
     -- Same as WiBox for the rest (normal/hovered/clicked fg/bg)
     WiBox
 }
 
+DarkGreen = Color(0, 128, 0)
 
--- Slider Widget
+-- Slider widget
 -- =============
 Slider = {
-    WiBox,
+    fg = DarkGreen,
+    hfg = Green,
+    cbg = Green,
+
     Handle = {
-        Label.Text
+        Green, DarkGreen,
+        Yellow, Green,
+        Red, #
     }
 }
 
+
+-- ScrollPane widget
+-- =================
 ScrollPane = {
-    ScrollBar = Wibox
+    ScrollBar = Wibox,
+    HSlider = Slider,
+    VSlider = Slider
 }

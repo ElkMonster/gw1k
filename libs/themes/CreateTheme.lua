@@ -110,6 +110,9 @@ local function build_theme_def()
         -- Any key setting operations are redirected to go into the themeDef
         -- table
         __newindex = function(t, key, value)
+            if value == nil then
+                print("Warning: Assigning undefined value to " .. key)
+            end
             if verbose then
                 local action = rawget(themeDef, key) and "Updating" or "New"
                 print("themeDef: " .. action .. " entry: ", key, value)
