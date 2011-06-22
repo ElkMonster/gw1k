@@ -36,16 +36,18 @@ ScrollPane::~ScrollPane()
 const Point&
 ScrollPane::setSize(float width, float height)
 {
-    const Point& size = WiBox::setSize(width, height);
+    const Point& newSize = WiBox::setSize(width, height);
 
-    pane_.setSize(size.x - 20, size.y - 20);
+    pane_.setSize(newSize.x - 20, newSize.y - 20);
 
-    hSlider_.setPos(0, size.y - 20);
-    hSlider_.setSize(size.x - 20, 20);
-    vSlider_.setPos(size.x - 20, 0);
-    vSlider_.setSize(20, size.y - 20);
+    hSlider_.setPos(0, newSize.y - 20);
+    hSlider_.setSize(newSize.x - 20, 20);
+    vSlider_.setPos(newSize.x - 20, 0);
+    vSlider_.setSize(20, newSize.y - 20);
 
-    return size;
+    refreshLayout();
+
+    return newSize;
 }
 
 
@@ -103,6 +105,14 @@ ScrollPane::setColors(const char* colorScheme)
     hSlider_.setColors((baseName + ".HSlider").c_str());
     vSlider_.setColors((baseName + ".VSlider").c_str());
 }
+
+
+const Point&
+ScrollPane::getVisibleSize() const
+{
+    return pane_.getSize();
+}
+
 
 void
 ScrollPane::updateSliders()

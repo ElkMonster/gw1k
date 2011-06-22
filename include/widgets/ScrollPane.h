@@ -38,6 +38,8 @@ public:
 
     virtual void setColors(const char* colorScheme);
 
+    const Point& getVisibleSize() const;
+
 protected:
 
     void updateSliders();
