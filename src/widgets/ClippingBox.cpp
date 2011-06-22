@@ -84,7 +84,7 @@ ClippingBox::renderSubObjects(const Point& offset) const
             WManager::getInstance()->pushGlScissorOffset(p);
 
             // Position of "this" will be added to offset in the Renderable
-            // implementation, so do not modify offset here
+            // implementation, therefore do not add anything to offset here
             Renderable::renderSubObjects(offset);
 
             WManager::getInstance()->popGlScissorOffset();
