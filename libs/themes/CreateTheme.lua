@@ -35,10 +35,10 @@ the global variable 'CreateTheme_errors'.
 
 ]]
 
--- This variable is normally set by the ThemeManager. Uncomment and set to a
--- theme name in order use this program stand-alone. The given theme is expected
--- to be a file named <theme_name>.theme in the themes/ directory.
-local theme_name = "default"
+-- This variable is normally set by the ThemeManager. If it is not, then the
+-- default theme will be loaded. The given theme is expected to be a file named
+-- <theme_name>.theme in the themes/ directory.
+theme_name = theme_name or "default"
 
 -- If the global variable CreateTheme_verbose has been set before running this
 -- program, it will put out messages about what it is doing. Errors and warnings
