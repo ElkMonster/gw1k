@@ -114,6 +114,21 @@ ScrollPane::getVisibleSize() const
 }
 
 
+Slider&
+ScrollPane::getHSlider()
+{
+    return hSlider_;
+}
+
+
+
+Slider&
+ScrollPane::getVSlider()
+{
+    return vSlider_;
+}
+
+
 void
 ScrollPane::updateSliders()
 {

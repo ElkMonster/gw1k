@@ -40,6 +40,10 @@ public:
 
     const Point& getVisibleSize() const;
 
+    Slider& getHSlider();
+
+    Slider& getVSlider();
+
 protected:
 
     void updateSliders();
