@@ -24,22 +24,9 @@ ThemeManager::getInstance()
 }
 
 
-ThemeManager::ThemeManager(const char* themeName)
+ThemeManager::ThemeManager()
 :   l_(0)
-{
-    if (themeName && !loadTheme(themeName))
-    {
-        std::cout
-            << "Error loading theme " << themeName
-            << ", trying default theme..."
-            << std::cout;
-
-        if (!loadTheme("default"))
-        {
-            throw Exception("Error loading default theme");
-        }
-    }
-}
+{}
 
 
 ThemeManager::~ThemeManager()
@@ -51,13 +38,10 @@ ThemeManager::loadTheme(const char* themeName)
 {
     if (!l_ && !loadLua())
     {
-        //throw Exception("Error creating Lua state");
-        return false;
+         return false;
     }
 
-    int err;
-
-    err = luaL_loadfile(l_, "libs/themes/CreateTheme.lua");
+    int err = luaL_loadfile(l_, "libs/themes/CreateTheme.lua");
     switch (err)
     {
     case LUA_ERRSYNTAX:
@@ -72,6 +56,11 @@ ThemeManager::loadTheme(const char* themeName)
     default:
         break;
     }
+    if (err)
+    {
+        luaError();
+        return false;
+    }
 
     lua_pushstring(l_, themeName);
     lua_setglobal(l_, "theme_name");
@@ -80,6 +69,7 @@ ThemeManager::loadTheme(const char* themeName)
     if (err)
     {
         luaError();
+        return false;
     }
 
     readTheme();
@@ -246,7 +236,7 @@ ThemeManager::readTheme()
 
     // Finally, pop _t and themeTable
     lua_pop(l_, 2);
-
 }
+
 
 } // namespace

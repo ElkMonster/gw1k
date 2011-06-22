@@ -23,7 +23,7 @@ public:
 
 private:
 
-    ThemeManager(const char* themeName = 0);
+    ThemeManager();
 
     ThemeManager(const ThemeManager&) {}
 
