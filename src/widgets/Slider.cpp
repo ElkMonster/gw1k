@@ -26,9 +26,9 @@ Slider::Slider(
     const char* colorScheme)
 :   WiBox(pos, size),
 #if DEBUG_SLIDER
-    handle_(Point(1, 1), vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2), "0", 12),
+    handle_(Point(1, 1), (vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2)), "0", 12),
 #else
-    handle_(Point(1, 1), vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2)),
+    handle_(Point(1, 1), (vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2))),
 #endif
     bVertical_(vertical),
     bEnabled_(true),

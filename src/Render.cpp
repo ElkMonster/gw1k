@@ -34,7 +34,6 @@ void drawRect(
         glVertex3f(p3.x, p3.y, 0.f);
     }
     glEnd();
-    printIfGLError();
 }
 
 
@@ -62,7 +61,6 @@ void fillRect(
         glVertex3f(p3.x, p3.y, 0.f);
     }
     glEnd();
-    printIfGLError();
 }
 
 

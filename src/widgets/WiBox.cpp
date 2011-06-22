@@ -35,8 +35,11 @@ void
 WiBox::renderBg(const Point& offset) const
 {
     Point pos = getPos() + offset;
-    Point last = pos + getSize() - Point(1, 1);
-    fillRect(pointToGeomPoint2D(pos), pointToGeomPoint2D(last));
+    // OpenGL will render Quads one pixel too small on the right and bottom
+    // edges if we give it the last pixel, so give it the end (which does not
+    // belong to our box anymore)
+    Point end = getEnd() + offset;
+    fillRect(pointToGeomPoint2D(pos), pointToGeomPoint2D(end));
 }
 
 
