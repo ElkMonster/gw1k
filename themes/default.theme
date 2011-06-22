@@ -158,6 +158,12 @@
 --     WiBox = { UndefinedName }   -- equals WiBox = {}, no error or warning
 --     GlobalBackground = Blackkk  -- gives a warning
 --
+-- To any number variables, math can be applied. Also, arbitrary variables can
+-- be used to ease theme modification, for example when several widgets have a
+-- common background color:
+--
+--     CommonCol = 66
+--     WiBox = { bg = CommonCol, hbg = CommonCol + 30  } -- bg = 66, hbg = 96
 --
 -- Sub-widget definitions
 -- ======================
