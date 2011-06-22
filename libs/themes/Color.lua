@@ -145,10 +145,10 @@ Color.White  = Color.new( 255 )
 Color.Red    = Color.new( 255, 0,   0 )
 Color.Green  = Color.new( 0,   255, 0 )
 Color.Blue   = Color.new( 0,   0,   255 )
-Color.Yellow = Color.new( 0,   255, 255 )
+Color.Yellow = Color.new( 255, 255, 0 )
 Color.Orange = Color.new( 255, 128, 0 )
-Color.Pink   = Color.new( 255, 0, 255 )
-Color.Violet = Color.new( 128, 0, 255 )
+Color.Pink   = Color.new( 255, 0,   255 )
+Color.Violet = Color.new( 128, 0,   255 )
 
 
 -- Redirect calls like "Color(255, 0, 0, 255)" to Color.new()
