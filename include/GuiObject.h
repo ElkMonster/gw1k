@@ -81,6 +81,8 @@ public:
 
     virtual GuiObject* getContainingObject(const Point& p);
 
+    int getNumSubObjects() const;
+
 /*protected:
 
     void setParent(GuiObject* parent);

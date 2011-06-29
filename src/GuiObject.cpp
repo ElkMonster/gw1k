@@ -284,31 +284,6 @@ GuiObject::triggerMouseButtonEvent(MouseButton b, StateEvent ev)
 }
 
 
-GuiObject*
-GuiObject::getContainingObject(const Point& p)
-{
-    Point cp = p;
-    if (bIsVisible_ && bIsInteractive_ && containsMouse(p))
-    {
-        for (unsigned int i = 0; i != subObjects_.size(); ++i)
-        {
-            Point offset = getPos();
-            GuiObject* o = subObjects_[i]->getContainingObject(p - offset);
-            if (o)
-            {
-                return o;
-            }
-        }
-
-        return this;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-
 void
 GuiObject::addSubObject(GuiObject* o)
 {
@@ -347,16 +322,36 @@ GuiObject::removeSubObject(GuiObject* o)
 }
 
 
-/*void
-GuiObject::setParent(GuiObject* parent)
+GuiObject*
+GuiObject::getContainingObject(const Point& p)
 {
-    if (parent_)
+    Point cp = p;
+    if (bIsVisible_ && bIsInteractive_ && containsMouse(p))
     {
-        parent_->removesu
+        for (unsigned int i = 0; i != subObjects_.size(); ++i)
+        {
+            Point offset = getPos();
+            GuiObject* o = subObjects_[i]->getContainingObject(p - offset);
+            if (o)
+            {
+                return o;
+            }
+        }
+
+        return this;
+    }
+    else
+    {
+        return 0;
     }
 }
 
-    GuiObject* getParent() const;
-*/
+
+int
+GuiObject::getNumSubObjects() const
+{
+    return subObjects_.size();
+}
+
 
 } // namespace gw1k
