@@ -19,8 +19,8 @@ public:
 
     ScrollPane(const Point& pos,
                const Point& size,
-               bool autoSize = true,
-               const char* colorScheme = 0);
+               const char* colorScheme = 0,
+               bool autoSize = true);
 
     ~ScrollPane();
 

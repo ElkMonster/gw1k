@@ -9,8 +9,8 @@ namespace gw1k
 ScrollPane::ScrollPane(
     const Point& pos,
     const Point& size,
-    bool autoSize,
-    const char* colorScheme)
+    const char* colorScheme,
+    bool autoSize)
 :   WiBox(pos, size),
     pane_(Point(0, 0), Point(size.x - 20, size.y - 20), autoSize),
     hSlider_(Point(0, size.y - 20), Point(size.x - 20, 20)),
