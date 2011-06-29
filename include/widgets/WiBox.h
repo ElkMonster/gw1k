@@ -13,7 +13,9 @@ class WiBox : public Box
 
 public:
 
-    WiBox(const Point& pos, const Point& size, const char* colorScheme = 0);
+    WiBox(const Point& pos = Point(0, 0),
+          const Point& size = Point(100, 100),
+          const char* colorScheme = 0);
 
     virtual ~WiBox();
 
