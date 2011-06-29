@@ -139,9 +139,9 @@ ClippingBox::getContainingObject(const Point& p)
     GuiObject* o =
         GuiObject::getContainingObject(p + realOrigin_ + clippingOffset_);
 
-    // Since ClippingBox' parent is the one which gets added sub-objects in the
-    // first place, we have also to return it as the containing object if none
-    // of the sub-objects is hit
+    // Since ClippingBox' parent is the one which gets added sub-objects, at
+    // least from the user's perspective, we alsa have to return that parent as
+    // the containing object if none of the sub-objects is hit
     return (o != this ? o : parent_);
 }
 
