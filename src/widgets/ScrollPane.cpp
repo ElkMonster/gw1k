@@ -10,18 +10,22 @@ ScrollPane::ScrollPane(
     const Point& pos,
     const Point& size,
     const char* colorScheme,
-    bool autoSize)
+    bool autoSize,
+    bool stickySliders)
 :   WiBox(pos, size),
-    pane_(Point(0, 0), Point(size.x - 20, size.y - 20), autoSize),
-    hSlider_(Point(0, size.y - 20), Point(size.x - 20, 20)),
-    vSlider_(Point(size.x - 20, 0), Point(20, size.y - 20), true)
+    hSlider_(new Slider(Point(0, size.y - 20), Point(size.x - 20, 20))),
+    vSlider_(new Slider(Point(size.x - 20, 0), Point(20, size.y - 20), true)),
+    stickySliders_(stickySliders)
 {
-    GuiObject::addSubObject(&vSlider_);
-    GuiObject::addSubObject(&hSlider_);
-    GuiObject::addSubObject(&pane_);
+    Point sliderSpace = (stickySliders ? Point(20, 20) : Point());
+    pane_ = new ClippingBox(Point(), size - sliderSpace, autoSize),
 
-    vSlider_.addListener(this);
-    hSlider_.addListener(this);
+    GuiObject::addSubObject(vSlider_);
+    GuiObject::addSubObject(hSlider_);
+    GuiObject::addSubObject(pane_);
+
+    vSlider_->addListener(this);
+    hSlider_->addListener(this);
 
     updateSliders();
 
@@ -36,14 +40,19 @@ ScrollPane::~ScrollPane()
 const Point&
 ScrollPane::setSize(float width, float height)
 {
-    const Point& newSize = WiBox::setSize(width, height);
+    Point newSize = WiBox::setSize(width, height);
 
-    pane_.setSize(newSize.x - 20, newSize.y - 20);
+    Point realPaneSize = pane_->getRealSize();
+    Point sliderSpace = (stickySliders_ ? Point(20, 20) :
+        Point(realPaneSize.y > newSize.y ? 20 : 0, realPaneSize.x > newSize.x ? 20 : 0));
 
-    hSlider_.setPos(0, newSize.y - 20);
-    hSlider_.setSize(newSize.x - 20, 20);
-    vSlider_.setPos(newSize.x - 20, 0);
-    vSlider_.setSize(20, newSize.y - 20);
+    Point paneSize = newSize - sliderSpace;
+    pane_->setSize(paneSize.x, paneSize.y);
+
+    hSlider_->setPos(0, newSize.y - 20);
+    hSlider_->setSize(newSize.x - sliderSpace.x, 20);
+    vSlider_->setPos(newSize.x - 20, 0);
+    vSlider_->setSize(20, newSize.y - sliderSpace.y);
 
     refreshLayout();
 
@@ -54,7 +63,16 @@ ScrollPane::setSize(float width, float height)
 void
 ScrollPane::addSubObject(GuiObject* o)
 {
-    pane_.addSubObject(o);
+    pane_->addSubObject(o);
+
+    // Recalculate object dimensions to take into account sliders that may
+    // appear and take occupy some space
+    if (!stickySliders_)
+    {
+        const Point& size = getSize();
+        setSize(size.x, size.y);
+    }
+
     updateSliders();
 }
 
@@ -62,7 +80,16 @@ ScrollPane::addSubObject(GuiObject* o)
 void
 ScrollPane::removeSubObject(GuiObject* o)
 {
-    pane_.removeSubObject(o);
+    pane_->removeSubObject(o);
+
+    // Recalculate object dimensions to take into account sliders that may
+    // appear and take occupy some space
+    if (!stickySliders_)
+    {
+        const Point& size = getSize();
+        setSize(size.x, size.y);
+    }
+
     updateSliders();
 }
 
@@ -70,29 +97,29 @@ ScrollPane::removeSubObject(GuiObject* o)
 void
 ScrollPane::sliderValueChanged(Slider* slider, float newVal, float delta)
 {
-    Point offset = pane_.getClippingOffset();
-    Point paneSize = pane_.getSize();
-    Point realSize = pane_.getRealSize();
-    Point realOrigin = pane_.getRealOrigin();
+    Point offset = pane_->getClippingOffset();
+    Point paneSize = pane_->getSize();
+    Point realSize = pane_->getRealSize();
+    Point realOrigin = pane_->getRealOrigin();
 
     Point range = realSize - paneSize;
 
-    if (slider == &hSlider_)
+    if (slider == hSlider_)
     {
         offset.x = range.x * newVal;
     }
-    else if (slider == &vSlider_)
+    else if (slider == vSlider_)
     {
         offset.y = range.y * newVal;
     }
-    pane_.setClippingOffset(offset);
+    pane_->setClippingOffset(offset);
 }
 
 
 void
 ScrollPane::refreshLayout()
 {
-    pane_.recalculateBounds();
+    pane_->recalculateBounds();
     updateSliders();
 }
 
@@ -102,22 +129,22 @@ ScrollPane::setColors(const char* colorScheme)
 {
     std::string baseName(colorScheme ? colorScheme : "ScrollPane");
     ThemeManager::getInstance()->setColors(this, colorScheme, "ScrollPane");
-    hSlider_.setColors((baseName + ".HSlider").c_str());
-    vSlider_.setColors((baseName + ".VSlider").c_str());
+    hSlider_->setColors((baseName + ".HSlider").c_str());
+    vSlider_->setColors((baseName + ".VSlider").c_str());
 }
 
 
 const Point&
 ScrollPane::getVisibleSize() const
 {
-    return pane_.getSize();
+    return pane_->getSize();
 }
 
 
 Slider&
 ScrollPane::getHSlider()
 {
-    return hSlider_;
+    return *hSlider_;
 }
 
 
@@ -125,45 +152,64 @@ ScrollPane::getHSlider()
 Slider&
 ScrollPane::getVSlider()
 {
-    return vSlider_;
+    return *vSlider_;
 }
 
 
 void
 ScrollPane::updateSliders()
 {
-    Point realSize = pane_.getRealSize();
-    Point realOrigin = pane_.getRealOrigin();
-    Point offset = pane_.getClippingOffset();
-    Point paneSize = pane_.getSize();
+    Point realSize = pane_->getRealSize();
+    Point realOrigin = pane_->getRealOrigin();
+    Point offset = pane_->getClippingOffset();
+    Point paneSize = pane_->getSize();
 
     Point range = realSize - paneSize;
 
-
     if (realSize.x > paneSize.x)
     {
+        if (!stickySliders_ && !hSlider_->isVisible())
+        {
+            hSlider_->setVisible();
+        }
+
         float val = static_cast<float>(offset.x) / range.x;
-        hSlider_.setHandleSize((float)paneSize.x / realSize.x);
-        hSlider_.setValue(val);
-        hSlider_.setEnabled();
+        hSlider_->setHandleSize((float)paneSize.x / realSize.x);
+        hSlider_->setValue(val);
+        hSlider_->setEnabled();
     }
     else
     {
-        hSlider_.setHandleSize(1.f);
-        hSlider_.setEnabled(false);
+        if (!stickySliders_ && hSlider_->isVisible())
+        {
+            hSlider_->setVisible(false);
+        }
+
+        hSlider_->setHandleSize(1.f);
+        hSlider_->setEnabled(false);
     }
 
     if (realSize.y > paneSize.y)
     {
+        if (!stickySliders_ && !vSlider_->isVisible())
+        {
+            vSlider_->setVisible();
+        }
+
         float val = static_cast<float>(offset.y) / range.y;
-        vSlider_.setHandleSize((float)paneSize.y / realSize.y);
-        vSlider_.setValue(val);
-        vSlider_.setEnabled();
+        vSlider_->setHandleSize((float)paneSize.y / realSize.y);
+        vSlider_->setValue(val);
+        vSlider_->setEnabled();
     }
     else
     {
-        vSlider_.setHandleSize(1.f);
-        vSlider_.setEnabled(false);
+        if (!stickySliders_ && vSlider_->isVisible())
+        {
+            vSlider_->setVisible(false);
+        }
+
+        vSlider_->setHandleSize(1.f);
+        vSlider_->setEnabled(false);
     }
 }
 

@@ -20,7 +20,8 @@ public:
     ScrollPane(const Point& pos,
                const Point& size,
                const char* colorScheme = 0,
-               bool autoSize = true);
+               bool autoSize = true,
+               bool stickySliders = false);
 
     ~ScrollPane();
 
@@ -50,11 +51,13 @@ protected:
 
 protected:
 
-    ClippingBox pane_;
+    ClippingBox* pane_;
 
-    Slider hSlider_;
+    Slider* hSlider_;
 
-    Slider vSlider_;
+    Slider* vSlider_;
+
+    bool stickySliders_;
 
 };
 
