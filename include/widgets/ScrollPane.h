@@ -35,6 +35,13 @@ public:
 
     virtual void sliderValueChanged(Slider* slider, float newVal, float delta);
 
+    /**
+     * Rearranges the layout of the ScrollPane to honor changed sub-object sizes.
+     *
+     * This method should be called when sub-objects have been resized (but not
+     * added or removed). The method will then calculate the new real size of
+     * the pane and set up the sliders accordingly.
+     */
     void refreshLayout();
 
     virtual void setColors(const char* colorScheme);
@@ -57,6 +64,14 @@ protected:
                       int offset,
                       int range);
 
+    /**
+     * Calls resizePaneAndSliders() and updateSliders().
+     *
+     * accommodationStateChanged should be the result of a comparison of two
+     * values obtained via ClippingBox::getAccommodationState().
+     * resizePaneAndSliders() will only be called if accommodationStateChanged
+     * is true.
+     */
     void revalidatePaneAndSliders(bool accommodationStateChanged);
 
 
