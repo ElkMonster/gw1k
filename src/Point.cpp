@@ -66,6 +66,20 @@ Point::operator-() const
 }
 
 
+bool
+Point::operator==(const Point& rhs) const
+{
+    return (x == rhs.x) && (y == rhs.y);
+}
+
+
+bool
+Point::operator!=(const Point& rhs) const
+{
+    return !((*this) == rhs);
+}
+
+
 std::ostream&
 operator<<(std::ostream& out, const Point& point)
 {

@@ -31,6 +31,10 @@ public:
 
     const Point operator-() const;
 
+    bool operator==(const Point& rhs) const;
+
+    bool operator!=(const Point& rhs) const;
+
     friend std::ostream& operator<<(std::ostream& out, const Point& point);
 
     friend const Point min(const Point& p1, const Point& p2);
