@@ -55,6 +55,15 @@ public:
 
     void recalculateBounds();
 
+    /** Do not return a reference here because the returned point will most likely
+     be used in before-after comparisons, so one has to make a copy anyway. */
+    Point getAccommodationStatus() const;
+
+private:
+
+    /** Sets subObjAccommodationStatus */
+    void checkAccommodation();
+
 private:
 
     /**
@@ -87,6 +96,8 @@ private:
      * set manually.
      */
     bool autoSize_;
+
+    Point subObjAccommodationStatus_;
 };
 
 

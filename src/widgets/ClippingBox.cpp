@@ -15,7 +15,8 @@ ClippingBox::ClippingBox(const Point& pos, const Point& size, bool autoSize)
     clippingOffset_(0, 0),
     realOrigin_(0, 0),
     realSize_(size),
-    autoSize_(autoSize)
+    autoSize_(autoSize),
+    subObjAccommodationStatus_(1, 1)
 {}
 
 
@@ -27,7 +28,7 @@ const Point&
 ClippingBox::setSize(float width, float height)
 {
     const Point& size = Box::setSize(width, height);
-    recalculateBounds();
+    checkAccommodation();
     return size;
 }
 
@@ -119,8 +120,9 @@ ClippingBox::addSubObject(GuiObject* o)
         clippingOffset_ += oldRealOrigin - realOrigin_;
     }
 
-    GuiObject::addSubObject(o);
+    checkAccommodation();
 
+    GuiObject::addSubObject(o);
 }
 
 
@@ -176,7 +178,6 @@ ClippingBox::recalculateBounds()
             if (end.y > maxPos.y) maxPos.y = end.y;
         }
 
-
         // Keep viewing window at its position
         clippingOffset_ += oldRealOrigin - realOrigin_;
 
@@ -185,8 +186,25 @@ ClippingBox::recalculateBounds()
         // Don't let things get smaller than the visible window
         realOrigin_ = min(minPos, Point(0, 0));
         realSize_ = max(maxPos, boxEnd) - realOrigin_;
-        //realSize_.y = std::max(maxPos.y, boxEnd.y) - minPos.y;
     }
+
+    checkAccommodation();
+}
+
+
+Point
+ClippingBox::getAccommodationStatus() const
+{
+    return subObjAccommodationStatus_;
+}
+
+
+void
+ClippingBox::checkAccommodation()
+{
+    const Point& size = getSize();
+    subObjAccommodationStatus_.x = (size.x >= realSize_.x);
+    subObjAccommodationStatus_.y = (size.y >= realSize_.y);
 }
 
 

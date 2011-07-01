@@ -47,7 +47,18 @@ public:
 
 protected:
 
+    void resizePaneAndSliders();
+
     void updateSliders();
+
+    void updateSlider(Slider* slider,
+                      int realSize,
+                      int paneSize,
+                      int offset,
+                      int range);
+
+    void revalidatePaneAndSliders(bool accommodationStateChanged);
+
 
 protected:
 

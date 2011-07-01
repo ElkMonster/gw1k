@@ -17,7 +17,7 @@ ScrollPane::ScrollPane(
     vSlider_(new Slider(Point(size.x - 20, 0), Point(20, size.y - 20), true)),
     stickySliders_(stickySliders)
 {
-    Point sliderSpace = (stickySliders ? Point(20, 20) : Point());
+    Point sliderSpace = (stickySliders ? Point(20, 20) : Point(0, 0));
     pane_ = new ClippingBox(Point(), size - sliderSpace, autoSize),
 
     GuiObject::addSubObject(vSlider_);
@@ -34,27 +34,20 @@ ScrollPane::ScrollPane(
 
 
 ScrollPane::~ScrollPane()
-{}
+{
+    delete hSlider_;
+    delete vSlider_;
+
+}
 
 
 const Point&
 ScrollPane::setSize(float width, float height)
 {
-    Point newSize = WiBox::setSize(width, height);
+    const Point& newSize = WiBox::setSize(width, height);
 
-    Point realPaneSize = pane_->getRealSize();
-    Point sliderSpace = (stickySliders_ ? Point(20, 20) :
-        Point(realPaneSize.y > newSize.y ? 20 : 0, realPaneSize.x > newSize.x ? 20 : 0));
-
-    Point paneSize = newSize - sliderSpace;
-    pane_->setSize(paneSize.x, paneSize.y);
-
-    hSlider_->setPos(0, newSize.y - 20);
-    hSlider_->setSize(newSize.x - sliderSpace.x, 20);
-    vSlider_->setPos(newSize.x - 20, 0);
-    vSlider_->setSize(20, newSize.y - sliderSpace.y);
-
-    refreshLayout();
+    resizePaneAndSliders();
+    updateSliders();
 
     return newSize;
 }
@@ -63,34 +56,22 @@ ScrollPane::setSize(float width, float height)
 void
 ScrollPane::addSubObject(GuiObject* o)
 {
+    Point objsFit = pane_->getAccommodationStatus();
+
     pane_->addSubObject(o);
 
-    // Recalculate object dimensions to take into account sliders that may
-    // appear and take occupy some space
-    if (!stickySliders_)
-    {
-        const Point& size = getSize();
-        setSize(size.x, size.y);
-    }
-
-    updateSliders();
+    revalidatePaneAndSliders(objsFit != pane_->getAccommodationStatus());
 }
 
 
 void
 ScrollPane::removeSubObject(GuiObject* o)
 {
+    Point objsFit = pane_->getAccommodationStatus();
+
     pane_->removeSubObject(o);
 
-    // Recalculate object dimensions to take into account sliders that may
-    // appear and take occupy some space
-    if (!stickySliders_)
-    {
-        const Point& size = getSize();
-        setSize(size.x, size.y);
-    }
-
-    updateSliders();
+    revalidatePaneAndSliders(objsFit != pane_->getAccommodationStatus());
 }
 
 
@@ -119,8 +100,11 @@ ScrollPane::sliderValueChanged(Slider* slider, float newVal, float delta)
 void
 ScrollPane::refreshLayout()
 {
+    Point objsFit = pane_->getAccommodationStatus();
+
     pane_->recalculateBounds();
-    updateSliders();
+
+    revalidatePaneAndSliders(objsFit != pane_->getAccommodationStatus());
 }
 
 
@@ -148,11 +132,33 @@ ScrollPane::getHSlider()
 }
 
 
-
 Slider&
 ScrollPane::getVSlider()
 {
     return *vSlider_;
+}
+
+
+void
+ScrollPane::resizePaneAndSliders()
+{
+    Point size = getSize();
+    Point realPaneSize = pane_->getRealSize();
+
+    bool hOverlaps = realPaneSize.x > size.x;
+    bool vOverlaps = realPaneSize.y > size.y;
+
+    Point sliderSpace = (stickySliders_ ? Point(20, 20) :
+        Point(vOverlaps ? 20 : 0, hOverlaps ? 20 : 0));
+
+    Point newPaneSize = size - sliderSpace;
+    pane_->setSize(newPaneSize.x, newPaneSize.y);
+
+    const Point& hSliderSize = hSlider_->setSize(size.x - sliderSpace.x, 20);
+    hSlider_->setPos(0, size.y - hSliderSize.y);
+
+    const Point& vSliderSize = vSlider_->setSize(20, size.y - sliderSpace.y);
+    vSlider_->setPos(size.x - vSliderSize.x, 0);
 }
 
 
@@ -166,51 +172,53 @@ ScrollPane::updateSliders()
 
     Point range = realSize - paneSize;
 
-    if (realSize.x > paneSize.x)
+    updateSlider(hSlider_, realSize.x, paneSize.x, offset.x, range.x);
+    updateSlider(vSlider_, realSize.y, paneSize.y, offset.y, range.y);
+}
+
+
+void
+ScrollPane::updateSlider(
+    Slider* slider,
+    int realSize,
+    int paneSize,
+    int offset,
+    int range)
+{
+    if (realSize > paneSize)
     {
-        if (!stickySliders_ && !hSlider_->isVisible())
+        if (!stickySliders_ && !slider->isVisible())
         {
-            hSlider_->setVisible();
+            slider->setVisible();
         }
 
-        float val = static_cast<float>(offset.x) / range.x;
-        hSlider_->setHandleSize((float)paneSize.x / realSize.x);
-        hSlider_->setValue(val);
-        hSlider_->setEnabled();
+        float val = static_cast<float>(offset) / range;
+        slider->setHandleSize((float)paneSize / realSize);
+        slider->setValue(val);
+        slider->setEnabled();
     }
     else
     {
-        if (!stickySliders_ && hSlider_->isVisible())
+        if (!stickySliders_ && slider->isVisible())
         {
-            hSlider_->setVisible(false);
+            slider->setVisible(false);
         }
 
-        hSlider_->setHandleSize(1.f);
-        hSlider_->setEnabled(false);
+        slider->setHandleSize(1.f);
+        slider->setEnabled(false);
     }
+}
 
-    if (realSize.y > paneSize.y)
+
+void
+ScrollPane::revalidatePaneAndSliders(bool accommodationStateChanged)
+{
+    if (!stickySliders_ && accommodationStateChanged)
     {
-        if (!stickySliders_ && !vSlider_->isVisible())
-        {
-            vSlider_->setVisible();
-        }
-
-        float val = static_cast<float>(offset.y) / range.y;
-        vSlider_->setHandleSize((float)paneSize.y / realSize.y);
-        vSlider_->setValue(val);
-        vSlider_->setEnabled();
+        resizePaneAndSliders();
     }
-    else
-    {
-        if (!stickySliders_ && vSlider_->isVisible())
-        {
-            vSlider_->setVisible(false);
-        }
 
-        vSlider_->setHandleSize(1.f);
-        vSlider_->setEnabled(false);
-    }
+    updateSliders();
 }
 
 
