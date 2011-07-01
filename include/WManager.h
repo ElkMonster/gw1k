@@ -73,6 +73,19 @@ public:
      */
     void registerForPreRenderUpdate(GuiObject* o);
 
+    /**
+     * This method allows to point out removed objects to WManager. This is
+     * useful for objects that are removed when clicked, e.g. a close button,
+     * as gw1k would automatically trigger a Released event on the object,
+     * possibly resulting in unwanted behavior or even a segmentation fault in
+     * case the object has been deleted.
+     *
+     * The given object argument is checked for matches with any internally
+     * referenced objects (hovered and clicked), and references are dropped
+     * accordingly in order to prevent any operation on the object.
+     */
+    void indicateRemovedObject(const GuiObject* o);
+
 private:
 
     void feedMouseMoveInternal(const Point& pos,

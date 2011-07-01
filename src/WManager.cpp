@@ -210,4 +210,19 @@ WManager::registerForPreRenderUpdate(GuiObject* o)
 }
 
 
+void
+WManager::indicateRemovedObject(const GuiObject* o)
+{
+    if (o == hoveredObject_)
+    {
+        hoveredObject_ = 0;
+    }
+
+    if (o == clickedObject_)
+    {
+        clickedObject_ = 0;
+    }
+}
+
+
 } // namespace gw1k
