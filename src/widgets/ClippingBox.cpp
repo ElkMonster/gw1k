@@ -112,6 +112,7 @@ ClippingBox::addSubObject(GuiObject* o)
     checkAccommodation();
 
     GuiObject::addSubObject(o);
+    o->setParent(this->parent_);
 }
 
 
