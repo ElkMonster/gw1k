@@ -20,7 +20,6 @@ public:
     ScrollPane(const Point& pos,
                const Point& size,
                const char* colorScheme = 0,
-               bool autoSize = true,
                bool stickySliders = false);
 
     ~ScrollPane();

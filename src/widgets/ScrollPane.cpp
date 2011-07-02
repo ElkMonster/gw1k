@@ -10,7 +10,6 @@ ScrollPane::ScrollPane(
     const Point& pos,
     const Point& size,
     const char* colorScheme,
-    bool autoSize,
     bool stickySliders)
 :   WiBox(pos, size),
     hSlider_(new Slider(Point(0, size.y - 20), Point(size.x - 20, 20))),
@@ -18,7 +17,7 @@ ScrollPane::ScrollPane(
     stickySliders_(stickySliders)
 {
     Point sliderSpace = (stickySliders ? Point(20, 20) : Point(0, 0));
-    pane_ = new ClippingBox(Point(), size - sliderSpace, autoSize),
+    pane_ = new ClippingBox(Point(), size - sliderSpace),
 
     GuiObject::addSubObject(vSlider_);
     GuiObject::addSubObject(hSlider_);
