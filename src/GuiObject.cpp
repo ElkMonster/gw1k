@@ -87,6 +87,28 @@ GuiObject::removeKeyListener(KeyListener* kl)
 }
 
 
+void
+GuiObject::addResizeListener(ResizeListener* rl)
+{
+    resizeListeners_.push_back(rl);
+}
+
+
+void
+GuiObject::removeResizeListener(ResizeListener* rl)
+{
+    for (std::vector<ResizeListener*>::iterator i = resizeListeners_.begin();
+        i != resizeListeners_.end(); ++i)
+    {
+        if (*i == rl)
+        {
+            resizeListeners_.erase(i);
+            break;
+        }
+    }
+}
+
+
 bool
 GuiObject::containsMouse(const Point& p) const
 {
@@ -142,7 +164,13 @@ GuiObject::setSize(float width, float height)
 
     rect_.size(round_pos(width), round_pos(height));
 
-    return rect_.size();
+    const Point& newSize = rect_.size();
+    for (unsigned int i = 0; i != resizeListeners_.size(); ++i)
+    {
+        resizeListeners_[i]->notifyResized(this, newSize);
+    }
+
+    return newSize;
 }
 
 
@@ -165,6 +193,7 @@ GuiObject::getEnd() const
 {
     return rect_.end();
 }
+
 
 Point
 GuiObject::getGlobalPos() const

@@ -3,6 +3,7 @@
 
 #include "listeners/MouseListener.h"
 #include "listeners/KeyListener.h"
+#include "listeners/ResizeListener.h"
 #include "Point.h"
 #include "Rect.h"
 
@@ -38,6 +39,10 @@ public:
     void addKeyListener(KeyListener* kl);
 
     void removeKeyListener(KeyListener* kl);
+
+    void addResizeListener(ResizeListener* rl);
+
+    void removeResizeListener(ResizeListener* rl);
 
     virtual bool containsMouse(const Point& p) const;
 
@@ -96,6 +101,8 @@ protected:
     std::list<KeyListener*> keyListeners_;
 
     std::vector<GuiObject*> subObjects_;
+
+    std::vector<ResizeListener*> resizeListeners_;
 
     bool bIsHovered_;
 
