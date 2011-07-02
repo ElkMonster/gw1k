@@ -83,11 +83,9 @@ public:
 
     int getNumSubObjects() const;
 
-/*protected:
-
     void setParent(GuiObject* parent);
 
-    GuiObject* getParent() const;*/
+    /*GuiObject* getParent() const;*/
 
 protected:
 
