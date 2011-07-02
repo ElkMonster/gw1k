@@ -195,7 +195,7 @@ WManager::render()
 
     for (unsigned int i = 0; i != preRenderUpdateQueue_.size(); ++i)
     {
-        preRenderUpdateQueue_[i]->update();
+        preRenderUpdateQueue_[i]->preRenderUpdate();
     }
     preRenderUpdateQueue_.clear();
 

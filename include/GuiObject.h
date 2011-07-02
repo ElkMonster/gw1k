@@ -29,7 +29,7 @@ public:
     /** This method is called when this object is registered for an update call
      *  via WManager's registerForPreRenderUpdate().
      */
-    virtual void update();
+    virtual void preRenderUpdate();
 
     void addMouseListener(MouseListener* ml);
 

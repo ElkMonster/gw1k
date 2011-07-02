@@ -43,7 +43,7 @@ Label::~Label()
 
 
 void
-Label::update()
+Label::preRenderUpdate()
 {
     if (text_.bBBoxUpdateNeeded_)
     {

@@ -41,7 +41,7 @@ GuiObject::~GuiObject()
 
 
 void
-GuiObject::update()
+GuiObject::preRenderUpdate()
 {
     // Do nothing by default
 }

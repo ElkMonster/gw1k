@@ -51,7 +51,7 @@ Text::~Text()
 
 
 void
-Text::update()
+Text::preRenderUpdate()
 {
     if (bBBoxUpdateNeeded_)
     {

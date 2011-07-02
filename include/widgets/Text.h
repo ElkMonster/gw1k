@@ -27,7 +27,7 @@ public:
 
 public:
 
-    virtual void update();
+    virtual void preRenderUpdate();
 
     void setText(const std::string& text);
 
