@@ -15,7 +15,7 @@ class ResizeListener
 
 public:
 
-    virtual void notifyResized(GuiObject* which, const Point& newSize) = 0;
+    virtual void notifyResized(GuiObject* resizedObj, const Point& newSize) = 0;
 
 };
 
