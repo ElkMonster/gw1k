@@ -354,4 +354,18 @@ GuiObject::getNumSubObjects() const
 }
 
 
+void
+GuiObject::setParent(GuiObject* parent)
+{
+    parent_ = parent;
+}
+
+
+GuiObject*
+GuiObject::getParent() const
+{
+    return parent_;
+}
+
+
 } // namespace gw1k

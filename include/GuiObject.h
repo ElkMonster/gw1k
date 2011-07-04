@@ -83,11 +83,18 @@ public:
 
     int getNumSubObjects() const;
 
-/*protected:
-
+    /**
+     * Sets the objects parent, overwriting any previously set parent.
+     *
+     * Manual parent setting should not be necessary normally. Instead,
+     * automatic parent setting via addSubObject() should be preferred.
+     * setParent() is mainly useful for re-parenting of objects and when an
+     * object serves as a hidden container "layer" for another object (see
+     * ScrollPane/ClippingBox for an example).
+     */
     void setParent(GuiObject* parent);
 
-    GuiObject* getParent() const;*/
+    GuiObject* getParent() const;
 
 protected:
 
