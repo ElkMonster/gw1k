@@ -193,9 +193,12 @@ WManager::render()
 {
     //MSG("WManager::render()");
 
-    for (unsigned int i = 0; i != preRenderUpdateQueue_.size(); ++i)
+    // Use iterator so to allow adding further objects to the queue while
+    // processing it!
+    for (std::vector<GuiObject*>::iterator i = preRenderUpdateQueue_.begin();
+        i != preRenderUpdateQueue_.end(); ++i)
     {
-        preRenderUpdateQueue_[i]->update();
+        (*i)->update();
     }
     preRenderUpdateQueue_.clear();
 
