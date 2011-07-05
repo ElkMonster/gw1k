@@ -10,12 +10,17 @@ namespace gw1k
 {
 
 
-ClippingBox::ClippingBox(const Point& pos, const Point& size)
+ClippingBox::ClippingBox(
+    const Point& pos,
+    const Point& size,
+    ScrollPane::AutoAdjustSize autoAdjustSize
+)
 :   Box(pos, size),
     clippingOffset_(0, 0),
     realOrigin_(0, 0),
     realSize_(size),
-    subObjAccommodationStatus_(1, 1)
+    subObjAccommodationStatus_(1, 1),
+    autoAdjustSize_(autoAdjustSize)
 {}
 
 
@@ -27,6 +32,18 @@ const Point&
 ClippingBox::setSize(float width, float height)
 {
     const Point& size = Box::setSize(width, height);
+    if (autoAdjustSize_ != ScrollPane::ADJUST_NONE)
+    {
+        autoAdjustSubObjs();
+        if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
+        {
+            realSize_.x = width;
+        }
+        else // autoAdjustSize == ScrollPane::ADJUST_VERT
+        {
+            realSize_.y = height;
+        }
+    }
     checkAccommodation();
     return size;
 }
@@ -93,21 +110,32 @@ ClippingBox::renderSubObjects(const Point& offset) const
 void
 ClippingBox::addSubObject(GuiObject* o)
 {
-    const Point& oPos = o->getPos();
-    const Point& oEnd = o->getEnd();
+    if (autoAdjustSize_ != ScrollPane::ADJUST_NONE)
+    {
+        autoAdjustSubObj(o);
+    }
 
     Point realEnd = realOrigin_ + realSize_;
-    Point oldRealOrigin = realOrigin_;
 
-    realOrigin_.x = std::min(oPos.x, realOrigin_.x);
-    realOrigin_.y = std::min(oPos.y, realOrigin_.y);
+    Point newRealOrigin(min(o->getPos(), realOrigin_));
+    Point newRealSize = Point(max(getEnd(), max(o->getEnd(), realEnd))) - newRealOrigin;
 
-    const Point& boxEnd = getEnd();
-    realSize_.x = std::max(boxEnd.x, std::max(oEnd.x, realEnd.x)) - realOrigin_.x;
-    realSize_.y = std::max(boxEnd.y, std::max(oEnd.y, realEnd.y)) - realOrigin_.y;
+    if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
+    {
+        newRealOrigin.x = 0;
+        newRealSize.x = realSize_.x;
+    }
+    else if (autoAdjustSize_ == ScrollPane::ADJUST_VERT)
+    {
+        newRealOrigin.y = 0;
+        newRealSize.y = realSize_.y;
+    }
 
     // Keep viewing window at its position
-    clippingOffset_ += oldRealOrigin - realOrigin_;
+    clippingOffset_ += realOrigin_ - newRealOrigin;
+
+    realOrigin_ = newRealOrigin;
+    realSize_ = newRealSize;
 
     checkAccommodation();
 
@@ -186,12 +214,63 @@ ClippingBox::getAccommodationStatus() const
 }
 
 
+ScrollPane::AutoAdjustSize
+ClippingBox::getAutoAdjustSize() const
+{
+    return autoAdjustSize_;
+}
+
+
 void
 ClippingBox::checkAccommodation()
 {
     const Point& size = getSize();
     subObjAccommodationStatus_.x = (size.x >= realSize_.x);
     subObjAccommodationStatus_.y = (size.y >= realSize_.y);
+}
+
+
+void
+ClippingBox::autoAdjustSubObjs()
+{
+    for (unsigned int i = 0; i != subObjects_.size(); ++i)
+    {
+        autoAdjustSubObj(subObjects_[i]);
+    }
+}
+
+
+void
+ClippingBox::autoAdjustSubObj(GuiObject* o)
+{
+    const Point& end = getEnd();
+    const Point& pos = o->getPos();
+    const Point& size = o->getSize();
+
+    Point adjustedSize = size;
+    bool bNeedsAdjustment = false;
+
+    if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
+    {
+        if (pos.x + size.x != end.x)
+        {
+            adjustedSize.x = end.x - pos.x;
+            bNeedsAdjustment = true;
+        }
+    }
+    else // ADJUST_VERT
+    {
+        if (pos.y + size.y != end.y)
+        {
+            adjustedSize.y = end.y - pos.y;
+            bNeedsAdjustment = true;
+        }
+    }
+
+    if (bNeedsAdjustment)
+    {
+        o->setSize(adjustedSize.x, adjustedSize.y);
+    }
 }
 
 

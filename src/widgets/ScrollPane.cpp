@@ -1,4 +1,5 @@
 #include "widgets/ScrollPane.h"
+#include "widgets/ClippingBox.h"
 #include "widgets/Label.h"
 #include "ThemeManager.h"
 
@@ -10,6 +11,7 @@ ScrollPane::ScrollPane(
     const Point& pos,
     const Point& size,
     const char* colorScheme,
+    AutoAdjustSize autoAdjustSize,
     bool stickySliders)
 :   WiBox(pos, size),
     hSlider_(new Slider(Point(0, size.y - 20), Point(size.x - 20, 20))),
@@ -17,7 +19,7 @@ ScrollPane::ScrollPane(
     stickySliders_(stickySliders)
 {
     Point sliderSpace = (stickySliders ? Point(20, 20) : Point(0, 0));
-    pane_ = new ClippingBox(Point(), size - sliderSpace),
+    pane_ = new ClippingBox(Point(), size - sliderSpace, autoAdjustSize);
 
     GuiObject::addSubObject(vSlider_);
     GuiObject::addSubObject(hSlider_);
@@ -121,6 +123,18 @@ const Point&
 ScrollPane::getVisibleSize() const
 {
     return pane_->getSize();
+}
+
+
+Point
+ScrollPane::predictVisibleSize(const Point& subObjsSize) const
+{
+    const Point& paneSize = pane_->getSize();
+
+    bool hOverlaps = subObjsSize.x > paneSize.x;
+    bool vOverlaps = subObjsSize.y > paneSize.y;
+
+    return paneSize - Point(vOverlaps ? 20 : 0, hOverlaps ? 20 : 0);
 }
 
 

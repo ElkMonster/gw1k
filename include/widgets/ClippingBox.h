@@ -3,6 +3,7 @@
 
 #include "Box.h"
 
+#include "ScrollPane.h"
 
 namespace gw1k
 {
@@ -20,7 +21,9 @@ public:
      * automatically adjusted to fit in any added sub-objects or recalculated
      * when sub-objects are removed.
      */
-    ClippingBox(const Point& pos, const Point& size);
+    ClippingBox(const Point& pos,
+                const Point& size,
+                ScrollPane::AutoAdjustSize autoAdjustSize);
 
     ~ClippingBox();
 
@@ -52,10 +55,16 @@ public:
      be used in before-after comparisons, so one has to make a copy anyway. */
     Point getAccommodationStatus() const;
 
+    ScrollPane::AutoAdjustSize getAutoAdjustSize() const;
+
 private:
 
     /** Sets subObjAccommodationStatus */
     void checkAccommodation();
+
+    void autoAdjustSubObjs();
+
+    void autoAdjustSubObj(GuiObject* o);
 
 private:
 
@@ -82,6 +91,8 @@ private:
     Point realSize_;
 
     Point subObjAccommodationStatus_;
+
+    ScrollPane::AutoAdjustSize autoAdjustSize_;
 };
 
 

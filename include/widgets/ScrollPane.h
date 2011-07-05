@@ -5,11 +5,13 @@
 #include "WiBox.h"
 #include "../listeners/SliderListener.h"
 #include "Slider.h"
-#include "ClippingBox.h"
 
 
 namespace gw1k
 {
+
+
+class ClippingBox;
 
 
 class ScrollPane : public WiBox, public SliderListener
@@ -17,9 +19,12 @@ class ScrollPane : public WiBox, public SliderListener
 
 public:
 
+    enum AutoAdjustSize { ADJUST_HORIZ, ADJUST_VERT, ADJUST_NONE };
+
     ScrollPane(const Point& pos,
                const Point& size,
                const char* colorScheme = 0,
+               AutoAdjustSize autoAdjustSize = ADJUST_NONE,
                bool stickySliders = false);
 
     ~ScrollPane();
@@ -46,6 +51,8 @@ public:
     virtual void setColors(const char* colorScheme);
 
     const Point& getVisibleSize() const;
+
+    Point predictVisibleSize(const Point& subObjsSize) const;
 
     Slider& getHSlider();
 
@@ -83,7 +90,6 @@ protected:
     Slider* vSlider_;
 
     bool stickySliders_;
-
 };
 
 } // namespace gw1k
