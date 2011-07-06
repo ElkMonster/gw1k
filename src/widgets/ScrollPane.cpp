@@ -146,8 +146,12 @@ ScrollPane::resizePaneAndSliders()
     Point size = getSize();
     Point realPaneSize = pane_->getRealSize();
 
-    bool hOverlaps = realPaneSize.x > size.x;
-    bool vOverlaps = realPaneSize.y > size.y;
+    // Take into account auto-sizing (which will take effect not until
+    // pane_->setSize() is called) for slider space calculation. realPaneSize
+    // is not going to overlap in the auto-sized dimension.
+    AutoAdjustSize aas = pane_->getAutoAdjustSize();
+    bool hOverlaps = (aas == ADJUST_HORIZ) ? false : (realPaneSize.x > size.x);
+    bool vOverlaps = (aas == ADJUST_VERT) ? false : (realPaneSize.y > size.y);
 
     Point sliderSpace = (stickySliders_ ? Point(20, 20) :
         Point(vOverlaps ? 20 : 0, hOverlaps ? 20 : 0));
