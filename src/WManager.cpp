@@ -112,8 +112,11 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
     // possibly be the target of mouse clicks)
     if (!eventHandled && currentHoveredObj)
     {
-        currentHoveredObj->triggerMouseButtonEvent(b, ev);
+        // Order matters: clickedObject_ may be reset to 0 in the triggered
+        // method in case that the clicked object is removed due to being
+        // clicked (i.e., indicateRemovedObject() is called for it)
         clickedObject_ = currentHoveredObj;
+        currentHoveredObj->triggerMouseButtonEvent(b, ev);
     }
 }
 
