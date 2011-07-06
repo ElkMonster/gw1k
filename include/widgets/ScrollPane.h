@@ -13,7 +13,24 @@ namespace gw1k
 
 class ClippingBox;
 
-
+/**
+ * ScrollPane can auto-resize sub-objects to let them fit into the ScrollPane in
+ * one dimension. When specifying ADJUST_HORIZ or ADJUST_VERT, the sub-objects'
+ * width or height, respectively, will be adjusted such that it will never
+ * exceed the ScrollPane's size in that dimension. This means that no slider
+ * will ever appear for that dimension. If a slider appears for the other
+ * dimension (which will reduce the size of the auto-adjusted dimension),
+ * sub-object size will be reduced accordingly. Likewise, the size will increase
+ * when the other dimension's slider disappears. Also, the sub-objects will grow
+ * and shrink when the ScrollPane's size is changed.
+ * When in auto-adjust mode, the sub-objects' coordinate of the auto-adjusted
+ * dimension should be positive and in the range of the ScrollPane's size.
+ * Positions will not be changed by the auto-adjust mechanism, only sizes will
+ * be adjusted to align with the right or bottom edge, respectively.
+ * Generally, it is recommended to use ScrollPane auto-adjust modes with
+ * sub-objects which are intended to fully fill the ScrollPane in the according
+ * dimension.
+ */
 class ScrollPane : public WiBox, public SliderListener
 {
 
@@ -21,6 +38,9 @@ public:
 
     enum AutoAdjustSize { ADJUST_HORIZ, ADJUST_VERT, ADJUST_NONE };
 
+    /**
+     * @param stickySliders if true, sliders will always be shown
+     */
     ScrollPane(const Point& pos,
                const Point& size,
                const char* colorScheme = 0,
@@ -31,10 +51,23 @@ public:
 
 public:
 
+    /**
+     * Sets the ScrollPane size, and updates sub-objects and sliders
+     * accordingly.
+     */
     virtual const Point& setSize(float width, float height);
 
+    /**
+     * Adds a sub-object, and resizes the internal pane if required to fit the
+     * sub-object by calling revalidatePaneAndSliders().
+     */
     virtual void addSubObject(GuiObject* o);
 
+    /**
+     * Removes a sub-object, and resizes the internal pane if less space than
+     * before is required to fit the sub-objects by calling
+     * revalidatePaneAndSliders().
+     */
     virtual void removeSubObject(GuiObject* o);
 
     virtual void sliderValueChanged(Slider* slider, float newVal, float delta);
@@ -52,18 +85,36 @@ public:
 
     const Point& getVisibleSize() const;
 
-    Point predictVisibleSize(const Point& subObjsSize) const;
-
     Slider& getHSlider();
 
     Slider& getVSlider();
 
 protected:
 
+    /**
+     * Checks whether sliders need to be visible (if not always visible due to
+     * the stickySliders option), resizes the internal pane to make room for
+     * them, and sets the sliders' location and size accordingly.
+     *
+     * Resizing the internal pane will auto-resize the sub-objects if enabled
+     * (see constructor).
+     */
     void resizePaneAndSliders();
 
+    /**
+     * Updates the horizontal and vertical sliders via updateSlider().
+     */
     void updateSliders();
 
+    /**
+     * Updates the given slider to reflect the state of the ScrollPane in the
+     * according dimension.
+     *
+     * Updates include enabling or disabling the slider depending on the
+     * realSize to paneSize proportion, setting visibility (if not made always
+     * visible with the stickySliders option, see constructor), and setting
+     * handle size and slider value (and thus, implicitly, handle position).
+     */
     void updateSlider(Slider* slider,
                       int realSize,
                       int paneSize,
@@ -90,6 +141,7 @@ protected:
     Slider* vSlider_;
 
     bool stickySliders_;
+
 };
 
 } // namespace gw1k

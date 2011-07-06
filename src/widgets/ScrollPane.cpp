@@ -126,18 +126,6 @@ ScrollPane::getVisibleSize() const
 }
 
 
-Point
-ScrollPane::predictVisibleSize(const Point& subObjsSize) const
-{
-    const Point& paneSize = pane_->getSize();
-
-    bool hOverlaps = subObjsSize.x > paneSize.x;
-    bool vOverlaps = subObjsSize.y > paneSize.y;
-
-    return paneSize - Point(vOverlaps ? 20 : 0, hOverlaps ? 20 : 0);
-}
-
-
 Slider&
 ScrollPane::getHSlider()
 {

@@ -80,7 +80,6 @@ ClippingBox::getRealOrigin() const
 void
 ClippingBox::renderSubObjects(const Point& offset) const
 {
-    //Point coffset = offset;
     if (subObjects_.size() != 0)
     {
 
@@ -148,6 +147,7 @@ void
 ClippingBox::removeSubObject(GuiObject* o)
 {
     GuiObject::removeSubObject(o);
+    // TODO keep viewing window at its position like in addSubObject
     recalculateBounds();
 }
 
@@ -160,7 +160,7 @@ ClippingBox::getContainingObject(const Point& p)
         GuiObject::getContainingObject(p + realOrigin_ + clippingOffset_);
 
     // Since ClippingBox' parent is the one which gets added sub-objects, at
-    // least from the user's perspective, we alsa have to return that parent as
+    // least from the user's perspective, we also have to return that parent as
     // the containing object if none of the sub-objects is hit
     return (o != this ? o : parent_);
 }
