@@ -27,17 +27,7 @@ GuiObject::GuiObject()
 
 
 GuiObject::~GuiObject()
-{
-    for (MListIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
-    {
-        delete *i;
-    }
-
-    for (KListIter i = keyListeners_.begin(); i != keyListeners_.end(); ++i)
-    {
-        delete *i;
-    }
-}
+{}
 
 
 void
