@@ -47,6 +47,8 @@ public:
                               StateEvent ev,
                               GuiObject* target);
 
+    virtual void mouseWheeled(int delta, GuiObject* target);
+
     void setColors(const char* colorScheme);
 
 private:

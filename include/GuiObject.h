@@ -80,6 +80,8 @@ public:
 
     void triggerMouseButtonEvent(MouseButton b, StateEvent ev);
 
+    void triggerMouseWheelEvent(int delta);
+
     virtual void addSubObject(GuiObject* o);
 
     virtual void removeSubObject(GuiObject* o);

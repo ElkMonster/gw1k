@@ -25,7 +25,7 @@ public:
                               StateEvent ev,
                               GuiObject* target) = 0;
 
-    //virtual void mouseWheel() const = 0;
+    virtual void mouseWheeled(int delta, GuiObject* target) = 0;
 
 };
 

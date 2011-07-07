@@ -112,37 +112,44 @@ Label::getTextWidget()
 
 void
 Label::mouseMoved(
-    gw1k::MouseMovedEvent ev,
-    const gw1k::Point& pos,
-    const gw1k::Point& delta,
-    gw1k::GuiObject* target)
+    MouseMovedEvent ev,
+    const Point& pos,
+    const Point& delta,
+    GuiObject* target)
 {
     switch (ev)
     {
-    case gw1k::GW1K_M_ENTERED:
+    case GW1K_M_ENTERED:
         text_.setHovered();
         break;
-    case gw1k::GW1K_M_LEFT:
+    case GW1K_M_LEFT:
         text_.setHovered(false);
         break;
     default: ;
     }
 }
 
+
 void
-Label::mouseClicked(
-    gw1k::MouseButton b, gw1k::StateEvent ev, gw1k::GuiObject* target)
+Label::mouseClicked(MouseButton b, StateEvent ev, GuiObject* target)
 {
     switch(ev)
     {
-    case gw1k::GW1K_PRESSED:
+    case GW1K_PRESSED:
         text_.setClicked();
         break;
-    case gw1k::GW1K_RELEASED:
+    case GW1K_RELEASED:
         text_.setClicked(false);
         break;
     default: ;
     }
+}
+
+
+void
+Label::mouseWheeled(int delta, GuiObject* target)
+{
+
 }
 
 

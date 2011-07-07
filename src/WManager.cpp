@@ -135,11 +135,27 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
     MSG("WManager::feedMouseClick [end]: clickedObj_ = " << (void*)clickedObj_);
 }
 
+
 void
 WManager::feedKey(StateEvent ev, int key)
 {
 
 }
+
+
+void
+WManager::feedMouseWheelEvent(int pos)
+{
+    //std::cout << "pos " << pos << std::endl;
+
+    if (hoveredObj_)
+    {
+        hoveredObj_->triggerMouseWheelEvent(pos - mouseWheelPos_);
+    }
+
+    mouseWheelPos_ = pos;
+}
+
 
 void
 WManager::setWindowSize(int width, int height)

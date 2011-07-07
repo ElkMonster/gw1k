@@ -314,6 +314,16 @@ GuiObject::triggerMouseButtonEvent(MouseButton b, StateEvent ev)
 
 
 void
+GuiObject::triggerMouseWheelEvent(int delta)
+{
+    for (MListIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
+    {
+        (*i)->mouseWheeled(delta, this);
+    }
+}
+
+
+void
 GuiObject::addSubObject(GuiObject* o)
 {
     if (o->parent_)

@@ -46,12 +46,14 @@ public:
 
     void setHandleSize(float size);
 
-    void mouseMoved(MouseMovedEvent ev,
+    virtual void mouseMoved(MouseMovedEvent ev,
                     const Point& pos,
                     const Point& delta,
                     GuiObject* target);
 
-    void mouseClicked(MouseButton b, StateEvent ev, GuiObject* target);
+    virtual void mouseClicked(MouseButton b, StateEvent ev, GuiObject* target);
+
+    virtual void mouseWheeled(int delta, GuiObject* target);
 
     void addListener(SliderListener* sl);
 

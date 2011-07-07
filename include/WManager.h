@@ -35,6 +35,8 @@ public:
 
     void feedMouseClick(MouseButton b, StateEvent ev);
 
+    void feedMouseWheelEvent(int pos);
+
     void feedKey(StateEvent ev, int key);
 
     void setWindowSize(int width, int height);
@@ -114,6 +116,8 @@ private:
     WindowStack scissorStack_;
 
     Point mousePos_;
+
+    int mouseWheelPos_;
 
     std::vector<GuiObject*> preRenderUpdateQueue_;
 

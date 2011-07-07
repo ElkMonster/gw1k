@@ -199,6 +199,19 @@ Slider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* target)
 
 
 void
+Slider::mouseWheeled(int delta, GuiObject* target)
+{
+    if ((target == &handle_) || (target == this))
+    {
+        float step = 0.1f;
+        // Sliders need to invert delta because a value of 0 = top/left, a value
+        // of 1 = bottom/right, but deltas work the other way round
+        setValue(value_ + (step * -delta));
+    }
+}
+
+
+void
 Slider::addListener(SliderListener* sl)
 {
     listeners_.push_back(sl);
