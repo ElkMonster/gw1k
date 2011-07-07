@@ -65,23 +65,25 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
         }
 
         // Trigger Mouse-Left event for element that was previously hovered, but
-        // is not anymore (because mouse totally left object or is hovering a
-        // sub-object now)
-        if (hoveredObj_ && (hoveredObj_ != o))
+        // is not anymore (because the mouse totally left the object, or is
+        // hovering a sub-object now, or the object moved/disappeared)
+        if (hoveredObj_ != o)
         {
-            MSG("WManager::feedMouseMoveInternal: hoveredObj_ = " << (void*)hoveredObj_ << ", o = " << (void*)o << ", setting hoveredObj_ to 0");
-            hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
-            hoveredObj_ = 0;
+            MSG("WManager::feedMouseMoveInternal: hoveredObj_ = " << (void*)hoveredObj_ << ", o = " << (void*)o << ", setting hoveredObj_ to o " << (void*)o);
+            if (hoveredObj_)
+            {
+                hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+            }
+            hoveredObj_ = o;
         }
 
         // Trigger Mouse-Hovered or Mouse-Entered event for element that is
-        // currently hovered and remember it for next round
+        // currently hovered
         if (o)
         {
-            MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObj_ = " << (void*)hoveredObj_ << ", setting hoveredObj_ to o " << (void*)o);
+            MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObj_ = " << (void*)hoveredObj_);
             o->triggerMouseMovedEvent(
                 (o->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED), pos, delta);
-            hoveredObj_ = o;
         }
     }
 
