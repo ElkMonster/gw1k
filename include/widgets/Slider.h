@@ -61,6 +61,10 @@ public:
 
     virtual void setColors(const char* colorScheme);
 
+    void setMouseWheelStep(float step);
+
+    float getMouseWheelStep() const;
+
 protected:
 
     void calculateValue();
@@ -82,6 +86,13 @@ protected:
     bool bEnabled_;
 
     float value_;
+
+    /**
+     * Value between 0 and 1 that determines how much the value changes on mouse
+     * wheel events. The step is multiplied with the wheel event's delta and
+     * added to value_. Default value is 0.1.
+     */
+    float mouseWheelStep_;
 
     std::vector<SliderListener*> listeners_;
 };

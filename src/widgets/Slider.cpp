@@ -32,7 +32,8 @@ Slider::Slider(
 #endif
     bVertical_(vertical),
     bEnabled_(true),
-    value_(0.f)
+    value_(0.f),
+    mouseWheelStep_(0.1f)
 {
 #if DEBUG_SLIDER
     handle_.getTextWidget().setInteractive(false);
@@ -74,38 +75,34 @@ Slider::getValue() const
 void
 Slider::setValue(float val)
 {
-    if (val >= 0.f && val <= 1.f)
+    float oldValue = value_;
+    value_ = std::max(0.f, std::min(1.f, val));
+
+    float hSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
+    float size = (bVertical_ ? getSize().y : getSize().x) - 2;
+    float z = value_ * (size - hSize) + 1;
+    Point newPos = handle_.getPos();
+
+    if (bVertical_)
     {
-        float oldValue = value_;
-        value_ = val;
+        newPos.y = z;
+    }
+    else
+    {
+        newPos.x = z;
+    }
+    handle_.setPos(newPos.x, newPos.y);
 
-        float hSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
-        float size = (bVertical_ ? getSize().y : getSize().x) - 2;
-
-        float z = val * (size - hSize) + 1;
-
-        Point newPos = handle_.getPos();
-        if (bVertical_)
-        {
-            newPos.y = z;
-        }
-        else
-        {
-            newPos.x = z;
-        }
-        handle_.setPos(newPos.x, newPos.y);
-
-        if (oldValue != value_)
-        {
-            informListeners(value_ - oldValue);
-        }
+    if (oldValue != value_)
+    {
+        informListeners(value_ - oldValue);
+    }
 
 #if DEBUG_SLIDER
-        std::stringstream ss;
-        ss << value_;
-        handle_.setText(ss.str());
+    std::stringstream ss;
+    ss << value_;
+    handle_.setText(ss.str());
 #endif
-    }
 }
 
 
@@ -203,10 +200,9 @@ Slider::mouseWheeled(int delta, GuiObject* target)
 {
     if ((target == &handle_) || (target == this))
     {
-        float step = 0.1f;
         // Sliders need to invert delta because a value of 0 = top/left, a value
         // of 1 = bottom/right, but deltas work the other way round
-        setValue(value_ + (step * -delta));
+        setValue(value_ + (mouseWheelStep_ * -delta));
     }
 }
 
@@ -239,6 +235,20 @@ Slider::setColors(const char* colorScheme)
     std::string baseName(colorScheme ? colorScheme : "Slider");
     t->setColors(this, colorScheme, "Slider");
     handle_.setColors((baseName + ".Handle").c_str());
+}
+
+
+void
+Slider::setMouseWheelStep(float step)
+{
+    mouseWheelStep_ = std::max(0.f, std::min(1.f, step));
+}
+
+
+float
+Slider::getMouseWheelStep() const
+{
+    return mouseWheelStep_;
 }
 
 
