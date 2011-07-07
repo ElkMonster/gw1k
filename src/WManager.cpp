@@ -97,10 +97,13 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
 
     // Trigger Release for object that was previously clicked (this makes sure
     // that the object is released even if it has moved away when it was clicked)
-    if ((ev == GW1K_RELEASED) && clickedObject_)
+    if (ev == GW1K_RELEASED)
     {
-        clickedObject_->triggerMouseButtonEvent(b, ev);
-        clickedObject_ = 0;
+        if (clickedObject_)
+        {
+            clickedObject_->triggerMouseButtonEvent(b, ev);
+            clickedObject_ = 0;
+        }
 
         // Don't let Release be triggered for another object
         eventHandled = true;
