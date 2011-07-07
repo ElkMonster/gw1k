@@ -3,8 +3,8 @@
 #include <GL/gl.h>
 #include <iostream>
 
-#define MSG(x) std::cout << x << std::endl
-
+//#define MSG(x) std::cout << x << std::endl
+#define MSG(x)
 
 namespace gw1k
 {
@@ -23,8 +23,8 @@ WManager::getInstance()
 
 
 WManager::WManager()
-:   hoveredObject_(0),
-    clickedObject_(0),
+:   hoveredObj_(0),
+    clickedObj_(0),
     mainWin_(new Box(Point(), Point()))
 {}
 
@@ -52,10 +52,10 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
     // A clicked object receives all the mouse movement events regardless of the
     // mouse leaving it. This allows for things like sliders which will follow
     // mouse movement even if their area is left.
-    if (clickedObject_)
+    if (clickedObj_)
     {
-        MSG("WManager::feedMouseMoveInternal: clickedObject_ = " << (void*)clickedObject_);
-        clickedObject_->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
+        MSG("WManager::feedMouseMoveInternal: clickedObj_ = " << (void*)clickedObj_);
+        clickedObj_->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
     }
     else
     {
@@ -67,21 +67,21 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
         // Trigger Mouse-Left event for element that was previously hovered, but
         // is not anymore (because mouse totally left object or is hovering a
         // sub-object now)
-        if (hoveredObject_ && (hoveredObject_ != o))
+        if (hoveredObj_ && (hoveredObj_ != o))
         {
-            MSG("WManager::feedMouseMoveInternal: hoveredObject_ = " << (void*)hoveredObject_ << ", o = " << (void*)o << ", setting hoveredObject_ to 0");
-            hoveredObject_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
-            hoveredObject_ = 0;
+            MSG("WManager::feedMouseMoveInternal: hoveredObj_ = " << (void*)hoveredObj_ << ", o = " << (void*)o << ", setting hoveredObj_ to 0");
+            hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+            hoveredObj_ = 0;
         }
 
         // Trigger Mouse-Hovered or Mouse-Entered event for element that is
         // currently hovered and remember it for next round
         if (o)
         {
-            MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObject_ = " << (void*)hoveredObject_ << ", setting hoveredObject_ to o " << (void*)o);
+            MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObj_ = " << (void*)hoveredObj_ << ", setting hoveredObj_ to o " << (void*)o);
             o->triggerMouseMovedEvent(
                 (o->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED), pos, delta);
-            hoveredObject_ = o;
+            hoveredObj_ = o;
         }
     }
 
@@ -99,10 +99,10 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
     // that the object is released even if it has moved away when it was clicked)
     if (ev == GW1K_RELEASED)
     {
-        if (clickedObject_)
+        if (clickedObj_)
         {
-            clickedObject_->triggerMouseButtonEvent(b, ev);
-            clickedObject_ = 0;
+            clickedObj_->triggerMouseButtonEvent(b, ev);
+            clickedObj_ = 0;
         }
 
         // Don't let Release be triggered for another object
@@ -110,27 +110,27 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
     }
 
     // Enable hover state for the object actually hovered now
-    GuiObject* currentHoveredObj = mainWin_->getContainingObject(mousePos_);
-    MSG("WManager::feedMouseClick: currentHoveredObj = " << (void*)currentHoveredObj << ", hoveredObject_ = " << (void*)hoveredObject_);
-    if (currentHoveredObj != hoveredObject_)
+    GuiObject* currHoveredObj = mainWin_->getContainingObject(mousePos_);
+    MSG("WManager::feedMouseClick: currHoveredObj = " << (void*)currHoveredObj << ", hoveredObj_ = " << (void*)hoveredObj_);
+    if (currHoveredObj != hoveredObj_)
     {
-        MSG("WManager::feedMouseClick:   --> update hoveredObject_ with feedMouseMoveInternal");
-        // Updates hoveredObject_
-        feedMouseMoveInternal(mousePos_, Point(), currentHoveredObj);
+        MSG("WManager::feedMouseClick:   --> update hoveredObj_ with feedMouseMoveInternal");
+        // Updates hoveredObj_
+        feedMouseMoveInternal(mousePos_, Point(), currHoveredObj);
     }
 
     // Trigger event for object that is currently hovered (only that can
     // possibly be the target of mouse clicks)
-    if (!eventHandled && currentHoveredObj)
+    if (!eventHandled && currHoveredObj)
     {
-        // Order matters: clickedObject_ may be reset to 0 in the triggered
+        // Order matters: clickedObj_ may be reset to 0 in the triggered
         // method in case that the clicked object is removed due to being
         // clicked (i.e., indicateRemovedObject() is called for it)
-        clickedObject_ = currentHoveredObj;
-        MSG("WManager::feedMouseClick: clickedObject_ = " << (void*)clickedObject_);
-        currentHoveredObj->triggerMouseButtonEvent(b, ev);
+        clickedObj_ = currHoveredObj;
+        MSG("WManager::feedMouseClick: clickedObj_ = " << (void*)clickedObj_);
+        currHoveredObj->triggerMouseButtonEvent(b, ev);
     }
-    MSG("WManager::feedMouseClick [end]: clickedObject_ = " << (void*)clickedObject_);
+    MSG("WManager::feedMouseClick [end]: clickedObj_ = " << (void*)clickedObj_);
 }
 
 void
@@ -233,16 +233,16 @@ WManager::registerForPreRenderUpdate(GuiObject* o)
 void
 WManager::indicateRemovedObject(const GuiObject* o)
 {
-    if (o == hoveredObject_)
+    if (o == hoveredObj_)
     {
-        MSG("WManager::indicateRemovedObject [hoveredObject_]: " << (void*)hoveredObject_);
-        hoveredObject_ = 0;
+        MSG("WManager::indicateRemovedObject [hoveredObj_]: " << (void*)hoveredObj_);
+        hoveredObj_ = 0;
     }
 
-    if (o == clickedObject_)
+    if (o == clickedObj_)
     {
-        MSG("WManager::indicateRemovedObject [clickedObject_]: " << (void*)clickedObject_);
-        clickedObject_ = 0;
+        MSG("WManager::indicateRemovedObject [clickedObj_]: " << (void*)clickedObj_);
+        clickedObj_ = 0;
     }
 }
 

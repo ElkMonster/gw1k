@@ -102,10 +102,10 @@ private:
     static WManager* pInstance_;
 
     /** GUI element hovered by mouse the last time feedMouseMove() was called */
-    GuiObject* hoveredObject_;
+    GuiObject* hoveredObj_;
 
     /** GUI element that has been clicked and not released yet */
-    GuiObject* clickedObject_;
+    GuiObject* clickedObj_;
 
     Box* mainWin_;
 
