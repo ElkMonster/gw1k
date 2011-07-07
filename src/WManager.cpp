@@ -48,11 +48,13 @@ WManager::feedMouseMove(int x, int y)
 void
 WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject* o)
 {
+    MSG("WManager::feedMouseMoveInternal [begin]: o = " << (void*)o);
     // A clicked object receives all the mouse movement events regardless of the
     // mouse leaving it. This allows for things like sliders which will follow
     // mouse movement even if their area is left.
     if (clickedObject_)
     {
+        MSG("WManager::feedMouseMoveInternal: clickedObject_ = " << (void*)clickedObject_);
         clickedObject_->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
     }
     else
@@ -64,9 +66,10 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
 
         // Trigger Mouse-Left event for element that was previously hovered, but
         // is not anymore (because mouse totally left object or is hovering a
-        // subobject now)
+        // sub-object now)
         if (hoveredObject_ && (hoveredObject_ != o))
         {
+            MSG("WManager::feedMouseMoveInternal: hoveredObject_ = " << (void*)hoveredObject_ << ", o = " << (void*)o << ", setting hoveredObject_ to 0");
             hoveredObject_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
             hoveredObject_ = 0;
         }
@@ -75,18 +78,21 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
         // currently hovered and remember it for next round
         if (o)
         {
+            MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObject_ = " << (void*)hoveredObject_ << ", setting hoveredObject_ to o " << (void*)o);
             o->triggerMouseMovedEvent(
                 (o->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED), pos, delta);
             hoveredObject_ = o;
         }
-
     }
+
+    MSG("WManager::feedMouseMoveInternal [end]");
 }
 
 
 void
 WManager::feedMouseClick(MouseButton b, StateEvent ev)
 {
+    MSG("WManager::feedMouseClick [begin]: ev = " << (ev == GW1K_RELEASED ? "RELEASED" : "PRESSED"));
     bool eventHandled = false;
 
     // Trigger Release for object that was previously clicked (this makes sure
@@ -102,8 +108,10 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
 
     // Enable hover state for the object actually hovered now
     GuiObject* currentHoveredObj = mainWin_->getContainingObject(mousePos_);
+    MSG("WManager::feedMouseClick: currentHoveredObj = " << (void*)currentHoveredObj << ", hoveredObject_ = " << (void*)hoveredObject_);
     if (currentHoveredObj != hoveredObject_)
     {
+        MSG("WManager::feedMouseClick:   --> update hoveredObject_ with feedMouseMoveInternal");
         // Updates hoveredObject_
         feedMouseMoveInternal(mousePos_, Point(), currentHoveredObj);
     }
@@ -116,8 +124,10 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
         // method in case that the clicked object is removed due to being
         // clicked (i.e., indicateRemovedObject() is called for it)
         clickedObject_ = currentHoveredObj;
+        MSG("WManager::feedMouseClick: clickedObject_ = " << (void*)clickedObject_);
         currentHoveredObj->triggerMouseButtonEvent(b, ev);
     }
+    MSG("WManager::feedMouseClick [end]: clickedObject_ = " << (void*)clickedObject_);
 }
 
 void
@@ -222,11 +232,13 @@ WManager::indicateRemovedObject(const GuiObject* o)
 {
     if (o == hoveredObject_)
     {
+        MSG("WManager::indicateRemovedObject [hoveredObject_]: " << (void*)hoveredObject_);
         hoveredObject_ = 0;
     }
 
     if (o == clickedObject_)
     {
+        MSG("WManager::indicateRemovedObject [clickedObject_]: " << (void*)clickedObject_);
         clickedObject_ = 0;
     }
 }

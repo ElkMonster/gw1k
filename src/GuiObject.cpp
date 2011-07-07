@@ -297,12 +297,12 @@ GuiObject::triggerMouseButtonEvent(MouseButton b, StateEvent ev)
     // second button is still pressed
     if (ev == GW1K_PRESSED)
     {
-        //MSG("clicked\t\t" << (void*)this);
+        MSG("clicked\t\t" << (void*)this);
         bIsClicked_ = true;
     }
     else
     {
-        //MSG("released\t" << (void*)this);
+        MSG("released\t" << (void*)this);
         bIsClicked_ = false;
     }
 
