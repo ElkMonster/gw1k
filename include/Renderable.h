@@ -60,8 +60,11 @@ protected:
 
     /**
      * This method should render all (widget decoration) foreground elements,
-     * e.g. borders and texts. To render actual content that is not related to
-     * gw1k's themeing, use renderContent().
+     * e.g. borders and texts. The method is called from renderSelf(), which
+     * sets the foreground color specified for the specific widgets in the theme
+     * file or in the code.
+     * To render actual content that is not related to gw1k's themeing, use
+     * renderContent().
      */
     virtual void renderFg(const Point& offset) const = 0;
 
@@ -72,12 +75,15 @@ protected:
      * should go into renderContent().
      * In its default implementation, renderContent() is an empty method.
      */
-    virtual void renderContent() const;
+    virtual void renderContent(const Point& offset) const;
 
     /**
      * This method should render the widget background. Typically, this is one
-     * single color that fills the whole area of the widget. To render actual
-     * content that is not related to gw1k's themeing, use renderContent().
+     * single color that fills the whole area of the widget. The method is
+     * called from renderSelf(), which sets the foreground color specified for
+     * the specific widgets in the theme file or in the code.
+     * To render actual content that is not related to gw1k's themeing, use
+     * renderContent().
      */
     virtual void renderBg(const Point& offset) const = 0;
 

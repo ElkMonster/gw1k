@@ -59,7 +59,7 @@ Renderable::renderSelf(const Point& offset) const
         renderBg(offset);
     }
 
-    renderContent();
+    renderContent(offset);
 
     if (fg)
     {
@@ -81,7 +81,7 @@ Renderable::renderSubObjects(const Point& offset) const
 
 
 void
-Renderable::renderContent() const
+Renderable::renderContent(const Point& offset) const
 {
     // Do nothing by default
 }
