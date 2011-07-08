@@ -357,17 +357,21 @@ GuiObject::getContainingObject(const Point& p)
     Point cp = p;
     if (bIsVisible_ && bIsInteractive_ && containsMouse(p))
     {
+        GuiObject* containingSubObj = 0;
+
+        // Go through sub-objects and find the backmost one that contains p,
+        // since the backmost one is assumed to also be the top-most one
         for (unsigned int i = 0; i != subObjects_.size(); ++i)
         {
             Point offset = getPos();
             GuiObject* o = subObjects_[i]->getContainingObject(p - offset);
             if (o)
             {
-                return o;
+                containingSubObj = o;
             }
         }
 
-        return this;
+        return (containingSubObj ? containingSubObj : this);
     }
     else
     {
