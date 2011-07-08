@@ -24,19 +24,15 @@ Box::~Box()
 
 
 void
-Box::renderSubObjects(const Point& offset) const
+Box::render(const Point& offset) const
 {
-    Point coffset = offset;
-    if (subObjects_.size() != 0)
-    {
-        WManager::getInstance()->pushGlScissor(getPos() + offset, getSize());
+    WManager::getInstance()->pushGlScissor(getPos() + offset, getSize());
 
-        // Position of "this" will be added to offset in the Renderable
-        // implementation, so do not modify offset here
-        Renderable::renderSubObjects(offset);
+    // Position of "this" will be added to offset in the Renderable
+    // implementation, so do not modify offset here
+    Renderable::render(offset);
 
-        WManager::getInstance()->popGlScissor();
-    }
+    WManager::getInstance()->popGlScissor();
 }
 
 

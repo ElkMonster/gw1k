@@ -82,24 +82,18 @@ ClippingBox::renderSubObjects(const Point& offset) const
 {
     if (subObjects_.size() != 0)
     {
-
         glPushMatrix();
         {
             Point p = realOrigin_ + clippingOffset_;
             glTranslatef(-p.x, -p.y, 0.f);
 
-            WManager::getInstance()->pushGlScissor(getPos() + offset, getSize());
-
             WManager::getInstance()->pushGlScissorOffset(p);
 
             // Position of "this" will be added to offset in the Renderable
             // implementation, therefore do not add anything to offset here
-            Renderable::renderSubObjects(offset);
+            Box::renderSubObjects(offset);
 
             WManager::getInstance()->popGlScissorOffset();
-
-            WManager::getInstance()->popGlScissor();
-
         }
         glPopMatrix();
     }

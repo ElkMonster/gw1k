@@ -20,7 +20,7 @@ public:
 
 public:
 
-    virtual void renderSubObjects(const Point& offset) const;
+    virtual void render(const Point& offset) const;
 
     virtual void renderFg(const Point& offset) const;
 
