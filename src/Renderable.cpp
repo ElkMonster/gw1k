@@ -59,6 +59,8 @@ Renderable::renderSelf(const Point& offset) const
         renderBg(offset);
     }
 
+    renderContent();
+
     if (fg)
     {
         glColor4f(fg->rf, fg->gf, fg->bf, fg->af);
@@ -77,6 +79,12 @@ Renderable::renderSubObjects(const Point& offset) const
     }
 }
 
+
+void
+Renderable::renderContent() const
+{
+    // Do nothing by default
+}
 
 void
 Renderable::setColor(const gw1k::Color4i* col, gw1k::Color4i*& dest)
