@@ -19,6 +19,8 @@ public:
 
 public:
 
+    virtual const Point& setSize(float width, float height);
+
     void setTranslation(const geom::Point2D& t);
 
     const geom::Point2D& getTranslation() const;
@@ -54,6 +56,16 @@ protected:
 
     float zoom_;
 
+private:
+
+    int minDimSize_;
+
+    /**
+     * Holds a factor that scales widget (pixel) size to relative (OpenGL basic
+     * coordinate system) size. Its value is 1.0 / min(width, height). It is
+     * calculated each time setSize() is called.
+     */
+    float widgToRelSize_;
 
 };
 

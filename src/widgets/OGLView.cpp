@@ -14,15 +14,28 @@ namespace gw1k
 OGLView::OGLView(const Point& pos, const Point& size)
 :   Box(pos, size),
     transl_(geom::Point2D()),
-    zoom_(1.f)
+    zoom_(1.f),
+    minDimSize_(std::min(size.x, size.y)),
+    widgToRelSize_(1.f / minDimSize_)
 {
-    setFgColor(color::red);
     addMouseListener(this);
 }
 
 
 OGLView::~OGLView()
 {}
+
+
+const Point&
+OGLView::setSize(float width, float height)
+{
+    const Point& newSize = Box::setSize(width, height);
+
+    minDimSize_ = std::min(newSize.x, newSize.y);
+    widgToRelSize_ = 1.f / minDimSize_;
+
+    return newSize;
+}
 
 
 void
@@ -60,14 +73,7 @@ OGLView::getZoomFactor() const
 void
 OGLView::relativeTranslateBy(const Point& delta)
 {
-    const Point& size = getSize();
-    float scf = std::min(size.x, size.y);
-
-    float zr = 2 / zoom_;
-    geom::Point2D relDelta = geom::Point2D(delta.x, -delta.y) / scf * zr / zoom_;
-
-    transl_ += relDelta;
-    std::cout << transl_ << " reldelta: " << relDelta << std::endl;
+    transl_ += geom::Point2D(delta.x, -delta.y) * widgToRelSize_ * 2;;
 }
 
 
@@ -87,7 +93,7 @@ OGLView::renderContent(const Point& offset) const
 {
     glPushMatrix();
     {
-        // Translate by offset so that (0,0) is at top-left corner of our widget
+        // Translate so (0,0) is at top-left corner of our widget
         Point pos = getPos() + offset;
         glTranslatef(pos.x, pos.y, 0);
 
@@ -95,9 +101,8 @@ OGLView::renderContent(const Point& offset) const
         // corresponds to the range (-1,1) (thus, the longer edge will have a
         // greater range, depending on the aspect ratio)
         const Point& size = getSize();
-        float scf = std::min(size.x, size.y);
-        glScalef(0.5f * scf, -0.5f * scf, 1.f);
-        glTranslatef(size.x * (1.f / scf), -size.y * (1.f / scf), 0.f);
+        glScalef(0.5f * minDimSize_, -0.5f * minDimSize_, 1.f);
+        glTranslatef(size.x * widgToRelSize_, -size.y * widgToRelSize_, 0.f);
 
         // Apply our transformations
         glTranslatef(transl_.x, transl_.y, 0.f);
@@ -150,8 +155,9 @@ OGLView::renderOGLContent() const
 {
     using namespace geom;
     glColor3f(1.f, 0.f, 0.f);
-    fillRect(Point2D(0.f, 0.f), Point2D(1.f, 1.f));
+    fillRect(Point2D(-0.5f, 0.f), Point2D(0.5f, 1.f));
 }
+
 
 } // namespace gw1k
 
