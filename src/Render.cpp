@@ -1,9 +1,51 @@
 #include "Render.h"
 
+#include <cmath>
 #include <GL/gl.h>
 
 //#define GW1K_ENABLE_GL_ERROR_CHECKS
 #include "GLErrorCheck.h"
+
+
+namespace
+{
+
+const double pi = std::atan(1.) * 4.;
+
+struct P2 { float x, y; };
+
+P2* circles[3] = { 0, 0, 0 };
+int circleSizes[3] = { 50, 200, 1000 };
+
+void setupCircle(int idx)
+{
+    P2* a = new P2[circleSizes[idx]];
+
+    float t = 0.f;
+    float dt = 2. * pi / circleSizes[idx];
+
+    for (int i = 0; i != circleSizes[idx]; ++i, t += dt)
+    {
+        a[i].x = std::cos(t);
+        a[i].y = std::sin(t);
+    }
+
+    circles[idx] = a;
+}
+
+P2* getCircle(int idx, int& size)
+{
+    if (!circles[idx])
+    {
+        setupCircle(idx);
+    }
+    size = circleSizes[idx];
+    return circles[idx];
+}
+
+
+} // namespace
+
 
 namespace gw1k
 {
@@ -64,9 +106,10 @@ void fillRect(
 }
 
 
-void drawTriangle(const geom::Point2D& p0,
-                  const geom::Point2D& p1,
-                  const geom::Point2D& p2)
+void drawTriangle(
+    const geom::Point2D& p0,
+    const geom::Point2D& p1,
+    const geom::Point2D& p2)
 {
     glBegin(GL_LINES);
     {
@@ -83,9 +126,11 @@ void drawTriangle(const geom::Point2D& p0,
 }
 
 
-void fillTriangle(const geom::Point2D& p0,
-                  const geom::Point2D& p1,
-                  const geom::Point2D& p2)
+void
+fillTriangle(
+    const geom::Point2D& p0,
+    const geom::Point2D& p1,
+    const geom::Point2D& p2)
 {
     glBegin(GL_TRIANGLES);
     {
@@ -94,6 +139,71 @@ void fillTriangle(const geom::Point2D& p0,
         glVertex3f(p2.x, p2.y, 0.f);
     }
     glEnd();
+}
+
+
+void drawEllipse(
+    const geom::Point2D& center,
+    const geom::Point2D& radius,
+    int sizeIdx)
+{
+    glPushMatrix();
+    {
+        int size;
+        P2* a = getCircle(sizeIdx, size);
+
+        glTranslatef(center.x, center.y, 0.f);
+        glScalef(radius.x, radius.y, 1.f);
+
+        glBegin(GL_LINE_LOOP);
+        {
+            for (int i = 0; i != size; ++i)
+            {
+                glVertex2f(a[i].x, a[i].y);
+            }
+        }
+        glEnd();
+    }
+    glPopMatrix();
+}
+
+
+void fillEllipse(
+    const geom::Point2D& center,
+    const geom::Point2D& radius,
+    int sizeIdx)
+{
+    glPushMatrix();
+    {
+        int size;
+        P2* a = getCircle(sizeIdx, size);
+
+        glTranslatef(center.x, center.y, 0.f);
+        glScalef(radius.x, radius.y, 1.f);
+
+        glBegin(GL_TRIANGLE_FAN);
+        {
+            glVertex2f(center.x, center.y);
+
+            for (int i = 0; i != size - 1; ++i)
+            {
+                glVertex2f(a[i].x, a[i].y);
+                glVertex2f(a[i+1].x, a[i+1].y);
+            }
+
+            glVertex2f(a[size - 1].x, a[size - 1].y);
+            glVertex2f(a[0].x, a[0].y);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+}
+
+
+void
+setColor(const Color4i* c)
+{
+    glColor4f(c->rf, c->gf, c->bf, c->af);
 }
 
 
