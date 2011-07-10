@@ -40,6 +40,10 @@ public:
 
     virtual void setColors(const char* colorScheme);
 
+    enum ColorState { STATE_NORMAL, STATE_HOVERED, STATE_CLICKED };
+
+    void queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const;
+
 protected:
 
     /**
