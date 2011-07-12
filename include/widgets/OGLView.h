@@ -50,6 +50,10 @@ protected:
 
     virtual void renderOGLContent() const;
 
+    geom::Point2D pxToGLPos(const gw1k::Point& pos) const;
+
+    geom::Point2D pxToGLDelta(const gw1k::Point& delta) const;
+
 protected:
 
     geom::Point2D transl_;

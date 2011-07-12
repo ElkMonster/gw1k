@@ -69,6 +69,8 @@
 		<Unit filename="include/widgets/Box.h" />
 		<Unit filename="include/widgets/ClippingBox.h" />
 		<Unit filename="include/widgets/Label.h" />
+		<Unit filename="include/widgets/OGLView.h" />
+		<Unit filename="include/widgets/OGLViewWiBox.h" />
 		<Unit filename="include/widgets/ScrollPane.h" />
 		<Unit filename="include/widgets/Slider.h" />
 		<Unit filename="include/widgets/Text.h" />
@@ -85,6 +87,8 @@
 		<Unit filename="src/widgets/Box.cpp" />
 		<Unit filename="src/widgets/ClippingBox.cpp" />
 		<Unit filename="src/widgets/Label.cpp" />
+		<Unit filename="src/widgets/OGLView.cpp" />
+		<Unit filename="src/widgets/OGLViewWiBox.cpp" />
 		<Unit filename="src/widgets/ScrollPane.cpp" />
 		<Unit filename="src/widgets/Slider.cpp" />
 		<Unit filename="src/widgets/Text.cpp" />
