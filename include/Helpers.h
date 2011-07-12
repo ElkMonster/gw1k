@@ -11,17 +11,6 @@
 #define DELETE_PTR(ptr) if (ptr) delete (ptr)
 
 
-/**
- * Prevents unused variable warning given by GCC when put in a variable
- * declaration like so: int PREVENT_UNUSED_WARNING x;
- */
-//#ifdef __GNUC__
-#define PREVENT_UNUSED_WARNING __attribute__((unused))
-//#else
-//#define PREVENT_UNUSED_WARNING
-//#endif
-
-
 namespace gw1k
 {
 
