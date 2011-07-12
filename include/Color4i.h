@@ -29,6 +29,10 @@ struct Color4i
     :   r(c.r), g(c.g), b(c.b), a(c.a), rf(c.rf), gf(c.gf), bf(c.bf), af(c.af)
     {}
 
+    Color4i(const Color4i* c)
+    :   r(c->r), g(c->g), b(c->b), a(c->a), rf(c->rf), gf(c->gf), bf(c->bf), af(c->af)
+    {}
+
     Color4i alpha(int alpha) const
     {
         Color4i c = *this;
