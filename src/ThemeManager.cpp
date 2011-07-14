@@ -160,7 +160,7 @@ ThemeManager::getColor(
         std::string key(scheme);
         key.append(".").append(modespec);
 
-        std::cout << "ThemeManager: request for key " << key << (colorMap_[key] ? "(success)" : "(fail)") << std::endl;
+        //std::cout << "ThemeManager: request for key " << key << (colorMap_[key] ? "(success)" : "(fail)") << std::endl;
 
         return colorMap_[key];
     }
