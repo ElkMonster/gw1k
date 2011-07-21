@@ -137,7 +137,7 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
 
 
 void
-WManager::feedKey(StateEvent ev, int key)
+WManager::feedKey(int key, StateEvent ev)
 {
 
 }

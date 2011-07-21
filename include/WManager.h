@@ -37,7 +37,7 @@ public:
 
     void feedMouseWheelEvent(int pos);
 
-    void feedKey(StateEvent ev, int key);
+    void feedKey(int key, StateEvent ev);
 
     void setWindowSize(int width, int height);
 
