@@ -32,8 +32,12 @@ StateEvent glfwToGw1kStateEvent(int glfwStateEvent)
 }
 
 
-KeyCode glfwToGw1kKeyCodes(int glfwKey)
+int glfwToGw1kKeyCodes(int glfwKey)
 {
+    if (glfwKey >= 0 && glfwKey <= 255)
+    {
+        return glfwKey;
+    }
 
     switch (glfwKey)
     {

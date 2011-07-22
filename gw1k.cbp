@@ -51,6 +51,7 @@
 		<Unit filename="include/FTGLFontManager.h" />
 		<Unit filename="include/GLErrorCheck.h" />
 		<Unit filename="include/GLFWAdapter.h" />
+		<Unit filename="include/GLFWApp.h" />
 		<Unit filename="include/GuiObject.h" />
 		<Unit filename="include/Gw1kConstants.h" />
 		<Unit filename="include/Helpers.h" />
@@ -76,6 +77,7 @@
 		<Unit filename="include/widgets/Text.h" />
 		<Unit filename="include/widgets/WiBox.h" />
 		<Unit filename="src/FTGLFontManager.cpp" />
+		<Unit filename="src/GLFWApp.cpp" />
 		<Unit filename="src/GuiObject.cpp" />
 		<Unit filename="src/Point.cpp" />
 		<Unit filename="src/Rect.cpp" />
