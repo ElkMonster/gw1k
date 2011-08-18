@@ -114,7 +114,7 @@ Text::setHorizontalAlignment(TextProperty alignment)
 void
 Text::renderFg(const Point& offset) const
 {
-    if (font_)
+    if (font_ && text_)
     {
         glPushMatrix();
         {
