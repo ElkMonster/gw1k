@@ -12,7 +12,7 @@ class KeyListener
 
 public:
 
-    virtual void keyEvent(StateEvent ev, int key) = 0;
+    virtual void keyEvent(int key, StateEvent ev) = 0;
 
 };
 
