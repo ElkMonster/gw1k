@@ -124,7 +124,7 @@ protected:
     virtual void getWindowParams(int& r, int& g, int& b, int& a, int& depthBits, int& stencilBits);
 
     /**
-     * Calls WManager::setWindowSize().
+     * Calls WManager::setWindowSize() and sets OpenGL viewport.
      * Override this method to implement a custom resize handler.
      */
     virtual void resizeWindowEvent(int width, int height);

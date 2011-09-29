@@ -47,8 +47,7 @@ void
 GLFWApp::mainLoop()
 {
     bool running = true;
-    const Point& size = WManager::getInstance()->getWindowSize();
-    glViewport(0, 0, size.x, size.y);
+
     while (running)
     {
         beforeRender();
@@ -150,6 +149,7 @@ void
 GLFWApp::resizeWindowEvent(int width, int height)
 {
     WManager::getInstance()->setWindowSize(width, height);
+    glViewport(0, 0, width, height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
