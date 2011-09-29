@@ -46,6 +46,8 @@ GLFWApp::init()
 void
 GLFWApp::mainLoop()
 {
+    preMainLoop();
+
     bool running = true;
 
     while (running)
@@ -56,7 +58,16 @@ GLFWApp::mainLoop()
         afterRender();
         running = !isMainLoopEndRequested();
     }
+
+    postMainLoop();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+void
+GLFWApp::preMainLoop()
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -111,6 +122,13 @@ GLFWApp::isMainLoopEndRequested()
 {
     return glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+void
+GLFWApp::postMainLoop()
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 

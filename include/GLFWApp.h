@@ -21,6 +21,11 @@ namespace gw1k
  * work. Creating a second GLFWApp instance will overwrite the instance variable
  * and leave the first instance without input. Therefore, no more than one
  * instance should be created.
+ * A GLFWApp can based basically consist of only two calls, init() and
+ * mainLoop(). init() should be called before doing anything related to GLFW.
+ * mainLoop() calls preMainLoop() and postMainLoop() before starting and after
+ * leaving the loop, respectively. Any custom code for application setup and
+ * cleanup can be put there.
  */
 class GLFWApp
 {
@@ -53,11 +58,13 @@ public:
     /**
      * A simple loop that runs until isMainLoopEndRequested() returns true.
      * It calls sub-methods in the following order:
+     * 0. preMainLoop() [once before starting to loop]
      * 1. beforeRender()
      * 2. setupGLForRender()
      * 3. render()
      * 4. afterRender()
      * 5. isMainLoopEndRequested()
+     * 6. postMainLoop() [once after leaving loop]
      * Each of these methods can be replaced or extended by overriding the
      * default implementation. After render() and before afterRender(),
      * glfwSwapBuffers() is called, triggering the GLFW callback system if
@@ -66,6 +73,13 @@ public:
     void mainLoop();
 
 protected:
+
+    /**
+     * Override this to perform actions (e.g., application setup) before the
+     * main loop actually starts looping.
+     * The default implementation is empty.
+     */
+    virtual void preMainLoop();
 
     /**
      * Override this to perform pre-render actions like logic updates, animation
@@ -102,6 +116,13 @@ protected:
      * pressed.
      */
     virtual bool isMainLoopEndRequested();
+
+    /**
+     * Override this to perform actions (e.g., application cleanup) after the
+     * main loop has been left.
+     * The default implementation is empty.
+     */
+    virtual void postMainLoop();
 
     /**
      * Override this to be able to decide about window size before the window is
