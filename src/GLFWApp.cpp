@@ -43,21 +43,12 @@ GLFWApp::init()
 ////////////////////////////////////////////////////////////////////////////////
 
 
-int
-GLFWApp::terminate()
-{
-    glfwTerminate();
-    return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-
 void
 GLFWApp::mainLoop()
 {
     bool running = true;
-
+    const Point& size = WManager::getInstance()->getWindowSize();
+    glViewport(0, 0, size.x, size.y);
     while (running)
     {
         beforeRender();
@@ -66,6 +57,60 @@ GLFWApp::mainLoop()
         afterRender();
         running = !isMainLoopEndRequested();
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+void
+GLFWApp::beforeRender()
+{}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+void
+GLFWApp::setupGLForRender()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Enable 2D window coordinate system as described at
+    // http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
+    // and
+    // http://www.opengl.org/wiki/Viewing_and_Transformations
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    const Point& size = WManager::getInstance()->getWindowSize();
+    glOrtho(0, size.x, size.y, 0, -1, 1);
+    //gluOrtho2D(0, winSize_.x, 0, winSize_.y);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(0.375f, 0.375f, 0.f);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+void
+GLFWApp::render()
+{
+    WManager::getInstance()->render();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+void
+GLFWApp::afterRender()
+{}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+bool
+GLFWApp::isMainLoopEndRequested()
+{
+    return glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,15 +141,6 @@ GLFWApp::getWindowParams(int& r, int& g, int& b, int& a, int& depthBits, int& st
 {
     r = g = b = a = 8;
     depthBits = stencilBits = 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-bool
-GLFWApp::isMainLoopEndRequested()
-{
-    return glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
