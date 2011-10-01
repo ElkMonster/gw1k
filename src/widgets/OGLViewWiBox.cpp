@@ -21,11 +21,21 @@ public:
 
 public:
 
+    /**
+     * Calls the renderOGLContent() method of the OGLViewWiBox passed in as
+     * parent in the constructor. Thus, OGLViewWiBox, despite only being a
+     * normal WiBox, will get its renderOGLContent() method executed even though
+     * it is derived from OGLView.
+     */
     virtual void renderOGLContent() const
     {
         parentWiBox_->renderOGLContent();
     }
 
+    /**
+     * Always returns false. This results in the parent being reported as the
+     * widget that receives clicks.
+     */
     virtual bool containsMouse(const Point& p) const
     {
         return false;
