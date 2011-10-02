@@ -148,7 +148,6 @@ Renderable::renderSelf(const Point& offset) const
 void
 Renderable::renderSubObjects(const Point& offset) const
 {
-    Point offsett = offset;
     for (unsigned int i = 0; i != subObjects_.size(); ++i)
     {
         subObjects_[i]->render(offset + getPos());
