@@ -42,6 +42,9 @@ public:
 
     enum ColorState { STATE_NORMAL, STATE_HOVERED, STATE_CLICKED };
 
+    /**
+     * Gets foreground and background colours specified for the given state.
+     */
     void queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const;
 
 protected:
@@ -93,6 +96,9 @@ protected:
 
     void setColor(const gw1k::Color4i* col, gw1k::Color4i*& dest);
 
+    /**
+     * Calls queryColors() with the current state of this Renderable.
+     */
     void selectColors(gw1k::Color4i*& fg, gw1k::Color4i*& bg) const;
 
 protected:
