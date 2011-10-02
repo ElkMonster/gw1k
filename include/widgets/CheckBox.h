@@ -9,7 +9,9 @@
 namespace gw1k
 {
 
-class CheckBox : public WiBox//, public MouseListener
+class CheckField;
+
+class CheckBox : public WiBox, public MouseListener
 {
 
 public:
@@ -36,14 +38,24 @@ public:
 
     virtual GuiObject* getContainingObject(const Point& p);
 
-    virtual void renderFg(const Point& offset) const;
-
     virtual void setColors(const char* colorScheme);
 
+    virtual void mouseMoved(MouseMovedEvent ev,
+                            const Point& pos,
+                            const Point& delta,
+                            GuiObject* target);
+
+    virtual void mouseClicked(MouseButton b,
+                              StateEvent ev,
+                              GuiObject* target);
+
+    virtual void mouseWheeled(int delta, GuiObject* target);
 
 private:
 
     bool checked_;
+
+    CheckField* checkField_;
 
     Label* label_;
 };

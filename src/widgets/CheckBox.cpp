@@ -8,6 +8,38 @@ namespace gw1k
 {
 
 
+class CheckField : public WiBox
+{
+
+public:
+
+    CheckField(const Point& pos, const Point& size, const CheckBox* checkBox)
+    :   WiBox(pos, size),
+        checkBox_(checkBox)
+    {};
+
+    ~CheckField() {};
+
+    virtual void renderContent(const Point& offset) const
+    {
+        if (checkBox_->isChecked())
+        {
+            const Point& pos = offset + getPos();
+            int h = getSize().y - 8;
+            Color4i* fg, * bg;
+            selectColors(fg, bg);
+            setGLColor(fg);
+            fillRect(pointToGeomPoint2D(pos + Point(4, 4)),
+                     pointToGeomPoint2D(pos + Point(4+h, 4+h)));
+        }
+    };
+
+private:
+
+    const CheckBox* checkBox_;
+};
+
+
 CheckBox::CheckBox(
     const Point& pos,
     const Point& size,
@@ -20,9 +52,14 @@ CheckBox::CheckBox(
     checked_(checked)
 {
     //Point
-    //checkField_ = new OGLView(Point(1, 1), Point(size.y - 2, size.y - 2));
-    label_ = new Label(Point(size.y, 1), Point(size.x - size.y - 2, size.y - 2),
+    checkField_ = new CheckField(Point(3, 3), Point(size.y - 6, size.y - 6), this);
+    label_ = new Label(Point(size.y, 1), Point(size.x - size.y - 1, size.y - 2),
                        text, faceSize, fontname);
+    addSubObject(checkField_);
+    addSubObject(label_);
+
+    checkField_->addMouseListener(this);
+
     setColors(colorScheme);
 }
 
@@ -71,6 +108,7 @@ CheckBox::setColors(const char* colorScheme)
     std::string baseName(colorScheme ? colorScheme : "CheckBox");
     t->setColors(this, colorScheme, "CheckBox");
     label_->setColors((baseName + ".Label").c_str());
+    checkField_->setColors((baseName + ".CheckField").c_str());
 }
 
 
@@ -78,28 +116,39 @@ GuiObject*
 CheckBox::getContainingObject(const Point& p)
 {
     GuiObject* o = WiBox::getContainingObject(p);
-//    if (o == checkField_)
-//    {
-        checked_ = !checked_;
-//    }
-    return this;
+    return o;
 }
 
 
 void
-CheckBox::renderFg(const Point& offset) const
+CheckBox::mouseMoved(
+    MouseMovedEvent ev,
+    const Point& pos,
+    const Point& delta,
+    GuiObject* target)
 {
-    WiBox::renderFg(offset);
-    Point pos = getPos() + offset;
-    int h = getSize().y - 4;
-    drawRect(pointToGeomPoint2D(pos + Point(2, 2)),
-             pointToGeomPoint2D(pos + Point(2 + h, 2 + h)));
-    if (checked_)
+
+}
+
+
+void
+CheckBox::mouseClicked(
+    MouseButton b,
+    StateEvent ev,
+    GuiObject* target)
+{
+    if (target == checkField_ && ev == GW1K_PRESSED)
     {
-        h -= 4;
-        fillRect(pointToGeomPoint2D(pos + Point(4, 4)),
-                 pointToGeomPoint2D(pos + Point(4 + h, 4 + h)));
+        checked_ = !checked_;
     }
 }
+
+
+void
+CheckBox::mouseWheeled(int delta, GuiObject* target)
+{
+
+}
+
 
 } // namespace gw1k

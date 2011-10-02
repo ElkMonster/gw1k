@@ -331,3 +331,11 @@ ScrollPane = {
     HSlider = Slider,
     VSlider = Slider
 }
+
+
+-- CheckBox widget
+-- ===============
+CheckBox = {
+    --Label = Label,
+    Wibox
+}
