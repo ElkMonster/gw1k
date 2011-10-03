@@ -201,7 +201,7 @@ void fillEllipse(
 
 
 void
-setColor(const Color4i* c)
+setGLColor(const Color4i* c)
 {
     glColor4f(c->rf, c->gf, c->bf, c->af);
 }

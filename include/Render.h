@@ -41,7 +41,7 @@ void fillEllipse(const geom::Point2D& center,
                  const geom::Point2D& radius,
                  int sizeIdx = 1);
 
-void setColor(const Color4i* c);
+void setGLColor(const Color4i* c);
 
 
 
