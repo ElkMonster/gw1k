@@ -53,6 +53,7 @@ GLFWApp::mainLoop()
     while (running)
     {
         beforeRender();
+        setupGLForRender();
         render();
         glfwSwapBuffers();
         afterRender();
@@ -232,6 +233,10 @@ GLFWApp::setupGLFW()
 
     // Set vsync on
     glfwSwapInterval(1);
+
+    // Enable translucency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return 0;
 }
