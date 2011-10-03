@@ -354,7 +354,6 @@ GuiObject::removeSubObject(GuiObject* o)
 GuiObject*
 GuiObject::getContainingObject(const Point& p)
 {
-    Point cp = p;
     if (bIsVisible_ && bIsInteractive_ && containsMouse(p))
     {
         GuiObject* containingSubObj = 0;
