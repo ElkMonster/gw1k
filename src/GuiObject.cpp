@@ -22,7 +22,8 @@ GuiObject::GuiObject()
     bIsClicked_(false),
     bIsVisible_(true),
     parent_(0),
-    bIsInteractive_(true)
+    bIsInteractive_(true),
+    bIsEmbedded_(false)
 {}
 
 
@@ -397,6 +398,20 @@ GuiObject*
 GuiObject::getParent() const
 {
     return parent_;
+}
+
+
+bool
+GuiObject::isEmbedded() const
+{
+    return bIsEmbedded_;
+}
+
+
+void
+GuiObject::setEmbedded(bool b)
+{
+    bIsEmbedded_ = b;
 }
 
 

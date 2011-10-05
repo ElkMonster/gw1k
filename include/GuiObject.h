@@ -103,6 +103,10 @@ public:
 
     GuiObject* getParent() const;
 
+    bool isEmbedded() const;
+
+    void setEmbedded(bool b = true);
+
 protected:
 
     std::list<MouseListener*> mouseListeners_;
@@ -120,6 +124,8 @@ protected:
     bool bIsVisible_;
 
     GuiObject* parent_;
+
+    bool bIsEmbedded_;
 
 private:
 
