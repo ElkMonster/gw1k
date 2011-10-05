@@ -16,9 +16,7 @@ public:
     CheckField(const Point& pos, const Point& size, const CheckBox* checkBox)
     :   WiBox(pos, size),
         checkBox_(checkBox)
-    {
-        setEmbedded();
-    };
+    {};
 
     ~CheckField() {};
 
@@ -56,10 +54,11 @@ CheckBox::CheckBox(
     checkField_ = new CheckField(Point(3, 3), Point(size.y - 6, size.y - 6), this);
     label_ = new Label(Point(size.y, 1), Point(size.x - size.y - 1, size.y - 2),
                        text, faceSize, fontname);
-    label_->setEmbedded();
-
     addSubObject(checkField_);
     addSubObject(label_);
+
+    checkField_->setEmbedded();
+    label_->setEmbedded();
 
     checkField_->addMouseListener(this);
 
