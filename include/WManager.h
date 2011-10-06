@@ -99,6 +99,13 @@ private:
                                const Point& delta,
                                GuiObject* o = 0);
 
+    void feedMouseMoveHandleOldHoveredObj(const Point& pos,
+                                          const Point& delta,
+                                          const GuiObject* newHoveredObj);
+
+    void feedMouseMoveHandleNewHoveredObj(const Point& pos,
+                                          const Point& delta);
+
 private:
 
     static WManager* pInstance_;

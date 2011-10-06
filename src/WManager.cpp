@@ -6,6 +6,25 @@
 //#define MSG(x) std::cout << x << std::endl
 #define MSG(x)
 
+
+namespace
+{
+
+
+inline gw1k::GuiObject* getNonEmbeddedParent(const gw1k::GuiObject* o)
+{
+    gw1k::GuiObject* p = o->getParent();
+    while (p && p->isEmbedded())
+    {
+        p = p->getParent();
+    }
+    return p;
+}
+
+
+} // namespace
+
+
 namespace gw1k
 {
 
@@ -56,6 +75,12 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
     {
         MSG("WManager::feedMouseMoveInternal: clickedObj_ = " << (void*)clickedObj_);
         clickedObj_->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
+
+        if (clickedObj_->isEmbedded())
+        {
+            getNonEmbeddedParent(clickedObj_)
+                ->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
+        }
     }
     else
     {
@@ -64,30 +89,89 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
             o = mainWin_->getContainingObject(pos);
         }
 
+        //GuiObject* prevHoveredObj = hoveredObj_;
+
         // Trigger Mouse-Left event for element that was previously hovered, but
         // is not anymore (because the mouse totally left the object, or is
         // hovering a sub-object now, or the object moved/disappeared)
         if (hoveredObj_ != o)
         {
-            MSG("WManager::feedMouseMoveInternal: hoveredObj_ = " << (void*)hoveredObj_ << ", o = " << (void*)o << ", setting hoveredObj_ to o " << (void*)o);
-            if (hoveredObj_)
-            {
-                hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
-            }
+            //MSG("WManager::feedMouseMoveInternal: hoveredObj_ = " << (void*)hoveredObj_ << ", o = " << (void*)o << ", setting hoveredObj_ to o " << (void*)o);
+            feedMouseMoveHandleOldHoveredObj(pos, delta, o);
             hoveredObj_ = o;
         }
 
         // Trigger Mouse-Hovered or Mouse-Entered event for element that is
         // currently hovered
-        if (o)
-        {
-            MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObj_ = " << (void*)hoveredObj_);
-            o->triggerMouseMovedEvent(
-                (o->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED), pos, delta);
-        }
+        feedMouseMoveHandleNewHoveredObj(pos, delta);
     }
 
     MSG("WManager::feedMouseMoveInternal [end]");
+}
+
+
+void
+WManager::feedMouseMoveHandleOldHoveredObj(
+    const Point& pos,
+    const Point& delta,
+    const GuiObject* newHoveredObj)
+{
+    if (hoveredObj_)
+    {
+        if (hoveredObj_->isEmbedded())
+        {
+            hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+
+            // Check if the containing non-embedded parent is also left; this is
+            // either true when there is no new hovered object, or when the new
+            // hovered object is not embedded, or when it is embedded, but in
+            // another parent
+            GuiObject* hPar = getNonEmbeddedParent(hoveredObj_);
+            GuiObject* nPar = 0;
+            if (newHoveredObj && newHoveredObj->isEmbedded())
+            {
+                nPar = getNonEmbeddedParent(newHoveredObj);
+            }
+
+            if (!newHoveredObj || (hPar != nPar))
+            {
+                hPar->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+            }
+        }
+        else // hoveredObj_ NOT embedded
+        {
+            // If new hovered object is an embedded sub-object of hoveredObj_,
+            // do nothing (that is, no LEFT event), otherwise trigger LEFT event
+            bool bIsEmbeddedSubObj = newHoveredObj && newHoveredObj->isEmbedded()
+                && (getNonEmbeddedParent(newHoveredObj) == hoveredObj_);
+            if (!bIsEmbeddedSubObj)
+            {
+                hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+            }
+        }
+    }
+}
+
+
+void
+WManager::feedMouseMoveHandleNewHoveredObj(
+    const Point& pos,
+    const Point& delta)
+{
+    if (hoveredObj_)
+    {
+        MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObj_ = " << (void*)hoveredObj_);
+        hoveredObj_->triggerMouseMovedEvent(
+            hoveredObj_->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED, pos,
+            delta);
+
+        if (hoveredObj_->isEmbedded())
+        {
+            GuiObject* hPar = getNonEmbeddedParent(hoveredObj_);
+            hPar->triggerMouseMovedEvent(
+                hPar->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED, pos, delta);
+        }
+    }
 }
 
 
@@ -104,6 +188,11 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
         if (clickedObj_)
         {
             clickedObj_->triggerMouseButtonEvent(b, ev);
+
+            if (clickedObj_->isEmbedded())
+            {
+                getNonEmbeddedParent(clickedObj_)->triggerMouseButtonEvent(b, ev);
+            }
             clickedObj_ = 0;
         }
 
@@ -117,8 +206,8 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
     if (currHoveredObj != hoveredObj_)
     {
         MSG("WManager::feedMouseClick:   --> update hoveredObj_ with feedMouseMoveInternal");
-        // Updates hoveredObj_
-        feedMouseMoveInternal(mousePos_, Point(), currHoveredObj);
+        // Update hoveredObj_ using a fake mouse move with a delta of 0
+        feedMouseMoveInternal(mousePos_, Point(0, 0), currHoveredObj);
     }
 
     // Trigger event for object that is currently hovered (only that can
@@ -131,6 +220,11 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
         clickedObj_ = currHoveredObj;
         MSG("WManager::feedMouseClick: clickedObj_ = " << (void*)clickedObj_);
         currHoveredObj->triggerMouseButtonEvent(b, ev);
+
+        if (currHoveredObj->isEmbedded())
+        {
+            getNonEmbeddedParent(currHoveredObj)->triggerMouseButtonEvent(b, ev);
+        }
     }
     MSG("WManager::feedMouseClick [end]: clickedObj_ = " << (void*)clickedObj_);
 }
@@ -150,7 +244,12 @@ WManager::feedMouseWheelEvent(int pos)
 
     if (hoveredObj_)
     {
-        hoveredObj_->triggerMouseWheelEvent(pos - mouseWheelPos_);
+        int delta = pos - mouseWheelPos_;
+        hoveredObj_->triggerMouseWheelEvent(delta);
+        if (hoveredObj_->isEmbedded())
+        {
+            getNonEmbeddedParent(hoveredObj_)->triggerMouseWheelEvent(delta);
+        }
     }
 
     mouseWheelPos_ = pos;
