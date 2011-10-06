@@ -2,12 +2,13 @@
 #define GW1K_CheckBox_H_
 
 #include "WiBox.h"
-#include "OGLView.h"
 #include "../listeners/MouseListener.h"
+#include "../listeners/ActionListener.h"
 #include "Label.h"
 
 namespace gw1k
 {
+
 
 class CheckField;
 
@@ -31,6 +32,10 @@ public:
     bool isChecked() const;
 
     void setChecked(bool checked = true);
+
+    virtual void addActionListener(ActionListener* al);
+
+    virtual void removeActionListener(ActionListener* al);
 
     virtual void setText(const std::string& text);
 
@@ -58,6 +63,8 @@ private:
     CheckField* checkField_;
 
     Label* label_;
+
+    std::list<ActionListener*> actionListeners_;
 };
 
 } // namespace gw1k
