@@ -211,7 +211,7 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
     }
 
     // Trigger event for object that is currently hovered (only that can
-    // possibly be the target of mouse clicks)
+    // possibly be the receiver of mouse clicks)
     if (!eventHandled && currHoveredObj)
     {
         // Order matters: clickedObj_ may be reset to 0 in the triggered

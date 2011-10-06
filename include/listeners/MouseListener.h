@@ -19,13 +19,13 @@ public:
     virtual void mouseMoved(MouseMovedEvent ev,
                             const Point& pos,
                             const Point& delta,
-                            GuiObject* target) = 0;
+                            GuiObject* receiver) = 0;
 
     virtual void mouseClicked(MouseButton b,
                               StateEvent ev,
-                              GuiObject* target) = 0;
+                              GuiObject* receiver) = 0;
 
-    virtual void mouseWheeled(int delta, GuiObject* target) = 0;
+    virtual void mouseWheeled(int delta, GuiObject* receiver) = 0;
 
 };
 

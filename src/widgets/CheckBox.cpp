@@ -128,7 +128,7 @@ CheckBox::mouseMoved(
     MouseMovedEvent ev,
     const Point& pos,
     const Point& delta,
-    GuiObject* target)
+    GuiObject* receiver)
 {
 
 }
@@ -138,9 +138,9 @@ void
 CheckBox::mouseClicked(
     MouseButton b,
     StateEvent ev,
-    GuiObject* target)
+    GuiObject* receiver)
 {
-    if (target == checkField_ && ev == GW1K_PRESSED)
+    if (receiver == checkField_ && ev == GW1K_PRESSED)
     {
         checked_ = !checked_;
     }
@@ -148,7 +148,7 @@ CheckBox::mouseClicked(
 
 
 void
-CheckBox::mouseWheeled(int delta, GuiObject* target)
+CheckBox::mouseWheeled(int delta, GuiObject* receiver)
 {
 
 }

@@ -115,7 +115,7 @@ Label::mouseMoved(
     MouseMovedEvent ev,
     const Point& pos,
     const Point& delta,
-    GuiObject* target)
+    GuiObject* receiver)
 {
     switch (ev)
     {
@@ -131,7 +131,7 @@ Label::mouseMoved(
 
 
 void
-Label::mouseClicked(MouseButton b, StateEvent ev, GuiObject* target)
+Label::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 {
     switch(ev)
     {
@@ -147,7 +147,7 @@ Label::mouseClicked(MouseButton b, StateEvent ev, GuiObject* target)
 
 
 void
-Label::mouseWheeled(int delta, GuiObject* target)
+Label::mouseWheeled(int delta, GuiObject* receiver)
 {
 
 }

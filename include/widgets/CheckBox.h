@@ -43,13 +43,13 @@ public:
     virtual void mouseMoved(MouseMovedEvent ev,
                             const Point& pos,
                             const Point& delta,
-                            GuiObject* target);
+                            GuiObject* receiver);
 
     virtual void mouseClicked(MouseButton b,
                               StateEvent ev,
-                              GuiObject* target);
+                              GuiObject* receiver);
 
-    virtual void mouseWheeled(int delta, GuiObject* target);
+    virtual void mouseWheeled(int delta, GuiObject* receiver);
 
 private:
 

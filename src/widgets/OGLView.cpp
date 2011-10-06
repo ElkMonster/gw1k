@@ -123,9 +123,9 @@ OGLView::mouseMoved(
     MouseMovedEvent ev,
     const Point& pos,
     const Point& delta,
-    GuiObject* target)
+    GuiObject* receiver)
 {
-    if ((target == this) && isClicked())
+    if ((receiver == this) && isClicked())
     {
         relativeTranslateBy(delta);
     }
@@ -133,16 +133,16 @@ OGLView::mouseMoved(
 
 
 void
-OGLView::mouseClicked(MouseButton b, StateEvent ev, GuiObject* target)
+OGLView::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 {
 
 }
 
 
 void
-OGLView::mouseWheeled(int delta, GuiObject* target)
+OGLView::mouseWheeled(int delta, GuiObject* receiver)
 {
-    if (target == this)
+    if (receiver == this)
     {
         float z = zoom_ + delta * 0.05f;
         setZoomFactor(z);

@@ -143,14 +143,14 @@ Slider::setHandleSize(float size)
 
 void
 Slider::mouseMoved(
-    MouseMovedEvent ev, const Point& pos, const Point& delta, GuiObject* target)
+    MouseMovedEvent ev, const Point& pos, const Point& delta, GuiObject* receiver)
 {
     if (!bEnabled_)
     {
         return;
     }
 
-    if (target == &handle_ && handle_.isClicked())
+    if (receiver == &handle_ && handle_.isClicked())
     {
         Point newPos = handle_.getPos();
         if (bVertical_)
@@ -168,14 +168,14 @@ Slider::mouseMoved(
 
 
 void
-Slider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* target)
+Slider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 {
     if (!bEnabled_)
     {
         return;
     }
 
-    if ((target == this) && (ev == GW1K_PRESSED))
+    if ((receiver == this) && (ev == GW1K_PRESSED))
     {
         Point newPos = WManager::getInstance()->getMousePos() - getGlobalPos();
 
@@ -196,9 +196,9 @@ Slider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* target)
 
 
 void
-Slider::mouseWheeled(int delta, GuiObject* target)
+Slider::mouseWheeled(int delta, GuiObject* receiver)
 {
-    if ((target == &handle_) || (target == this))
+    if ((receiver == &handle_) || (receiver == this))
     {
         // Sliders need to invert delta because a value of 0 = top/left, a value
         // of 1 = bottom/right, but deltas work the other way round
