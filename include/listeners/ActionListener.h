@@ -10,7 +10,7 @@ class ActionListener
 
 public:
 
-    void actionPerformed(GuiObject* receiver) = 0;
+    virtual void actionPerformed(GuiObject* receiver) = 0;
 
 };
 
