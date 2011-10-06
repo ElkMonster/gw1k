@@ -61,6 +61,7 @@ CheckBox::CheckBox(
     label_->setEmbedded();
 
     checkField_->addMouseListener(this);
+    label_->setTextProperty(GW1K_ALIGN_LEFT);
 
     setColors(colorScheme);
 }
