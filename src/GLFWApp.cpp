@@ -83,7 +83,7 @@ GLFWApp::beforeRender()
 void
 GLFWApp::setupGLForRender()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Enable 2D window coordinate system as described at
     // http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
