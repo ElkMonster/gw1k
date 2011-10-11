@@ -138,7 +138,7 @@ GuiObject::setSize(float width, float height)
         {
             width = parSize.x - thisPos.x + width;
         }
-        else if (width <= 1.f)
+        else if (width < 1.f)
         {
             width = parSize.x * width;
         }
@@ -147,7 +147,7 @@ GuiObject::setSize(float width, float height)
         {
             height = parSize.y - thisPos.y + height;
         }
-        else if (height <= 1.f)
+        else if (height < 1.f)
         {
             height = parSize.y * height;
         }
