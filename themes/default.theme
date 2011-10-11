@@ -339,3 +339,14 @@ CheckBox = {
     --Label = Label,
     Wibox
 }
+
+
+-- RangeSlider widget
+-- ==================
+RangeSlider = {
+    Handle = {
+    },
+    RangeBar = {
+    },
+    Wibox
+}
