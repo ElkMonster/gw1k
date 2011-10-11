@@ -39,7 +39,8 @@ public:
 private:
 
     const CheckBox* checkBox_;
-};
+
+}; // class CheckField
 
 
 
