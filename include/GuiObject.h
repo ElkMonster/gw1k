@@ -105,6 +105,26 @@ public:
 
     bool isEmbedded() const;
 
+    /**
+     * Embedded objects can be used to build combined widgets that more or less
+     * act as if they were one widget, but in fact they are made up of two or
+     * more. There has to be one non-embedded parent widget that serves as the
+     * "master" container for all embedded widgets. In case of events occuring
+     * on these embedded widgets, an appropriate event will be generated for the
+     * non-embedded parent. Thus, the parent always reports an event when one of
+     * its embedded sub-widgets receives one, making events easier to handle:
+     * Inner details of the combined widget can be handled internally (with the
+     * actual event receiver being correctly given in the callback), while an
+     * external listener (registered to the non-embedded parent) will receive
+     * only events stating the non-embedded parent as the receiver. Thus, it is
+     * not necessary to have a global instance knowing about all widgets, but a
+     * more structured approach is feasible where complexities are hidden in
+     * parent widgets.
+     * In contrast to non-embedded sub-objects, embedded sub-objects do not
+     * trigger mouse-leave events for the containing non-embedded parent, but
+     * instead, the non-embedded parent receives a mouse-move event.
+     *
+     */
     void setEmbedded(bool b = true);
 
 protected:
