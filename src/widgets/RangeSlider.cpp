@@ -1,9 +1,9 @@
 #include "widgets/RangeSlider.h"
 
-#include "Math.h"
+
 #include "ThemeManager.h"
 #include "WManager.h"
-#include "Log.h"
+#include "Math.h"
 
 #include <iostream>
 
@@ -17,20 +17,9 @@ RangeSlider::RangeSlider(
     const float range[2],
     RangeType rangeType,
     const char* colorScheme)
-:   WiBox(pos, size, colorScheme),
-    rangeType_(rangeType),
+:   AbstractSliderBase(pos, size, range, rangeType, colorScheme),
     handleSize_(3)
 {
-    if (range)
-    {
-        setRange(range);
-    }
-    else
-    {
-        float r[] = { 0.f, 1.f };
-        setRange(r);
-    }
-
     lValue_ = 0.f;
     rValue_ = 1.f;
 
@@ -97,27 +86,6 @@ RangeSlider::getRValue() const
 
 
 void
-RangeSlider::setRange(const float range[2])
-{
-    range_[0] = range[0];
-    range_[1] = range[1];
-
-    if (range_[0] > range_[1])
-    {
-        std::swap(range_[0], range_[1]);
-        Log::warning("RangeSlider", "Wrong order of range values");
-    }
-}
-
-
-const float*
-RangeSlider::getRange() const
-{
-    return range_;
-}
-
-
-void
 RangeSlider::updateRangeBar()
 {
     const Point& s = lHandle_->getSize();
@@ -144,70 +112,6 @@ RangeSlider::restoreConsistency()
         std::swap(lHandle_, rHandle_);
     }
     updateRangeBar();
-}
-
-
-float
-RangeSlider::getMappedValue(float internalVal) const
-{
-    float d = range_[1] - range_[0];
-    float v = 0.f;
-    if (internalVal > 0.f)
-    {
-        switch(rangeType_)
-        {
-        case MAP_LINEAR:
-            v = internalVal;
-            break;
-        case MAP_QUADRATIC:
-            v = internalVal * internalVal;
-            break;
-        case MAP_CUBIC:
-            v = internalVal * internalVal * internalVal;
-            break;
-        case MAP_SQRT:
-            v = std::sqrt(internalVal);
-            break;
-        case MAP_CUBICRT:
-            v = std::pow(internalVal, 1.f / 3.f);
-            break;
-        }
-    }
-
-    return v * d + range_[0];
-}
-
-
-float
-RangeSlider::getUnmappedValue(float rangeVal) const
-{
-    float d = range_[1] - range_[0];
-    float v = 0.f;
-    float r = (rangeVal - range_[0]) / d;
-
-    if (r != 0.f)
-    {
-        switch(rangeType_)
-        {
-        case MAP_LINEAR:
-            v = r;
-            break;
-        case MAP_QUADRATIC:
-            v = sqrt(r);
-            break;
-        case MAP_CUBIC:
-            v = pow(r, 1.f / 3.f);
-            break;
-        case MAP_SQRT:
-            v = r * r;
-            break;
-        case MAP_CUBICRT:
-            v = r * r * r;
-            break;
-        }
-    }
-
-    return v;
 }
 
 
