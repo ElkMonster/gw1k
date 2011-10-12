@@ -4,6 +4,7 @@
 #include "WManager.h"
 #include "Color4i.h"
 #include "ThemeManager.h"
+#include "Log.h"
 
 #include <algorithm>
 #include <iostream>
@@ -47,12 +48,11 @@ Slider::Slider(
     if ((vertical && (getSize().x > getSize().y))
         || (!vertical && (getSize().x < getSize().y)))
     {
-        std::cout
+        Log::warning("Slider", Log::os()
             << "Slider dimensions do not seem reasonable "
             << "- confused horizontal and vertical? "
             << "(Slider is " << (bVertical_ ? "vertical" : "horizontal")
-            << ", size is " << getSize() << ")"
-            << std::endl;
+            << ", size is " << getSize() << ")");
     }
 
     setColors(colorScheme);

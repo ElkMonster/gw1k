@@ -1,5 +1,7 @@
 #include "ThemeManager.h"
+
 #include "Exception.h"
+#include "Log.h"
 
 extern "C" {
 #include <lauxlib.h>
@@ -42,23 +44,24 @@ ThemeManager::loadTheme(const char* themeName)
     }
 
     int err = luaL_loadfile(l_, "libs/themes/CreateTheme.lua");
-    switch (err)
-    {
-    case LUA_ERRSYNTAX:
-        std::cout << "Lua: Syntax error" << std::endl;
-        break;
-    case LUA_ERRMEM:
-        std::cout << "Lua: Memory allocation error" << std::endl;
-        break;
-    case LUA_ERRFILE:
-        std::cout << "Lua: Could not open CreateTheme.lua" << std::endl;
-        break;
-    default:
-        break;
-    }
     if (err)
     {
-        luaError();
+        switch (err)
+        {
+        case LUA_ERRSYNTAX:
+            Log::error("ThemeManager", "Lua: Syntax error");
+            break;
+        case LUA_ERRMEM:
+            Log::error("ThemeManager", "Lua: Memory allocation error");
+            break;
+        case LUA_ERRFILE:
+            Log::error("ThemeManager", "Lua: Could not open CreateTheme.lua");
+            break;
+        default:
+            Log::error("ThemeManager", Log::os() << "Lua: Unknown error: " << err);
+            break;
+        }
+                luaError();
         return false;
     }
 
@@ -184,7 +187,7 @@ ThemeManager::loadLua()
 void
 ThemeManager::luaError()
 {
-    std::cout << "Lua error:\n" << lua_tostring(l_, -1) << std::endl;
+    Log::error("ThemeManager", Log::os() << "Lua error:\n" << lua_tostring(l_, -1));
 }
 
 
@@ -230,8 +233,9 @@ ThemeManager::readTheme()
         std::string key = lua_tostring(l_, -1);
 
         colorMap_[key] = new Color4i(rgba[0], rgba[1], rgba[2], rgba[3]);
-        std::cout << "ThemeManager: Added " << key << " = (" << rgba[0] << ", "
-            << rgba[1] << ", " << rgba[2] << ", " << rgba[3] << ")" << std::endl;
+        Log::info("ThemeManager", Log::os() << "Added " << key << " = ("
+            << rgba[0] << ", " << rgba[1] << ", " << rgba[2] << ", " << rgba[3]
+            << ")");
     }
 
     // Finally, pop _t and themeTable

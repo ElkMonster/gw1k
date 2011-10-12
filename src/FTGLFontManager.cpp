@@ -4,6 +4,8 @@
 
 #include "FTGLFontManager.h"
 
+#include "Log.h"
+
 #include <string>
 #include <iostream>
 
@@ -58,7 +60,8 @@ FTGLFontManager::GetFont(const char *filename, int size)
     FontList::iterator result = fonts_.find(fontKey);
     if(result != fonts_.end())
     {
-        std::cout << "Found font " << filename << " in list" << std::endl;
+        Log::info("FTGLFontManager", Log::os() << "Found font " << filename
+            << " in list");
         return result->second;
     }
 
@@ -71,14 +74,16 @@ FTGLFontManager::GetFont(const char *filename, int size)
 
     if(font->Error() != 0)
     {
-        std::cout << "Font " << fullname << " failed to open" << std::endl;
+        Log::error("FTGLFontManager", Log::os() << "Font " << fullname
+            << " failed to open");
         delete font;
         return 0;
     }
 
     if(!font->FaceSize(size))
     {
-        std::cout << "Font " << filename << " failed to set size " << size << std::endl;
+        Log::error("FTGLFontManager", Log::os() << "Font " << filename
+            << " failed to set size " << size);
         delete font;
         return 0;
     }

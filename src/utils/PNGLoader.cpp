@@ -1,6 +1,7 @@
 #include "utils/PNGLoader.h"
 
-#include "utils/FileUtil.h"
+#include "Log.h"
+
 
 //#define GW1K_ENABLE_GL_ERROR_CHECKS
 //#include "GLErrorCheck.h"
@@ -79,10 +80,9 @@ bool loadPngImage(const char* filename, int& width, int& height, bool& alpha, un
             alpha = false;
             break;
         default:
-            std::cout
-                << "Warning: Unsupported colour type " << colorType
-                << " in file " << filename
-                << std::endl;
+            Log::error("PNGLoader", Log::os()
+                << "Unsupported colour type " << colorType
+                << " in file " << filename);
             png_destroy_read_struct(&pngPtr, &pngInfoPtr, NULL);
             fclose(pFile);
             return false;
