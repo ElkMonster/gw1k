@@ -216,9 +216,9 @@ RangeSlider::calculateValues()
     float d = 1.f / (getSize().x - lHandle_->getSize().x - 2);
     lValue_ = d * (lHandle_->getPos().x - 1);
     rValue_ = d * (rHandle_->getPos().x - 1);
-    std::cout
-        << lValue_ << "  ->  "<< getMappedValue(lValue_) << " / "
-        << rValue_ << "  ->  "<< getMappedValue(rValue_) << std::endl;
+    //std::cout
+        //<< lValue_ << "  ->  "<< getMappedValue(lValue_) << " / "
+        //<< rValue_ << "  ->  "<< getMappedValue(rValue_) << std::endl;
 }
 
 
