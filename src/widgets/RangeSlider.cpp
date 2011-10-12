@@ -216,6 +216,9 @@ RangeSlider::calculateValues()
     float d = 1.f / (getSize().x - lHandle_->getSize().x - 2);
     lValue_ = d * (lHandle_->getPos().x - 1);
     rValue_ = d * (rHandle_->getPos().x - 1);
+    std::cout
+        << lValue_ << "  ->  "<< getMappedValue(lValue_) << " / "
+        << rValue_ << "  ->  "<< getMappedValue(rValue_) << std::endl;
 }
 
 
@@ -234,10 +237,6 @@ RangeSlider::mouseMoved(
                 receiver->getPos() + delta);
             restoreConsistency();
             calculateValues();
-            std::cout
-                << lValue_ << "  ->  "<< getMappedValue(lValue_) << " / "
-                << rValue_ << "  ->  "<< getMappedValue(rValue_)
-                << std::endl;
         }
         else if (receiver == rangeBar_)
         {
@@ -257,8 +256,9 @@ RangeSlider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
         int dl = std::abs(lHandle_->getPos().x + hdlWidth / 2 - p.x);
         int dr = std::abs(rHandle_->getPos().x + hdlWidth / 2 - p.x);
         WiBox* closestHandle = dl <= dr ? lHandle_ : rHandle_;
-        closestHandle->setPos(p.x - hdlWidth / 2, 1);
+        setHandlePos(closestHandle, Point(p.x - hdlWidth / 2, 1));
         restoreConsistency();
+        calculateValues();
     }
 }
 
