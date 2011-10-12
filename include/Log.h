@@ -14,7 +14,7 @@ class Log
 
 public:
 
-    enum MsgType { LOG_WARNING };
+    enum MsgType { LOG_WARNING, LOG_ERROR, LOG_INFO };
 
 public:
 
@@ -22,18 +22,29 @@ public:
 
     static void warning(const char* who, const char* msg, bool bEndl = true);
 
-    static void warning(const char* who, const std::string& msg, bool bEndl = true);
+    static void warning(const char* who, const std::ostream& msg, bool bEndl = true);
 
-    static void warning(const char* who, const std::ostringstream& msg, bool bEndl = true);
+    static void error(const char* who, const char* msg, bool bEndl = true);
 
+    static void error(const char* who, const std::ostream& msg, bool bEndl = true);
+
+    static void info(const char* who, const char* msg, bool bEndl = true);
+
+    static void info(const char* who, const std::ostream& msg, bool bEndl = true);
 
 private:
 
     static void print(MsgType msgType, const char* who, const char* msg, bool bEndl);
 
+    static void print(MsgType msgType, const char* who, const std::ostream& msg, bool bEndl);
+
     static std::ostringstream buffer_;
 
     static const std::string sLogWarning_;
+
+    static const std::string sLogError_;
+
+    static const std::string sLogInfo_;
 
 };
 
