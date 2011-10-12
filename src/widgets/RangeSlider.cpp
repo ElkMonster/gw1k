@@ -3,6 +3,7 @@
 #include "Math.h"
 #include "ThemeManager.h"
 #include "WManager.h"
+#include "Log.h"
 
 #include <iostream>
 
@@ -104,7 +105,7 @@ RangeSlider::setRange(const float range[2])
     if (range_[0] > range_[1])
     {
         std::swap(range_[0], range_[1]);
-        std::cout << "RangeSlider: Warning: Wrong order of range values" << std::endl;
+        Log::warning("RangeSlider", "Wrong order of range values");
     }
 }
 
@@ -277,9 +278,9 @@ RangeSlider::setColors(const char* colorScheme)
 
     std::string baseName(colorScheme ? colorScheme : "RangeSlider");
     t->setColors(this, colorScheme, "RangeSlider");
-    const char* hdlName = (baseName + ".Handle").c_str();
-    lHandle_->setColors(hdlName);
-    rHandle_->setColors(hdlName);
+    std::string hdlName = baseName + ".Handle";
+    lHandle_->setColors(hdlName.c_str());
+    rHandle_->setColors(hdlName.c_str());
     rangeBar_->setColors((baseName + ".RangeBar").c_str());
 }
 
