@@ -37,6 +37,13 @@ GLFWApp::init()
 
     int ret = setupGLFW();
 
+    // Setup GL here already because some components might need it for their
+    // initialisation (e.g., FTGL requires a readily set-up GL state when
+    // working with it, even though it's not obvious). (Thus, initialisation
+    // should be done in preMainLoop(), or any other method that is called after
+    // init().)
+    setupGLForRender();
+
     return ret;
 }
 

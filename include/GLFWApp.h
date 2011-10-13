@@ -25,7 +25,10 @@ namespace gw1k
  * mainLoop(). init() should be called before doing anything related to GLFW.
  * mainLoop() calls preMainLoop() and postMainLoop() before starting and after
  * leaving the loop, respectively. Any custom code for application setup and
- * cleanup can be put there.
+ * cleanup should be put there. Widget initialisation should always be performed
+ * after init() has been called, otherwise widgets that depend on an initialised
+ * GL state might fail to work correctly. For example, the Text widget will only
+ * produce garbled glyphs when used before init().
  */
 class GLFWApp
 {
