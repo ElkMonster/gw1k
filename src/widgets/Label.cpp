@@ -19,16 +19,21 @@ Label::Label(
     const std::string& text,
     int faceSize,
     const std::string& fontName,
+    bool autoSize,
     const char* colorScheme)
 :   WiBox(pos, size),
-    textProps_(0)
+    textProps_(0),
+    bAutoSized_(autoSize)
 {
     text_.setFont(fontName, (faceSize < 0 ? size.y : faceSize));
     setText(text);
     setTextProperty(GW1K_ALIGN_CENTER);
     setTextProperty(GW1K_ALIGN_VERT_CENTER);
-    text_.setPos(0, 0);
-    text_.setSize(size.x, size.y);
+    if (!bAutoSized_)
+    {
+        text_.setPos(0, 0);
+        text_.setSize(size.x, size.y);
+    }
 
     addSubObject(&text_);
 
@@ -43,13 +48,28 @@ Label::~Label()
 
 
 void
+Label::setAutoSized(bool b)
+{
+    if (!bAutoSized_ && b)
+    {
+        text_.setSize(99999.f, 99999.f);
+        Point textSize = text_.getTextSize();
+        setSize(textSize.x, textSize.y);
+    }
+    bAutoSized_ = b;
+}
+
+
+bool
+Label::isAutoSized() const
+{
+    return bAutoSized_;
+}
+
+
+void
 Label::preRenderUpdate()
 {
-    if (text_.bBBoxUpdateNeeded_)
-    {
-        text_.updateBBox();
-    }
-
     updateVerticalAlignment();
 }
 
@@ -58,7 +78,13 @@ void
 Label::setText(const std::string& text)
 {
     text_.setText(text);
-    WManager::getInstance()->registerForPreRenderUpdate(this);
+
+    if (bAutoSized_)
+    {
+        Point textSize = text_.getTextSize();
+        setSize(textSize.x, textSize.y);
+    }
+
 }
 
 
@@ -69,7 +95,7 @@ Label::setSize(float width, float height)
 
     // Bounding box needs update in order for us to recalculate the vertical
     // alignment
-    text_.bBBoxUpdateNeeded_ = true;
+    text_.updateBBox();
     WManager::getInstance()->registerForPreRenderUpdate(this);
 
     return size;

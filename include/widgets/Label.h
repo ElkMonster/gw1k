@@ -22,11 +22,16 @@ public:
           const std::string& text,
           int faceSize = -1,
           const std::string& fontname = "arial.ttf",
+          bool autoSize = false,
           const char* colorScheme = 0);
 
     virtual ~Label();
 
 public:
+
+    void setAutoSized(bool b = true);
+
+    bool isAutoSized() const;
 
     virtual void preRenderUpdate();
 
@@ -63,6 +68,7 @@ private:
 
     int textProps_;
 
+    bool bAutoSized_;
 };
 
 

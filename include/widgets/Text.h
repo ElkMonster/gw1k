@@ -12,6 +12,13 @@ namespace gw1k
 {
 
 
+/**
+ * Text is a pretty basic class that is not intended to be used directly as a
+ * widget. Instead, use a (auto-sized) Label without decoration if you need to
+ * display pure text in your application. Text does not entirely adhere to the
+ * normal rendering process and disregards widget boundaries. Also, it does not
+ * draw any decoration, but only pure letters.
+ */
 class Text : public Renderable
 {
 
@@ -27,7 +34,7 @@ public:
 
 public:
 
-    virtual void preRenderUpdate();
+    Point getTextSize() const;
 
     void setText(const std::string& text);
 
@@ -47,7 +54,10 @@ public:
 
 protected:
 
-    /** Only call this inside render() (garbles font textures otherwise, it seems) */
+    /**
+     * Only call this inside render() (garbles font textures otherwise, it
+     * seems). Note that preRenderUpdate() is part of render().
+     */
     void updateBBox();
 
 protected:
@@ -61,10 +71,6 @@ protected:
     char* text_;
 
     FTBBox ftBB_;
-
-private:
-
-    bool bBBoxUpdateNeeded_;
 
 };
 

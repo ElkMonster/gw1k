@@ -8,6 +8,7 @@
 #include <GL/gl.h>
 
 #include <iostream>
+#include <cmath>
 
 namespace gw1k
 {
@@ -50,13 +51,13 @@ Text::~Text()
 }
 
 
-void
-Text::preRenderUpdate()
+Point
+Text::getTextSize() const
 {
-    if (bBBoxUpdateNeeded_)
-    {
-        updateBBox();
-    }
+    int w = std::abs(ftBB_.Lower().Xf() - ftBB_.Upper().Xf());
+    int h = std::abs(ftBB_.Lower().Yf() - ftBB_.Upper().Yf());
+
+    return Point(w, h);
 }
 
 
@@ -70,11 +71,9 @@ Text::setText(const std::string& text)
 
     textLength_ = text.length();
     text_ = new char[textLength_ + 1];
+    strncpy(text_, text.c_str(), textLength_ + 1);
 
-    strcpy(text_, text.c_str());
-
-    bBBoxUpdateNeeded_ = true;
-    WManager::getInstance()->registerForPreRenderUpdate(this);
+    updateBBox();
 }
 
 
@@ -178,7 +177,6 @@ void
 Text::updateBBox()
 {
     ftBB_ = layout_->BBox(text_);
-    bBBoxUpdateNeeded_ = false;
 }
 
 
