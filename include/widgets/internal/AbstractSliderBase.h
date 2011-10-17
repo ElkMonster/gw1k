@@ -1,7 +1,7 @@
 #ifndef GW1K_ABSTRACTSLIDERBASE_H_
 #define GW1K_ABSTRACTSLIDERBASE_H_
 
-#include "WiBox.h"
+#include "../WiBox.h"
 
 namespace gw1k
 {
