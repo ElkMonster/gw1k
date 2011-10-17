@@ -4,39 +4,42 @@
 #include "Helpers.h"
 #include "WManager.h"
 #include "ThemeManager.h"
+#include "Math.h"
 
 #include <GL/gl.h>
 
 #include <iostream>
 #include <cmath>
+#include <limits>
 
 namespace gw1k
 {
 
 
-Text::Text(const char* colorScheme)
+Text::Text(
+    const Point& pos,
+    const std::string& text,
+    const std::string& fontName,
+    const char* colorScheme)
 :   Renderable(colorScheme),
     font_(0),
     layout_(new FTSimpleLayout()),
     textLength_(0),
-    text_(0)
+    text_(0),
+    size_(0, 0),
+    bLineLengthSet_(false),
+    fontName_(fontName)
 {
-    // Set to very large default such that we will end up
-    setSize(99999, 99999);
+    setPos(pos.x, pos.y);
+
+    setHorizontalAlignment(GW1K_ALIGN_LEFT);
     setColors(colorScheme);
-}
 
+    setFont(fontName_, 12);
 
-Text::Text(const std::string& text, const char* colorScheme)
-:   Renderable(colorScheme),
-    font_(0),
-    layout_(new FTSimpleLayout()),
-    textLength_(0),
-    text_(0)
-{
-    setSize(99999, 99999);
+    // Initial size is really big, so text never wraps
+    setSize(0, std::numeric_limits<float>::max());
     setText(text);
-    setColors(colorScheme);
 }
 
 
@@ -48,16 +51,6 @@ Text::~Text()
     }
 
     delete layout_;
-}
-
-
-Point
-Text::getTextSize() const
-{
-    int w = std::abs(ftBB_.Lower().Xf() - ftBB_.Upper().Xf());
-    int h = std::abs(ftBB_.Lower().Yf() - ftBB_.Upper().Yf());
-
-    return Point(w, h);
 }
 
 
@@ -73,15 +66,34 @@ Text::setText(const std::string& text)
     text_ = new char[textLength_ + 1];
     strncpy(text_, text.c_str(), textLength_ + 1);
 
-    updateBBox();
+    update();
+}
+
+
+void
+Text::setFontSize(int fontSize)
+{
+    if (font_)
+    {
+        setFont(fontName_, fontSize);
+    }
+}
+
+
+int
+Text::getFontSize() const
+{
+    return font_ ? font_->FaceSize() : -1;
 }
 
 
 void
 Text::setFont(const std::string& name, unsigned int faceSize)
 {
+    fontName_ = name;
     font_ = FTGLFontManager::Instance().GetFont(name.c_str(), faceSize);
     layout_->SetFont(font_);
+    update();
 }
 
 
@@ -132,9 +144,8 @@ Text::renderFg(const Point& offset) const
             // to exactly fit the expected way - try centered text without it.)
 
             Point t = offset + getPos();
-            float x = t.x - ftBB_.Lower().Xf();
             float y = t.y + ftBB_.Upper().Yf();
-            glTranslatef(x, y, 0.f);
+            glTranslatef(t.x, y, 0.f);
             glScalef(1.f, -1.f, 1.f);
             layout_->Render(text_, textLength_);
         }
@@ -160,9 +171,37 @@ Text::containsMouse(const Point& p) const
 const Point&
 Text::setSize(float width, float height)
 {
-    const Point& size = GuiObject::setSize(width, height);
-    layout_->SetLineLength(getSize().x);
-    return size;
+    if (width == 0.f)
+    {
+        bLineLengthSet_ = false;
+        // Make text one-liner
+        layout_->SetLineLength(std::numeric_limits<float>::max());
+        updateBBox();
+        updateWidth();
+        updateHeight();
+        // Trim line to actual size required by text (while keeping it a one-
+        // liner)
+        layout_->SetLineLength(size_.x);
+        updateBBox();
+    }
+    else
+    {
+        bLineLengthSet_ = true;
+        size_.x = GuiObject::setSize(width, height).x;
+        layout_->SetLineLength(size_.x);
+        updateBBox();
+        updateWidth();
+        updateHeight();
+    }
+
+    return size_;
+}
+
+
+const Point&
+Text::getSize() const
+{
+    return size_;
 }
 
 
@@ -176,7 +215,37 @@ Text::setColors(const char* colorScheme)
 void
 Text::updateBBox()
 {
-    ftBB_ = layout_->BBox(text_);
+    ftBB_ = (font_ && text_) ? layout_->BBox(text_) : FTBBox();
+}
+
+
+void
+Text::updateHeight()
+{
+    float hf = std::abs(ftBB_.Lower().Yf() - ftBB_.Upper().Yf());
+    int fontSize = getFontSize();
+    size_.y = std::ceil(hf / fontSize) * fontSize;
+}
+
+
+void
+Text::updateWidth()
+{
+    if (bLineLengthSet_)
+    {
+        size_.x = layout_->GetLineLength();
+    }
+    else
+    {
+        size_.x = std::ceil(std::abs(ftBB_.Lower().Xf() - ftBB_.Upper().Xf()));
+    }
+}
+
+
+void
+Text::update()
+{
+    setSize((bLineLengthSet_ ? size_.x : 0.f), size_.y);
 }
 
 

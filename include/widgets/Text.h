@@ -24,25 +24,35 @@ class Text : public Renderable
 
 public:
 
-    friend class Label;
-
-    Text(const char* colorScheme = 0);
-
-    Text(const std::string& text, const char* colorScheme = 0);
+    Text(const Point& pos,
+         const std::string& text,
+         const std::string& fontName = "arial.ttf",
+         const char* colorScheme = 0);
 
     virtual ~Text();
 
 public:
 
-    Point getTextSize() const;
-
     void setText(const std::string& text);
+
+    void setFontSize(int fontSize);
+
+    /**
+     * Gets the font size, or -1 if no font is set.
+     */
+    int getFontSize() const;
 
     void setFont(const std::string& name, unsigned int faceSize);
 
     void setHorizontalAlignment(TextProperty alignment);
 
+    /**
+     * Setting width to 0 leaves line length disregarded, meaning that the
+     * Text's width is always set to the actual width of the text (as one line).
+     */
     virtual const Point& setSize(float width, float height);
+
+    virtual const Point& getSize() const;
 
     virtual void renderFg(const Point& offset) const;
 
@@ -52,13 +62,15 @@ public:
 
     virtual void setColors(const char* colorScheme);
 
-protected:
+private:
 
-    /**
-     * Only call this inside render() (garbles font textures otherwise, it
-     * seems). Note that preRenderUpdate() is part of render().
-     */
     void updateBBox();
+
+    void updateWidth();
+
+    void updateHeight();
+
+    void update();
 
 protected:
 
@@ -72,6 +84,11 @@ protected:
 
     FTBBox ftBB_;
 
+    Point size_;
+
+    bool bLineLengthSet_;
+
+    std::string fontName_;
 };
 
 
