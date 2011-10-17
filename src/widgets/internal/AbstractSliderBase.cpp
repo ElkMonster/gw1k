@@ -1,4 +1,4 @@
-#include "widgets/AbstractSliderBase.h"
+#include "widgets/internal/AbstractSliderBase.h"
 
 #include "Log.h"
 #include "Math.h"
