@@ -1,7 +1,7 @@
 #ifndef GW1K_RANGESLIDER_H_
 #define GW1K_RANGESLIDER_H_
 
-#include "AbstractSliderBase.h"
+#include "internal/AbstractSliderBase.h"
 
 namespace gw1k
 {
