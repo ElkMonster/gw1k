@@ -85,10 +85,18 @@ Label::isAutoSized() const
 
 
 void
-Label::setLineLength(int length, bool includesPadding)
+Label::setWrapText(bool wrap)
 {
-    lineLength_ = length - (includesPadding ? (2 * padding_.x) : 0);
-    text_.setSize(lineLength_, text_.getSize().y);
+    if (wrap && (lineLength_ < 0))
+    {
+        updateWrappedTextLayout();
+    }
+    else if (!wrap && (lineLength_ >= 0))
+    {
+        // Disable wrapping, reset text to one line
+        lineLength_ = -1;
+        text_.setSize(0, 0);
+    }
 
     if (bAutoSized_)
     {
@@ -119,6 +127,11 @@ void
 Label::setPadding(const Point& padding)
 {
     padding_ = padding;
+
+    if (lineLength_ >= 0)
+    {
+        updateWrappedTextLayout();
+    }
 
     if (bAutoSized_)
     {
@@ -169,9 +182,10 @@ Label::setTextProperty(TextProperty p)
         textProps_ &=0xFFFFFFFF ^ (GW1K_ALIGN_TOP | GW1K_ALIGN_VERT_CENTER
             | GW1K_ALIGN_BOTTOM);
         textProps_ |= p;
-        updateTextAlignment();
         break;
     }
+
+    updateTextAlignment();
 }
 
 
@@ -184,6 +198,15 @@ Label::adaptToTextSize()
     textBox_.setSize(s.x - 2, s.y - 2);
 
     updateTextAlignment();
+}
+
+
+void
+Label::updateWrappedTextLayout()
+{
+    // Enable wrapping, even if not enough space due to padding
+    lineLength_ = std::max(1, textBox_.getSize().x - 2 * padding_.x);
+    text_.setSize(lineLength_, 0);
 }
 
 
@@ -241,10 +264,14 @@ const Point&
 Label::setSizeInternal(float width, float height)
 {
     const Point& size = WiBox::setSize(width, height);
-    textBox_.setSize(size.x - 2, size.y - 2);
+    int textWidth = textBox_.setSize(size.x - 2, size.y - 2).x - 2 * padding_.x;
 
-    int x = (lineLength_ < 0) ? 0 : (size.x - 2 - 2 * padding_.x);
-    text_.setSize(x, size.y - 2 - 2 * padding_.y);
+    if (lineLength_ >= 0)
+    {
+        lineLength_ = std::max(1, textWidth);
+    }
+
+    text_.setSize(((lineLength_ >= 0) ? lineLength_ : 0), 0);
     updateTextAlignment();
 
     return size;
@@ -302,9 +329,9 @@ Label::updateTextAlignment()
         }
 
         // Make sure we pass absolute coordinates and not relative ones
-        if (is_fraction(y))
+        if (is_fraction(x))
         {
-            y = round_pos(y);
+            x = round_pos(x);
         }
     }
 

@@ -30,7 +30,8 @@ public:
 public:
 
     /**
-     * When enabling auto-size, the text is reset to one line. Use
+     * When enabling auto-size, the text is reset to one line. Calls to
+     * setSize() will only
      * setLineLength() to set the length at which lines wrap.
      *
      */
@@ -39,14 +40,12 @@ public:
     bool isAutoSized() const;
 
     /**
-     * Set the line length. Text that uses more space than the specified line
-     * length is wrapped. Negative length values disable wrapping.
-     * The includesPadding argument states whether the given length already
-     * includes horizontal padding. If true, the actual line length is
-     * calculated internally by subtracting padding. If false, the line is set
-     * to have the given length.
+     * Enables or disables text wrapping. When enabled, the text will be wrapped
+     * if it exceeds the available horizontal space in a non-auto-sized Label.
+     * Wrapping can be combined with auto-sizing: If auto-sizing and wrapping
+     * are enabled, setSize()'s width argument will determine the line length.
      */
-    void setLineLength(int length, bool includesPadding = true);
+    void setWrapText(bool wrap = true);
 
     virtual void setText(const std::string& text);
 
@@ -82,6 +81,8 @@ private:
     bool textProp(TextProperty p) const;
 
     void adaptToTextSize();
+
+    void updateWrappedTextLayout();
 
 private:
 
