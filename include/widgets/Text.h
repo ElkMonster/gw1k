@@ -49,10 +49,17 @@ public:
 
     /**
      * Setting width to 0 leaves line length disregarded, meaning that the
-     * Text's width is always set to the actual width of the text (as one line).
+     * Text's width is always set to the actual width of the text (laid out as
+     * one line). Any other value sets the line length, thus wrapping texts that
+     * are too long to fit into length. The height argument is generally ignored
+     * and overwritten by the value calculated for the current text.
      */
     virtual const Point& setSize(float width, float height);
 
+    /**
+     * Gets the current size of the text when rendered. The returned height
+     * value is rounded to integer multiples of the font size.
+     */
     virtual const Point& getSize() const;
 
     virtual void renderFg(const Point& offset) const;

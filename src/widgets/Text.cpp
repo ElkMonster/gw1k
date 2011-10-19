@@ -115,6 +115,7 @@ Text::setHorizontalAlignment(TextProperty alignment)
     }
 
     layout_->SetAlignment(ftglAlignment);
+    updateBBox();
 }
 
 
@@ -130,23 +131,17 @@ Text::setSize(float width, float height)
         // for centre and right alignment, so we need to trim the line length
         // afterwards
         layout_->SetLineLength(999999.f);
-        updateBBox();
-        updateWidth();
-        updateHeight();
-        // Trim text to its actual size (while keeping it a one-liner); add 1 to
-        // work around FTGL wrapping the last letter in some cases (why?!)
-        //layout_->SetLineLength(size_.x);
-        //updateBBox();
     }
     else
     {
         bLineLengthSet_ = true;
         size_.x = GuiObject::setSize(width, height).x;
         layout_->SetLineLength(size_.x);
-        updateBBox();
-        updateWidth();
-        updateHeight();
     }
+
+    updateBBox();
+    updateWidth();
+    updateHeight();
 
     return size_;
 }
@@ -180,11 +175,18 @@ Text::renderFg(const Point& offset) const
 
             Point t = offset + getPos();
 
+            // We need to "neutralise" the offset that the text gets when it is
+            // aligned centred or right and line length is not set (because the
+            // text is then located somewhere far from our screen); if line
+            // length is set, there's no need to neutralise (because the text
+            // should be on-screen usually)
             float x = t.x + (bLineLengthSet_ ? 0 : -ftBB_.Lower().Xf());
+
             // We need to add the text's upper y extent to our y-offset; this
             // translates the text the correct (from our point of view) baseline
             // (try leaving it out, the text will be displaced)
             float y = t.y + ftBB_.Upper().Yf();
+
             glTranslatef(x, y, 0.f);
             glScalef(1.f, -1.f, 1.f);
             layout_->Render(text_, textLength_);
