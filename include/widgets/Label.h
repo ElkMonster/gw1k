@@ -29,13 +29,30 @@ public:
 
 public:
 
+    /**
+     * When enabling auto-size, the text is reset to one line. Use
+     * setLineLength() to set the length at which lines wrap.
+     *
+     */
     void setAutoSized(bool b = true);
 
     bool isAutoSized() const;
 
-    virtual void preRenderUpdate();
+    /**
+     * Set the line length. Text that uses more space than the specified line
+     * length is wrapped. Negative length values disable wrapping.
+     * The includesPadding argument states whether the given length already
+     * includes horizontal padding. If true, the actual line length is
+     * calculated internally by subtracting padding. If false, the line is set
+     * to have the given length.
+     */
+    void setLineLength(int length, bool includesPadding = true);
 
     virtual void setText(const std::string& text);
+
+    void setPadding(const Point& padding);
+
+    const Point& getPadding() const;
 
     virtual const Point& setSize(float width, float height);
 
@@ -58,17 +75,38 @@ public:
 
 private:
 
-    void updateVerticalAlignment();
+    const Point& setSizeInternal(float width, float height);
+
+    void updateTextAlignment();
 
     bool textProp(TextProperty p) const;
 
+    void adaptToTextSize();
+
 private:
 
-    Text text_;
+    Box textBox_;
+
+    Point padding_;
 
     int textProps_;
 
     bool bAutoSized_;
+
+    Text text_;
+
+    /**
+     * If true, a vertically centred Label's text is placed below the
+     * mathematical centre to improve the perceived "centring". If false, the
+     * text is placed at the mathematical centre, but it may seem to be offset
+     * to the top by a little due to most letters "bodies" lying mostly above
+     * the baseline (except for letters like g, j, y, etc.).
+     * Default value is true.
+     */
+    bool bVCenterVisually_;
+
+    int lineLength_;
+
 };
 
 

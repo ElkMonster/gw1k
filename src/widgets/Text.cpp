@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <cmath>
-#include <limits>
 
 namespace gw1k
 {
@@ -34,11 +33,8 @@ Text::Text(
 
     setHorizontalAlignment(GW1K_ALIGN_LEFT);
     setColors(colorScheme);
-
     setFont(fontName_, 12);
 
-    // Initial size is really big, so text never wraps
-    setSize(0, std::numeric_limits<float>::max());
     setText(text);
 }
 
@@ -122,67 +118,25 @@ Text::setHorizontalAlignment(TextProperty alignment)
 }
 
 
-void
-Text::renderFg(const Point& offset) const
-{
-    if (font_ && text_)
-    {
-        glPushMatrix();
-        {
-            // We have to tinker a little with the Y coordinate because FTGL
-            // assumes the default OpenGL default coordinate system with X and Y
-            // axis going right and up, respectively. Since our coordinate
-            // system's origin is in the upper left corner and spreads right and
-            // down, we have to transform a little:
-            // First, move to global render position, though this actually
-            // happens in FTGL space, which moves away from our view.
-            // Second, mirror vertically to compensate for FTGL's and our
-            // coordinate system's opposite Y directions, so the text is flipped
-            // at the origin an appears at the right place in our coordinate
-            // system.
-            // (Note: The ftBB_ addenda are needed to adjust the text's position
-            // to exactly fit the expected way - try centered text without it.)
-
-            Point t = offset + getPos();
-            float y = t.y + ftBB_.Upper().Yf();
-            glTranslatef(t.x, y, 0.f);
-            glScalef(1.f, -1.f, 1.f);
-            layout_->Render(text_, textLength_);
-        }
-        glPopMatrix();
-    }
-}
-
-
-void
-Text::renderBg(const Point& offset) const
-{
-    // Nothing to do here
-}
-
-
-bool
-Text::containsMouse(const Point& p) const
-{
-    return false;
-}
-
-
 const Point&
 Text::setSize(float width, float height)
 {
     if (width == 0.f)
     {
         bLineLengthSet_ = false;
-        // Make text one-liner
-        layout_->SetLineLength(std::numeric_limits<float>::max());
+        // Make text one-liner; using std::numeric_limits<float>::max() here
+        // resulted in a zero-width bounding box, so a really big number is used
+        // instead; note that this places the text a some very distant position
+        // for centre and right alignment, so we need to trim the line length
+        // afterwards
+        layout_->SetLineLength(999999.f);
         updateBBox();
         updateWidth();
         updateHeight();
-        // Trim line to actual size required by text (while keeping it a one-
-        // liner)
-        layout_->SetLineLength(size_.x);
-        updateBBox();
+        // Trim text to its actual size (while keeping it a one-liner); add 1 to
+        // work around FTGL wrapping the last letter in some cases (why?!)
+        //layout_->SetLineLength(size_.x);
+        //updateBBox();
     }
     else
     {
@@ -202,6 +156,55 @@ const Point&
 Text::getSize() const
 {
     return size_;
+}
+
+
+void
+Text::renderFg(const Point& offset) const
+{
+    if (font_ && text_)
+    {
+        glPushMatrix();
+        {
+            // We have to tinker a little with the Y coordinate because FTGL
+            // assumes the default OpenGL default coordinate system with X and Y
+            // axis going right and up, respectively. Since our coordinate
+            // system's origin is in the upper left corner and spreads right and
+            // down, we have to transform a little:
+            // First, move to global render position, though this actually
+            // happens in FTGL space, which moves away from our view.
+            // Second, mirror vertically to compensate for FTGL's and our
+            // coordinate system's opposite Y directions, so the text is flipped
+            // at the origin an appears at the right place in our coordinate
+            // system.
+
+            Point t = offset + getPos();
+
+            float x = t.x + (bLineLengthSet_ ? 0 : -ftBB_.Lower().Xf());
+            // We need to add the text's upper y extent to our y-offset; this
+            // translates the text the correct (from our point of view) baseline
+            // (try leaving it out, the text will be displaced)
+            float y = t.y + ftBB_.Upper().Yf();
+            glTranslatef(x, y, 0.f);
+            glScalef(1.f, -1.f, 1.f);
+            layout_->Render(text_, textLength_);
+        }
+        glPopMatrix();
+    }
+}
+
+
+void
+Text::renderBg(const Point& offset) const
+{
+    // Nothing to do here
+}
+
+
+bool
+Text::containsMouse(const Point& p) const
+{
+    return false;
 }
 
 

@@ -17,7 +17,8 @@ namespace gw1k
  * widget. Instead, use a (auto-sized) Label without decoration if you need to
  * display pure text in your application. Text does not entirely adhere to the
  * normal rendering process and disregards widget boundaries. Also, it does not
- * draw any decoration, but only pure letters.
+ * draw any decoration, but only pure letters. Furthermore, it doesn't react to
+ * mouse or keyboard events, including colour changes.
  */
 class Text : public Renderable
 {
@@ -89,6 +90,7 @@ protected:
     bool bLineLengthSet_;
 
     std::string fontName_;
+
 };
 
 
