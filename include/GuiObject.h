@@ -48,9 +48,13 @@ public:
 
     virtual void setPos(float x, float y);
 
+    virtual void setPos(const Point& pos);
+
     virtual const Point& getPos() const;
 
     virtual const Point& setSize(float width, float height);
+
+    virtual const Point& setSize(const Point& size);
 
     virtual const Point& getSize() const;
 
