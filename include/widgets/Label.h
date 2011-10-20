@@ -22,15 +22,36 @@ public:
           const std::string& text,
           int faceSize = -1,
           const std::string& fontname = "arial.ttf",
+          bool autoSize = false,
           const char* colorScheme = 0);
 
     virtual ~Label();
 
 public:
 
-    virtual void preRenderUpdate();
+    /**
+     * When enabling auto-size, the text is reset to one line. Calls to
+     * setSize() will only
+     * setLineLength() to set the length at which lines wrap.
+     *
+     */
+    void setAutoSized(bool b = true);
+
+    bool isAutoSized() const;
+
+    /**
+     * Enables or disables text wrapping. When enabled, the text will be wrapped
+     * if it exceeds the available horizontal space in a non-auto-sized Label.
+     * Wrapping can be combined with auto-sizing: If auto-sizing and wrapping
+     * are enabled, setSize()'s width argument will determine the line length.
+     */
+    void setWrapText(bool wrap = true);
 
     virtual void setText(const std::string& text);
+
+    void setPadding(const Point& padding);
+
+    const Point& getPadding() const;
 
     virtual const Point& setSize(float width, float height);
 
@@ -53,15 +74,37 @@ public:
 
 private:
 
-    void updateVerticalAlignment();
+    void updateTextAlignment();
 
     bool textProp(TextProperty p) const;
 
+    void adaptToTextSize();
+
+    void updateWrappedTextLayout();
+
 private:
+
+    Box textBox_;
+
+    Point padding_;
+
+    int textProps_;
+
+    bool bAutoSized_;
 
     Text text_;
 
-    int textProps_;
+    /**
+     * If true, a vertically centred Label's text is placed below the
+     * mathematical centre to improve the perceived "centring". If false, the
+     * text is placed at the mathematical centre, but it may seem to be offset
+     * to the top by a little due to most letters "bodies" lying mostly above
+     * the baseline (except for letters like g, j, y, etc.).
+     * Default value is true.
+     */
+    bool bVCenterVisually_;
+
+    int lineLength_;
 
 };
 

@@ -2,7 +2,6 @@
 
 #include "Gw1kConstants.h"
 #include "Math.h"
-#include "WManager.h"
 #include "Color4i.h"
 #include "ThemeManager.h"
 
@@ -19,18 +18,36 @@ Label::Label(
     const std::string& text,
     int faceSize,
     const std::string& fontName,
+    bool autoSize,
     const char* colorScheme)
 :   WiBox(pos, size),
-    textProps_(0)
+    textBox_(Point(1, 1), size - Point(2, 2)),
+    padding_(0, 0),
+    textProps_(0),
+    bAutoSized_(autoSize),
+    text_(padding_, text),
+    bVCenterVisually_(true),
+    lineLength_(-1)
 {
-    text_.setFont(fontName, (faceSize < 0 ? size.y : faceSize));
-    setText(text);
+    int fSize = (faceSize < 0) ? std::max(1, size.y - 2) : faceSize;
+    text_.setFont(fontName, fSize);
     setTextProperty(GW1K_ALIGN_CENTER);
     setTextProperty(GW1K_ALIGN_VERT_CENTER);
-    text_.setPos(0, 0);
-    text_.setSize(size.x, size.y);
 
-    addSubObject(&text_);
+    if (bAutoSized_)
+    {
+        adaptToTextSize();
+    }
+    else
+    {
+        Point s = size - Point(2, 2) - padding_ - padding_;
+        text_.setSize(s.x, s.y);
+        updateTextAlignment();
+    }
+
+    addSubObject(&textBox_);
+    textBox_.setEmbedded();
+    textBox_.addSubObject(&text_);
 
     addMouseListener(this);
 
@@ -43,14 +60,48 @@ Label::~Label()
 
 
 void
-Label::preRenderUpdate()
+Label::setAutoSized(bool b)
 {
-    if (text_.bBBoxUpdateNeeded_)
+    if (!bAutoSized_ && b)
     {
-        text_.updateBBox();
+        text_.setSize(0.f, 999999.f);
+        adaptToTextSize();
+    }
+    else if (bAutoSized_ && !b)
+    {
+        const Point& size = getSize();
+        text_.setSize(size.x - 2 - 2 * padding_.x, size.y - 2 - 2 * padding_.y);
+        updateTextAlignment();
+    }
+    bAutoSized_ = b;
+}
+
+
+bool
+Label::isAutoSized() const
+{
+    return bAutoSized_;
+}
+
+
+void
+Label::setWrapText(bool wrap)
+{
+    if (wrap && (lineLength_ < 0))
+    {
+        updateWrappedTextLayout();
+    }
+    else if (!wrap && (lineLength_ >= 0))
+    {
+        // Disable wrapping, reset text to one line
+        lineLength_ = -1;
+        text_.setSize(0, 0);
     }
 
-    updateVerticalAlignment();
+    if (bAutoSized_)
+    {
+        adaptToTextSize();
+    }
 }
 
 
@@ -58,21 +109,84 @@ void
 Label::setText(const std::string& text)
 {
     text_.setText(text);
-    WManager::getInstance()->registerForPreRenderUpdate(this);
+
+    if (bAutoSized_)
+    {
+        adaptToTextSize();
+    }
+    else
+    {
+        // Update could be necessary if text's length has changed so much that
+        // the number of lines changed
+        updateTextAlignment();
+    }
+}
+
+
+void
+Label::setPadding(const Point& padding)
+{
+    padding_ = padding;
+
+    if (lineLength_ >= 0)
+    {
+        updateWrappedTextLayout();
+    }
+
+    if (bAutoSized_)
+    {
+        adaptToTextSize();
+    }
+    else
+    {
+        const Point& s = getSize();
+        setSize(s.x, s.y);
+        updateTextAlignment();
+    }
+}
+
+
+const Point&
+Label::getPadding() const
+{
+    return padding_;
 }
 
 
 const Point&
 Label::setSize(float width, float height)
 {
-    const Point& size = GuiObject::setSize(width, height);
+    if (bAutoSized_)
+    {
+        // lineLength_ < 0: do nothing
+        if (lineLength_ >= 0) // Wrapping is enabled
+        {
+            const Point& size = WiBox::setSize(width, height);
+            lineLength_ = std::max(size.x - 2 - 2 * padding_.x, 1);
+            text_.setSize(lineLength_, 0);
+            adaptToTextSize();
+            updateTextAlignment();
+        }
+    }
+    else
+    {
+        const Point& size = WiBox::setSize(width, height);
+        textBox_.setSize(size.x - 2, size.y - 2);
 
-    // Bounding box needs update in order for us to recalculate the vertical
-    // alignment
-    text_.bBBoxUpdateNeeded_ = true;
-    WManager::getInstance()->registerForPreRenderUpdate(this);
+        if (lineLength_ < 0)
+        {
+            text_.setSize(0, 0);
+        }
+        else
+        {
+            lineLength_ = std::max(size.x - 2 - 2 * padding_.x, 1);
+            text_.setSize(lineLength_, 0);
+        }
+        updateTextAlignment();
 
-    return size;
+    }
+
+    return getSize();
 }
 
 
@@ -86,7 +200,8 @@ Label::setTextProperty(TextProperty p)
     case GW1K_ALIGN_RIGHT:
     case GW1K_ALIGN_JUSTIFY:
         // Erase current horizontal alignment
-        textProps_ &= !(GW1K_ALIGN_LEFT | GW1K_ALIGN_CENTER | GW1K_ALIGN_RIGHT
+
+        textProps_ &= 0xFFFFFFFF ^ (GW1K_ALIGN_LEFT | GW1K_ALIGN_CENTER | GW1K_ALIGN_RIGHT
             | GW1K_ALIGN_JUSTIFY);
         textProps_ |= p;
         text_.setHorizontalAlignment(p);
@@ -94,12 +209,35 @@ Label::setTextProperty(TextProperty p)
     case GW1K_ALIGN_TOP:
     case GW1K_ALIGN_VERT_CENTER:
     case GW1K_ALIGN_BOTTOM:
-        textProps_ &= !(GW1K_ALIGN_TOP | GW1K_ALIGN_VERT_CENTER
+        textProps_ &=0xFFFFFFFF ^ (GW1K_ALIGN_TOP | GW1K_ALIGN_VERT_CENTER
             | GW1K_ALIGN_BOTTOM);
         textProps_ |= p;
-        WManager::getInstance()->registerForPreRenderUpdate(this);
         break;
     }
+
+    updateTextAlignment();
+}
+
+
+void
+Label::adaptToTextSize()
+{
+    Point s = text_.getSize() + padding_ + padding_ + Point(2, 2);
+
+    WiBox::setSize(s.x, s.y);
+    textBox_.setSize(s.x - 2, s.y - 2);
+
+    updateTextAlignment();
+}
+
+
+void
+Label::updateWrappedTextLayout()
+{
+    // Enable wrapping by setting it to a value >= 0, even if not enough space
+    // due to padding
+    lineLength_ = std::max(1, textBox_.getSize().x - 2 * padding_.x);
+    text_.setSize(lineLength_, 0);
 }
 
 
@@ -154,70 +292,64 @@ Label::mouseWheeled(int delta, GuiObject* receiver)
 
 
 void
-Label::updateVerticalAlignment()
+Label::updateTextAlignment()
 {
-    float y;
+    float x = 0;
+    float y = 0;
 
-    if (textProps_ & GW1K_ALIGN_TOP)
+    if (!bAutoSized_)
     {
-        y = 0;
-    }
-    else
-    {
-        FTBBox& bb = text_.ftBB_;
+        const Point& textSize = text_.getSize();
 
-        float textHeight = bb.Upper().Yf() - bb.Lower().Yf();
-        float labelHeight = getSize().y;
-
-        if (textProps_ & GW1K_ALIGN_BOTTOM)
+        // GW1K_ALIGN_TOP -> keep y = 0;
+        if (!(textProps_ & GW1K_ALIGN_TOP))
         {
-            y = labelHeight - textHeight;
+
+            float availableHeight = textBox_.getSize().y - 2 * padding_.y;
+
+            if (textProps_ & GW1K_ALIGN_BOTTOM)
+            {
+                y = availableHeight - textSize.y;
+            }
+            else // GW1K_ALIGN_VERT_CENTER or not set
+            {
+                y = 0.5f * (availableHeight - textSize.y);
+                if (bVCenterVisually_)
+                {
+                    y += 0.1f * text_.getFontSize();
+                }
+            }
         }
-        else // GW1K_ALIGN_VERT_CENTER or not set
+
+        // Make sure we pass absolute coordinates and not relative ones
+        if (is_fraction(y))
         {
-            y = 0.5f * (labelHeight - textHeight);
+            y = round_pos(y);
         }
-    }
 
-    // Make sure we pass absolute coordinates and not relative ones
-    if (is_fraction(y))
-    {
-        y = round_pos(y);
-    }
-
-
-    float x;
-
-    if (textProps_ & GW1K_ALIGN_LEFT)
-    {
-        x = 0;
-    }
-    else
-    {
-        FTBBox& bb = text_.ftBB_;
-
-        float textWidth = std::abs(bb.Upper().Xf() - bb.Lower().Xf());
-        float labelWidth = getSize().x;
-
-        if (textProps_ & GW1K_ALIGN_RIGHT)
+        // GW1K_ALIGN_LEFT -> keep x = 0;
+        if (!(textProps_ & GW1K_ALIGN_LEFT))
         {
-            x = labelWidth - textWidth;
+            float availableWidth = textBox_.getSize().x - 2 * padding_.x;
+
+            if (textProps_ & GW1K_ALIGN_RIGHT)
+            {
+                x = availableWidth - textSize.x;
+            }
+            else // GW1K_ALIGN_CENTER or not set
+            {
+                x = 0.5f * (availableWidth - textSize.x);
+            }
         }
-        else // GW1K_ALIGN_CENTER or not set
+
+        // Make sure we pass absolute coordinates and not relative ones
+        if (is_fraction(x))
         {
-            x = 0.5f * (labelWidth - textWidth);
+            x = round_pos(x);
         }
     }
 
-    // Make sure we pass absolute coordinates and not relative ones
-    if (is_fraction(x))
-    {
-        x = round_pos(x);
-    }
-
-    //text_.setPosition(text_.getPosition().x, y);
-    text_.setPos(x, y);
-    //text_.setSize()
+    text_.setPos(x + padding_.x, y + padding_.y);
 }
 
 
