@@ -174,8 +174,8 @@ GLFWApp::getWindowParams(int& r, int& g, int& b, int& a, int& depthBits, int& st
 void
 GLFWApp::resizeWindowEvent(int width, int height)
 {
-    WManager::getInstance()->setWindowSize(width, height);
     glViewport(0, 0, width, height);
+    WManager::getInstance()->setWindowSize(width, height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
