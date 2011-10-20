@@ -91,7 +91,7 @@ Slider::setValue(float val)
     {
         newPos.x = z;
     }
-    handle_.setPos(newPos.x, newPos.y);
+    handle_.setPos(newPos);
 
     if (oldValue != value_)
     {
@@ -276,7 +276,7 @@ Slider::setHandlePosition(Point newPos)
         newPos.x = std::max(1, std::min(newPos.x, maxPos.x));
     }
 
-    handle_.setPos(newPos.x, newPos.y);
+    handle_.setPos(newPos);
 
     float oldValue = value_;
     calculateValue();

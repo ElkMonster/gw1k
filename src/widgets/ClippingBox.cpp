@@ -263,7 +263,7 @@ ClippingBox::autoAdjustSubObj(GuiObject* o)
 
     if (bNeedsAdjustment)
     {
-        o->setSize(adjustedSize.x, adjustedSize.y);
+        o->setSize(adjustedSize);
     }
 }
 

@@ -29,7 +29,7 @@ Text::Text(
     bLineLengthSet_(false),
     fontName_(fontName)
 {
-    setPos(pos.x, pos.y);
+    setPos(pos);
 
     setHorizontalAlignment(GW1K_ALIGN_LEFT);
     setColors(colorScheme);
