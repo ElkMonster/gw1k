@@ -3,6 +3,9 @@
 #include "WManager.h"
 #include "GLFWAdapter.h"
 
+#define GW1K_ENABLE_GL_ERROR_CHECKS
+#include "GLErrorCheck.h"
+
 namespace gw1k
 {
 
@@ -36,13 +39,15 @@ GLFWApp::init()
     }
 
     int ret = setupGLFW();
+    PRINT_IF_GL_ERROR;
 
     // Setup GL here already because some components might need it for their
     // initialisation (e.g., FTGL requires a readily set-up GL state when
-    // working with it, even though it's not obvious). (Thus, initialisation
-    // should be done in preMainLoop(), or any other method that is called after
-    // init().)
+    // working with it, even though it's not obvious). (Therefore,
+    // initialisation should be done in preMainLoop(), or any other method that
+    // is called after init().)
     setupGLForRender();
+    PRINT_IF_GL_ERROR;
 
     // Registering callbacks is done after the other setup steps to make sure
     // that nothing can go wrong in terms of setting size. Upon registering the
