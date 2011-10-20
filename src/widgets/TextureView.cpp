@@ -3,9 +3,9 @@
 #include "utils/PNGLoader.h"
 #include "WManager.h"
 #include "Render.h"
+#include "Log.h"
 
-#define GW1K_ENABLE_GL_ERROR_CHECKS
-#include "GLErrorCheck.h"
+#include <cstring>
 
 namespace gw1k
 {
@@ -47,6 +47,17 @@ TextureView::loadTexture(const std::string& filename)
 
     if (loadPngTexture(filename.c_str(), imgWidth_, imgHeight_, imgAlpha_, pImgData_))
     {
+        if (imgWidth_ != imgHeight_)
+        {
+            if (!std::strstr(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)),
+                "GL_ARB_texture_non_power_of_two"))
+            {
+                Log::error("TextureView", Log::os()
+                    << "Image size is " << imgWidth_ << "x" << imgHeight_
+                    << ", but GL_ARB_texture_non_power_of_two not supported");
+            }
+        }
+
         bReqLoadTexture_ = true;
         WManager::getInstance()->registerForPreRenderUpdate(this);
         return true;
@@ -65,12 +76,17 @@ TextureView::createTexture()
         glGenTextures(1, pTex_);
         glBindTexture(GL_TEXTURE_2D, *pTex_);
 
+        // Required for some graphics cards to work with non-power of two images
+        // according to http://stackoverflow.com/questions/318194/
+        // display-arbitrary-size-2d-image-in-opengl/413658#413658
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
         int format = imgAlpha_ ? GL_RGBA : GL_RGB;
         glTexImage2D(GL_TEXTURE_2D, 0, format, imgWidth_, imgHeight_, 0, format,
             GL_UNSIGNED_BYTE, pImgData_);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
