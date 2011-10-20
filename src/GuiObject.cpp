@@ -127,13 +127,6 @@ GuiObject::setPos(float x, float y)
 }
 
 
-inline void
-GuiObject::setPos(const Point& pos)
-{
-    setPos(pos.x, pos.y);
-}
-
-
 const Point&
 GuiObject::setSize(float width, float height)
 {
@@ -169,13 +162,6 @@ GuiObject::setSize(float width, float height)
     }
 
     return newSize;
-}
-
-
-inline const Point&
-GuiObject::setSize(const Point& size)
-{
-    return setSize(size.x, size.y);
 }
 
 

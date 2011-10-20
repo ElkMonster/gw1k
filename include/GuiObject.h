@@ -48,13 +48,27 @@ public:
 
     virtual void setPos(float x, float y);
 
-    virtual void setPos(const Point& pos);
+    /**
+     * Calls setPos(float, float)
+     * Do not override this function in a derived class.
+     * To call this function on an object of a class that overrides
+     * setPos(float, float), prepend 'GuiObject::' to it.
+     * Example: var->GuiObject::setPos(Point)
+     */
+    void setPos(const Point& pos);
 
     virtual const Point& getPos() const;
 
     virtual const Point& setSize(float width, float height);
 
-    virtual const Point& setSize(const Point& size);
+    /**
+     * Calls setSize(float, float).
+     * Do not override this function in a derived class.
+     * To call this function on an object of a class that overrides
+     * setSize(float, float), prepend 'GuiObject::' to it.
+     * Example: var->GuiObject::setSize(Point)
+     */
+    const Point& setSize(const Point& size);
 
     virtual const Point& getSize() const;
 
@@ -158,6 +172,21 @@ private:
     bool bIsInteractive_;
 
 };
+
+
+// Inline methods need to be in the header
+inline void
+GuiObject::setPos(const Point& pos)
+{
+    setPos(pos.x, pos.y);
+}
+
+
+inline const Point&
+GuiObject::setSize(const Point& size)
+{
+    return setSize(size.x, size.y);
+}
 
 
 } // namespace gw1k
