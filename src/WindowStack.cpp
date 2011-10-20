@@ -18,9 +18,6 @@ void
 WindowStack::pushGlScissor(const Point& pos, const Point& size)
 {
     //MSG("push");
-    Point cpos = pos;
-    Point csize = size;
-
     if (stack_.size() == 0)
     {
         glEnable(GL_SCISSOR_TEST);
