@@ -49,12 +49,6 @@ GLFWApp::init()
     setupGLForRender();
     PRINT_IF_GL_ERROR;
 
-    // Registering callbacks is done after the other setup steps to make sure
-    // that nothing can go wrong in terms of setting size. Upon registering the
-    // resize callback function, it is immediately called since opening the
-    // window has already created one event.
-    registerGLFWCallbacks();
-
     return ret;
 }
 
@@ -246,6 +240,8 @@ GLFWApp::setupGLFW()
         // TODO handle
         return 1;
     }
+
+    registerGLFWCallbacks();
 
     // Set vsync on
     glfwSwapInterval(1);
