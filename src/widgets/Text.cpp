@@ -227,9 +227,7 @@ Text::updateBBox()
 void
 Text::updateHeight()
 {
-    float hf = std::abs(ftBB_.Lower().Yf() - ftBB_.Upper().Yf());
-    int fontSize = getFontSize();
-    size_.y = std::ceil(hf / fontSize) * fontSize;
+    size_.y = std::ceil(std::abs(ftBB_.Lower().Yf() - ftBB_.Upper().Yf()));
 }
 
 

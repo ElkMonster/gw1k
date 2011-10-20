@@ -57,8 +57,7 @@ public:
     virtual const Point& setSize(float width, float height);
 
     /**
-     * Gets the current size of the text when rendered. The returned height
-     * value is rounded to integer multiples of the font size.
+     * Gets the current size of the text when rendered.
      */
     virtual const Point& getSize() const;
 
