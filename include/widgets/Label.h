@@ -3,7 +3,7 @@
 
 #include "WiBox.h"
 #include "../listeners/MouseListener.h"
-#include "Text.h"
+#include "internal/Text.h"
 #include "../Gw1kConstants.h"
 
 #include <string>

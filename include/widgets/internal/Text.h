@@ -1,8 +1,8 @@
 #ifndef GW1K_TEXT_H_
 #define GW1K_TEXT_H_
 
-#include "../Renderable.h"
-#include "../Gw1kConstants.h"
+#include "../../Renderable.h"
+#include "../../Gw1kConstants.h"
 
 
 #include <string>

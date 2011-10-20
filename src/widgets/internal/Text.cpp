@@ -1,4 +1,4 @@
-#include "widgets/Text.h"
+#include "widgets/internal/Text.h"
 #include "FTGLFontManager.h"
 
 #include "Helpers.h"
