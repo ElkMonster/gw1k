@@ -74,8 +74,6 @@ public:
 
 private:
 
-    const Point& setSizeInternal(float width, float height);
-
     void updateTextAlignment();
 
     bool textProp(TextProperty p) const;

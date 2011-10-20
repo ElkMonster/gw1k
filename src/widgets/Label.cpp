@@ -140,7 +140,7 @@ Label::setPadding(const Point& padding)
     else
     {
         const Point& s = getSize();
-        setSizeInternal(s.x, s.y);
+        setSize(s.x, s.y);
         updateTextAlignment();
     }
 }
@@ -156,7 +156,37 @@ Label::getPadding() const
 const Point&
 Label::setSize(float width, float height)
 {
-    return bAutoSized_ ? getSize() : setSizeInternal(width, height);
+    if (bAutoSized_)
+    {
+        // lineLength_ < 0: do nothing
+        if (lineLength_ >= 0) // Wrapping is enabled
+        {
+            const Point& size = WiBox::setSize(width, height);
+            lineLength_ = std::max(size.x - 2 - 2 * padding_.x, 1);
+            text_.setSize(lineLength_, 0);
+            adaptToTextSize();
+            updateTextAlignment();
+        }
+    }
+    else
+    {
+        const Point& size = WiBox::setSize(width, height);
+        textBox_.setSize(size.x - 2, size.y - 2);
+
+        if (lineLength_ < 0)
+        {
+            text_.setSize(0, 0);
+        }
+        else
+        {
+            lineLength_ = std::max(size.x - 2 - 2 * padding_.x, 1);
+            text_.setSize(lineLength_, 0);
+        }
+        updateTextAlignment();
+
+    }
+
+    return getSize();
 }
 
 
@@ -204,7 +234,8 @@ Label::adaptToTextSize()
 void
 Label::updateWrappedTextLayout()
 {
-    // Enable wrapping, even if not enough space due to padding
+    // Enable wrapping by setting it to a value >= 0, even if not enough space
+    // due to padding
     lineLength_ = std::max(1, textBox_.getSize().x - 2 * padding_.x);
     text_.setSize(lineLength_, 0);
 }
@@ -260,24 +291,6 @@ Label::mouseWheeled(int delta, GuiObject* receiver)
 }
 
 
-const Point&
-Label::setSizeInternal(float width, float height)
-{
-    const Point& size = WiBox::setSize(width, height);
-    int textWidth = textBox_.setSize(size.x - 2, size.y - 2).x - 2 * padding_.x;
-
-    if (lineLength_ >= 0)
-    {
-        lineLength_ = std::max(1, textWidth);
-    }
-
-    text_.setSize(((lineLength_ >= 0) ? lineLength_ : 0), 0);
-    updateTextAlignment();
-
-    return size;
-}
-
-
 void
 Label::updateTextAlignment()
 {
@@ -286,22 +299,24 @@ Label::updateTextAlignment()
 
     if (!bAutoSized_)
     {
+        const Point& textSize = text_.getSize();
+
         // GW1K_ALIGN_TOP -> keep y = 0;
         if (!(textProps_ & GW1K_ALIGN_TOP))
         {
-            float textHeight = text_.getFontSize();
+
             float availableHeight = textBox_.getSize().y - 2 * padding_.y;
 
             if (textProps_ & GW1K_ALIGN_BOTTOM)
             {
-                y = availableHeight - textHeight;
+                y = availableHeight - textSize.y;
             }
             else // GW1K_ALIGN_VERT_CENTER or not set
             {
-                y = 0.5f * (availableHeight - textHeight);
+                y = 0.5f * (availableHeight - textSize.y);
                 if (bVCenterVisually_)
                 {
-                    y += 0.1f * textHeight;
+                    y += 0.1f * text_.getFontSize();
                 }
             }
         }
@@ -315,16 +330,15 @@ Label::updateTextAlignment()
         // GW1K_ALIGN_LEFT -> keep x = 0;
         if (!(textProps_ & GW1K_ALIGN_LEFT))
         {
-            float textWidth = text_.getSize().x;
             float availableWidth = textBox_.getSize().x - 2 * padding_.x;
 
             if (textProps_ & GW1K_ALIGN_RIGHT)
             {
-                x = availableWidth - textWidth;
+                x = availableWidth - textSize.x;
             }
             else // GW1K_ALIGN_CENTER or not set
             {
-                x = 0.5f * (availableWidth - textWidth);
+                x = 0.5f * (availableWidth - textSize.x);
             }
         }
 
