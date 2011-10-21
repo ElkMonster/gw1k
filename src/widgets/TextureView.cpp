@@ -114,14 +114,7 @@ TextureView::createTexture()
 void
 TextureView::setTexMulColor(const Color4i* c)
 {
-    if (c)
-    {
-        texMulColor_ = *c;
-    }
-    else
-    {
-        texMulColor_ = Color4i(0, 0, 0, 0);
-    }
+    texMulColor_ = (c ? *c : Color4i(0, 0, 0, 0));
 }
 
 
