@@ -66,6 +66,8 @@ public:
 
     void setTexMulColor(const Color4i* c);
 
+    const Point& getTextureSize() const;
+
     virtual void preRenderUpdate();
 
     virtual void renderOGLContent() const;
@@ -78,9 +80,7 @@ private:
 
     GLuint* pTex_;
 
-    int imgWidth_;
-
-    int imgHeight_;
+    Point imgSize_;
 
     bool imgAlpha_;
 

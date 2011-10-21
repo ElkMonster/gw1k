@@ -27,7 +27,7 @@ TextureView::TextureView(
     loadTexture(filename);
     if (bResizeToImageSize)
     {
-        setSize(imgWidth_, imgHeight_);
+        GuiObject::setSize(imgSize_);
     }
 }
 
@@ -61,15 +61,15 @@ TextureView::loadTexture(const std::string& filename)
         delete pTex_;
     }
 
-    if (loadPngTexture(filename.c_str(), imgWidth_, imgHeight_, imgAlpha_, pImgData_))
+    if (loadPngTexture(filename.c_str(), imgSize_.x, imgSize_.y, imgAlpha_, pImgData_))
     {
-        if (imgWidth_ != imgHeight_)
+        if (imgSize_.x != imgSize_.y)
         {
             if (!std::strstr(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)),
                 "GL_ARB_texture_non_power_of_two"))
             {
                 Log::error("TextureView", Log::os()
-                    << "Image size is " << imgWidth_ << "x" << imgHeight_
+                    << "Image size is " << imgSize_.x << "x" << imgSize_.y
                     << ", but GL_ARB_texture_non_power_of_two not supported");
             }
         }
@@ -98,7 +98,7 @@ TextureView::createTexture()
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
         int format = imgAlpha_ ? GL_RGBA : GL_RGB;
-        glTexImage2D(GL_TEXTURE_2D, 0, format, imgWidth_, imgHeight_, 0, format,
+        glTexImage2D(GL_TEXTURE_2D, 0, format, imgSize_.x, imgSize_.y, 0, format,
             GL_UNSIGNED_BYTE, pImgData_);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -125,6 +125,13 @@ TextureView::setTexMulColor(const Color4i* c)
 }
 
 
+const Point&
+TextureView::getTextureSize() const
+{
+    return imgSize_;
+}
+
+
 void
 TextureView::preRenderUpdate()
 {
@@ -146,8 +153,8 @@ TextureView::renderOGLContent() const
     glBindTexture(GL_TEXTURE_2D, *pTex_);
     glPushMatrix();
     {
-        float m = 1.f / std::min(imgWidth_, imgHeight_);
-        glScalef(imgWidth_ *m, imgHeight_ * m, 1.f);
+        float m = 1.f / std::min(imgSize_.x, imgSize_.y);
+        glScalef(imgSize_.x * m, imgSize_.y * m, 1.f);
         glBegin(GL_QUADS);
         {
             glTexCoord2f(0.0, 0.0);
@@ -177,12 +184,12 @@ TextureView::setSize(float width, float height)
     {
     case AR_ADAPT_WIDTH:
     {
-        float w = static_cast<float>(newSize.y * imgWidth_) / imgHeight_;
+        float w = static_cast<float>(newSize.y * imgSize_.x) / imgSize_.y;
         return OGLView::setSize(w, newSize.y);
     }
     case AR_ADAPT_HEIGHT:
     {
-        float h = static_cast<float>(newSize.x * imgHeight_) / imgWidth_;
+        float h = static_cast<float>(newSize.x * imgSize_.y) / imgSize_.x;
         return OGLView::setSize(newSize.x, h);
     }
     case AR_NO_ADAPT:
