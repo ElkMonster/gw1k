@@ -30,8 +30,8 @@ Point::~Point()
 Point&
 Point::operator+=(const Point& rhs)
 {
-    this->x += rhs.x;
-    this->y += rhs.y;
+    x += rhs.x;
+    y += rhs.y;
     return *this;
 }
 
@@ -39,8 +39,8 @@ Point::operator+=(const Point& rhs)
 Point&
 Point::operator-=(const Point& rhs)
 {
-    this->x -= rhs.x;
-    this->y -= rhs.y;
+    x -= rhs.x;
+    y -= rhs.y;
     return *this;
 }
 
@@ -48,21 +48,21 @@ Point::operator-=(const Point& rhs)
 const Point
 Point::operator+(const Point& other) const
 {
-    return Point(*this) += other;
+    return Point(x + other.x, y + other.y);
 }
 
 
 const Point
 Point::operator-(const Point& other) const
 {
-    return Point(*this) -= other;
+    return Point(x - other.x, y - other.y);
 }
 
 
 const Point
 Point::operator-() const
 {
-    return Point(-this->x, -this->y);
+    return Point(-x, -y);
 }
 
 
@@ -76,7 +76,7 @@ Point::operator==(const Point& rhs) const
 bool
 Point::operator!=(const Point& rhs) const
 {
-    return !((*this) == rhs);
+    return !((x == rhs.x) && (y == rhs.y));
 }
 
 
