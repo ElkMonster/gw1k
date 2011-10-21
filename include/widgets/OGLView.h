@@ -31,6 +31,8 @@ public:
 
     void relativeTranslateBy(const Point& delta);
 
+    void allowMouseControl(bool enabled = true);
+
     //virtual void renderFg(const Point& offset) const;
 
     virtual void renderContent(const Point& offset) const;
@@ -59,6 +61,8 @@ protected:
     geom::Point2D transl_;
 
     float zoom_;
+
+    bool bMouseControl_;
 
 private:
 

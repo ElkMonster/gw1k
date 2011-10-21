@@ -20,7 +20,6 @@ TextureView::TextureView(
     pTex_(0),
     pImgData_(0),
     bReqLoadTexture_(false),
-    bMouseControl_(false),
     texMulColor_(255, 255, 255, 255)
 {
     loadTexture(filename);
@@ -110,13 +109,6 @@ TextureView::setTexMulColor(const Color4i* c)
 
 
 void
-TextureView::allowMouseControl(bool state)
-{
-    bMouseControl_ = state;
-}
-
-
-void
 TextureView::preRenderUpdate()
 {
     if (bReqLoadTexture_)
@@ -135,52 +127,26 @@ TextureView::renderOGLContent() const
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, *pTex_);
-    glBegin(GL_QUADS);
+    glPushMatrix();
     {
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(-1.0, -1.0, 0.0);
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(-1.0, 1.0, 0.0);
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(1.0, 1.0, 0.0);
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(1.0, -1.0, 0.0);
+        float m = 1.f / std::min(imgWidth_, imgHeight_);
+        glScalef(imgWidth_ *m, imgHeight_ * m, 1.f);
+        glBegin(GL_QUADS);
+        {
+            glTexCoord2f(0.0, 0.0);
+            glVertex3f(-1.0, -1.0, 0.0);
+            glTexCoord2f(0.0, 1.0);
+            glVertex3f(-1.0, 1.0, 0.0);
+            glTexCoord2f(1.0, 1.0);
+            glVertex3f(1.0, 1.0, 0.0);
+            glTexCoord2f(1.0, 0.0);
+            glVertex3f(1.0, -1.0, 0.0);
+        }
+        glEnd();
     }
-    glEnd();
+    glPopMatrix();
+
     glDisable(GL_TEXTURE_2D);
-}
-
-void
-TextureView::mouseMoved(
-    MouseMovedEvent ev,
-    const Point& pos,
-    const Point& delta,
-    GuiObject* receiver)
-{
-    if (bMouseControl_)
-    {
-        OGLView::mouseMoved(ev, pos, delta, receiver);
-    }
-}
-
-
-void
-TextureView::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
-{
-    if (bMouseControl_)
-    {
-        OGLView::mouseClicked(b, ev, receiver);
-    }
-}
-
-
-void
-TextureView::mouseWheeled(int delta, GuiObject* receiver)
-{
-    if (bMouseControl_)
-    {
-        OGLView::mouseWheeled(delta, receiver);
-    }
 }
 
 

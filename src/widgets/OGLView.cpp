@@ -15,6 +15,7 @@ OGLView::OGLView(const Point& pos, const Point& size)
 :   Box(pos, size),
     transl_(geom::Point2D(0.f, 0.f)),
     zoom_(1.f),
+    bMouseControl_(false),
     minDimSize_(std::min(size.x, size.y)),
     widgToRelSize_(1.f / minDimSize_)
 {
@@ -77,15 +78,11 @@ OGLView::relativeTranslateBy(const Point& delta)
 }
 
 
-//void
-//OGLView::renderFg(const Point& offset) const
-//{
-//    glColor3f(1.f, 1.f, 1.f);
-//    Point pos = getPos() + offset;
-//    Point last = pos + getSize() - Point(1, 1);
-//    drawRect(pointToGeomPoint2D(pos), pointToGeomPoint2D(last));
-//
-//}
+void
+OGLView::allowMouseControl(bool state)
+{
+    bMouseControl_ = state;
+}
 
 
 void
@@ -125,9 +122,12 @@ OGLView::mouseMoved(
     const Point& delta,
     GuiObject* receiver)
 {
-    if ((receiver == this) && isClicked())
+    if (bMouseControl_)
     {
-        relativeTranslateBy(delta);
+        if ((receiver == this) && isClicked())
+        {
+            relativeTranslateBy(delta);
+        }
     }
 }
 
@@ -142,10 +142,13 @@ OGLView::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 void
 OGLView::mouseWheeled(int delta, GuiObject* receiver)
 {
-    if (receiver == this)
+    if (bMouseControl_)
     {
-        float z = zoom_ + delta * 0.05f;
-        setZoomFactor(z);
+        if (receiver == this)
+        {
+            float z = zoom_ + delta * 0.05f;
+            setZoomFactor(z);
+        }
     }
 }
 

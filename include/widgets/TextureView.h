@@ -44,22 +44,9 @@ public:
 
     void setTexMulColor(const Color4i* c);
 
-    void allowMouseControl(bool enabled = true);
-
     virtual void preRenderUpdate();
 
     virtual void renderOGLContent() const;
-
-    virtual void mouseMoved(MouseMovedEvent ev,
-                            const Point& pos,
-                            const Point& delta,
-                            GuiObject* receiver);
-
-    virtual void mouseClicked(MouseButton b,
-                              StateEvent ev,
-                              GuiObject* receiver);
-
-    virtual void mouseWheeled(int delta, GuiObject* receiver);
 
 private:
 
@@ -77,8 +64,6 @@ private:
 
     /** If this is true, a call to preRenderUpdate() will create the texture */
     bool bReqLoadTexture_;
-
-    bool bMouseControl_;
 
     Color4i texMulColor_;
 };
