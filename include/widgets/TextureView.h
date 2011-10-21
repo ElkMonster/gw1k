@@ -21,11 +21,25 @@ class TextureView : public OGLView
 
 public:
 
+    enum AspectRatioAutoAdapt { AR_NO_ADAPT, AR_ADAPT_WIDTH, AR_ADAPT_HEIGHT };
+
     TextureView(const Point& pos, const Point& size, const std::string& filename);
 
     virtual ~TextureView();
 
 public:
+
+    /**
+     * Determines the way the widget behaves upon setSize().
+     *
+     * AR_NO_ADAPT resizes the widget to the given size. The texture is scaled
+     * in both dimensions to fit the size.
+     * AR_ADAPT_WIDTH resizes the widget to the given height and sets width to a
+     * value such that the original image aspect ratio is kept.
+     * AR_ADAPT_HEIGHT resizes the widget to the given width and sets height to
+     * a value such that the original image aspect ratio is kept.
+     */
+    void setAspectRatioAutoResize(AspectRatioAutoAdapt a);
 
     /**
      * Loads the given image file and enqueues this TextureView in WManager's
@@ -48,6 +62,8 @@ public:
 
     virtual void renderOGLContent() const;
 
+    virtual const Point& setSize(float width, float height);
+
 private:
 
     std::string filename_;
@@ -66,6 +82,8 @@ private:
     bool bReqLoadTexture_;
 
     Color4i texMulColor_;
+
+    AspectRatioAutoAdapt aspectRatioAutoAdapt_;
 };
 
 

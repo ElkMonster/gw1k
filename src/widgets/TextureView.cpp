@@ -20,7 +20,8 @@ TextureView::TextureView(
     pTex_(0),
     pImgData_(0),
     bReqLoadTexture_(false),
-    texMulColor_(255, 255, 255, 255)
+    texMulColor_(255, 255, 255, 255),
+    aspectRatioAutoAdapt_(AR_NO_ADAPT)
 {
     loadTexture(filename);
 }
@@ -31,6 +32,17 @@ TextureView::~TextureView()
     if (pTex_)
     {
         glDeleteTextures(1, pTex_);
+    }
+}
+
+
+void
+TextureView::setAspectRatioAutoResize(AspectRatioAutoAdapt a)
+{
+    if (a != aspectRatioAutoAdapt_)
+    {
+        aspectRatioAutoAdapt_ = a;
+        GuiObject::setSize(getSize());
     }
 }
 
@@ -147,6 +159,32 @@ TextureView::renderOGLContent() const
     glPopMatrix();
 
     glDisable(GL_TEXTURE_2D);
+}
+
+
+const Point&
+TextureView::setSize(float width, float height)
+{
+    // Get pixel-size first
+    const Point& newSize = OGLView::setSize(width, height);
+
+    switch (aspectRatioAutoAdapt_)
+    {
+    case AR_ADAPT_WIDTH:
+    {
+        float w = static_cast<float>(newSize.y * imgWidth_) / imgHeight_;
+        return OGLView::setSize(w, newSize.y);
+    }
+    case AR_ADAPT_HEIGHT:
+    {
+        float h = static_cast<float>(newSize.x * imgHeight_) / imgWidth_;
+        return OGLView::setSize(newSize.x, h);
+    }
+    case AR_NO_ADAPT:
+        break;
+    }
+
+    return newSize;
 }
 
 
