@@ -14,7 +14,8 @@ namespace gw1k
 TextureView::TextureView(
     const Point& pos,
     const Point& size,
-    const std::string& filename)
+    const std::string& filename,
+    bool bResizeToImageSize)
 :   OGLView(pos, size),
     filename_(filename),
     pTex_(0),
@@ -24,6 +25,10 @@ TextureView::TextureView(
     aspectRatioAutoAdapt_(AR_NO_ADAPT)
 {
     loadTexture(filename);
+    if (bResizeToImageSize)
+    {
+        setSize(imgWidth_, imgHeight_);
+    }
 }
 
 

@@ -23,7 +23,15 @@ public:
 
     enum AspectRatioAutoAdapt { AR_NO_ADAPT, AR_ADAPT_WIDTH, AR_ADAPT_HEIGHT };
 
-    TextureView(const Point& pos, const Point& size, const std::string& filename);
+    /**
+     * If bResizeToImageSize is true, then size is ignored and the image's size
+     * is used. This is only a convenience feature of the constructor; the
+     * widget can be resized as usual.
+     */
+    TextureView(const Point& pos,
+                const Point& size,
+                const std::string& filename,
+                bool bImageSizeOnCreate = false);
 
     virtual ~TextureView();
 
