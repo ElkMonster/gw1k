@@ -1,7 +1,5 @@
 #include "widgets/RangeSlider.h"
 
-
-#include "ThemeManager.h"
 #include "WManager.h"
 #include "Math.h"
 
@@ -190,10 +188,8 @@ RangeSlider::mouseWheeled(int delta, GuiObject* receiver)
 void
 RangeSlider::setColors(const char* colorScheme)
 {
-    ThemeManager* t = ThemeManager::getInstance();
-
     std::string baseName(colorScheme ? colorScheme : "RangeSlider");
-    t->setColors(this, colorScheme, "RangeSlider");
+    AbstractSliderBase::setColors(baseName.c_str());
     std::string hdlName = baseName + ".Handle";
     lHandle_->setColors(hdlName.c_str());
     rHandle_->setColors(hdlName.c_str());
