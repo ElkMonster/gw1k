@@ -7,6 +7,9 @@ namespace gw1k
 {
 
 
+class GuiObject;
+
+
 class KeyListener
 {
 

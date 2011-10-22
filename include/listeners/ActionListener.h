@@ -5,6 +5,9 @@ namespace gw1k
 {
 
 
+class GuiObject;
+
+
 class ActionListener
 {
 
