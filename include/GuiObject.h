@@ -1,8 +1,8 @@
 #ifndef GW1K_GUIOBJECT_H_
 #define GW1K_GUIOBJECT_H_
 
-#include "listeners/MouseListener.h"
-#include "listeners/KeyListener.h"
+#include "providers/MouseEventProvider.h"
+#include "providers/KeyEventProvider.h"
 #include "listeners/ResizeListener.h"
 #include "Point.h"
 #include "Rect.h"
@@ -14,7 +14,7 @@ namespace gw1k
 {
 
 
-class GuiObject
+class GuiObject : public MouseEventProvider, public KeyEventProvider
 {
 
 public:
@@ -31,14 +31,6 @@ public:
      *  via WManager's registerForPreRenderUpdate().
      */
     virtual void preRenderUpdate();
-
-    void addMouseListener(MouseListener* ml);
-
-    void removeMouseListener(MouseListener* ml);
-
-    void addKeyListener(KeyListener* kl);
-
-    void removeKeyListener(KeyListener* kl);
 
     void addResizeListener(ResizeListener* rl);
 
@@ -146,10 +138,6 @@ public:
     void setEmbedded(bool b = true);
 
 protected:
-
-    std::list<MouseListener*> mouseListeners_;
-
-    std::list<KeyListener*> keyListeners_;
 
     std::vector<GuiObject*> subObjects_;
 

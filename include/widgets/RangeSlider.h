@@ -2,12 +2,13 @@
 #define GW1K_RANGESLIDER_H_
 
 #include "internal/AbstractSliderBase.h"
+#include "../providers/ActionEventProvider.h"
 
 namespace gw1k
 {
 
 
-class RangeSlider : public AbstractSliderBase
+class RangeSlider : public AbstractSliderBase, public ActionEventProvider
 {
 
 public:
@@ -29,7 +30,6 @@ public:
     void setRValue(float v);
 
     float getRValue() const;
-
 
     virtual void mouseMoved(MouseMovedEvent ev,
                             const Point& pos,

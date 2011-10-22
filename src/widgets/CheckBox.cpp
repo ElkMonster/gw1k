@@ -44,9 +44,6 @@ private:
 
 
 
-typedef std::list<ActionListener*>::iterator AListIter;
-
-
 CheckBox::CheckBox(
     const Point& pos,
     const Point& size,
@@ -90,25 +87,6 @@ void
 CheckBox::setChecked(bool checked)
 {
     checked_ = checked;
-}
-
-
-void
-CheckBox::addActionListener(ActionListener* al)
-{
-    actionListeners_.push_back(al);
-}
-
-
-void
-CheckBox::removeActionListener(ActionListener* al)
-{
-    AListIter i = std::find(actionListeners_.begin(), actionListeners_.end(), al);
-
-    if (i != actionListeners_.end())
-    {
-        actionListeners_.remove(al);
-    }
 }
 
 
@@ -170,10 +148,7 @@ CheckBox::mouseClicked(
     {
         checked_ = !checked_;
 
-        for (AListIter i = actionListeners_.begin(); i != actionListeners_.end(); ++i)
-        {
-            (*i)->actionPerformed(this);
-        }
+        informActionListeners(this);
     }
 }
 

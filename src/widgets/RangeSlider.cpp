@@ -60,7 +60,12 @@ RangeSlider::~RangeSlider()
 void
 RangeSlider::setLValue(float v)
 {
+    float oldVal = lValue_;
     lValue_ = std::max(getUnmappedValue(v), 0.f);
+    if (lValue_ != oldVal)
+    {
+        informActionListeners(this);
+    }
 }
 
 
@@ -74,7 +79,12 @@ RangeSlider::getLValue() const
 void
 RangeSlider::setRValue(float v)
 {
+    float oldVal = rValue_;
     rValue_ = std::min(getUnmappedValue(v), 1.f);
+    if (rValue_ != oldVal)
+    {
+        informActionListeners(this);
+    }
 }
 
 
@@ -142,6 +152,7 @@ RangeSlider::mouseMoved(
                 receiver->getPos() + delta);
             restoreConsistency();
             calculateValues();
+            informActionListeners(this);
         }
         else if (receiver == rangeBar_)
         {
@@ -164,6 +175,7 @@ RangeSlider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
         setHandlePos(closestHandle, Point(p.x - hdlWidth / 2, 1));
         restoreConsistency();
         calculateValues();
+        informActionListeners(this);
     }
 }
 

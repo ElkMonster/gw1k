@@ -1,7 +1,6 @@
 #include "GuiObject.h"
 
 
-#include <algorithm>
 #include "Math.h"
 #include "Helpers.h"
 #include "Exception.h"
@@ -11,10 +10,6 @@
 
 namespace gw1k
 {
-
-
-typedef std::list<MouseListener*>::iterator MListIter;
-typedef std::list<KeyListener*>::iterator KListIter;
 
 
 GuiObject::GuiObject()
@@ -35,46 +30,6 @@ void
 GuiObject::preRenderUpdate()
 {
     // Do nothing by default
-}
-
-
-void
-GuiObject::addMouseListener(MouseListener* ml)
-{
-    mouseListeners_.push_back(ml);
-}
-
-
-void
-GuiObject::removeMouseListener(MouseListener* ml)
-{
-
-    MListIter i = std::find(mouseListeners_.begin(), mouseListeners_.end(), ml);
-
-    if (i != mouseListeners_.end())
-    {
-        mouseListeners_.remove(ml);
-    }
-}
-
-
-void
-GuiObject::addKeyListener(KeyListener* ml)
-{
-    keyListeners_.push_back(ml);
-}
-
-
-void
-GuiObject::removeKeyListener(KeyListener* kl)
-{
-
-    KListIter i = std::find(keyListeners_.begin(), keyListeners_.end(), kl);
-
-    if (i != keyListeners_.end())
-    {
-        keyListeners_.remove(kl);
-    }
 }
 
 
@@ -272,7 +227,7 @@ GuiObject::triggerMouseMovedEvent(
         bIsHovered_ = true;
     }
 
-    for (MListIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
+    for (MouseListnrIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
     {
         (*i)->mouseMoved(ev, pos, delta, this);
     }
@@ -297,7 +252,7 @@ GuiObject::triggerMouseButtonEvent(MouseButton b, StateEvent ev)
         bIsClicked_ = false;
     }
 
-    for (MListIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
+    for (MouseListnrIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
     {
         (*i)->mouseClicked(b, ev, this);
     }
@@ -307,7 +262,7 @@ GuiObject::triggerMouseButtonEvent(MouseButton b, StateEvent ev)
 void
 GuiObject::triggerMouseWheelEvent(int delta)
 {
-    for (MListIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
+    for (MouseListnrIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
     {
         (*i)->mouseWheeled(delta, this);
     }
