@@ -3,7 +3,7 @@
 
 #include "../Box.h"
 #include "../RangeSlider.h"
-#include "../Label.h"
+#include "NumberLabel.h"
 #include "../../providers/ActionEventProvider.h"
 #include "../../listeners/ActionListener.h"
 
@@ -35,11 +35,11 @@ public:
 
     float getRValue() const;
 
+    void setLabelPrecision(int left, int right);
+
     virtual void actionPerformed(GuiObject* receiver);
 
     void setColors(const char* colorScheme);
-
-    void render(const Point& offset) const;
 
 protected:
 
@@ -51,9 +51,9 @@ private:
 
     RangeSlider* slider_;
 
-    Label* lLabel_;
+    NumberLabel* lLabel_;
 
-    Label* rLabel_;
+    NumberLabel* rLabel_;
 
 };
 

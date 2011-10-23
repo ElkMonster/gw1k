@@ -1,5 +1,7 @@
 #include "widgets/advanced/LabeledRangeSlider.h"
+
 #include "utils/StringHelpers.h"
+#include "Math.h"
 
 namespace gw1k
 {
@@ -17,12 +19,18 @@ LabeledRangeSlider::LabeledRangeSlider(
     slider_ = new RangeSlider(Point(0, h), Point(size.x, h),
         range, rangeTye, colorScheme);
 
-    lLabel_ = new Label(Point(), Point(50, h), "Left");
-    rLabel_ = new Label(Point(size.x - 50, 0), Point(50, h), "Right");
+    int lh = gw1k::round_pos(h * 0.8f);
+    range = slider_->getRange();
+    lLabel_ = new NumberLabel(Point(), Point(50, lh), range[0]);
+    rLabel_ = new NumberLabel(Point(size.x - 50, 0), Point(50, lh), range[1]);
+    lLabel_->setAutoSized(true);
+    rLabel_->setAutoSized(true);
 
     addSubObject(slider_);
     addSubObject(lLabel_);
     addSubObject(rLabel_);
+
+    slider_->addActionListener(this);
 
     setColors(colorScheme);
 
@@ -77,11 +85,20 @@ LabeledRangeSlider::getRValue() const
 
 
 void
+LabeledRangeSlider::setLabelPrecision(int left, int right)
+{
+    lLabel_->setPrecision(left);
+    rLabel_->setPrecision(right);
+}
+
+
+void
 LabeledRangeSlider::actionPerformed(GuiObject* receiver)
 {
     if (receiver == slider_)
     {
         updateLabels();
+        informActionListeners(this);
     }
 }
 
@@ -100,13 +117,9 @@ LabeledRangeSlider::setColors(const char* colorScheme)
 void
 LabeledRangeSlider::updateLabels()
 {
-    lLabel_->setText(toString(slider_->getLValue()));
-    rLabel_->setText(toString(slider_->getRValue()));
+    lLabel_->setNumber(slider_->getLValue());
+    rLabel_->setNumber(slider_->getRValue());
 }
 
-void LabeledRangeSlider::render(const Point& offset) const
-{
-    Box::render(offset);
-}
 
 } // namespace gw1k
