@@ -26,7 +26,7 @@ Label::Label(
     textProps_(0),
     bAutoSized_(autoSize),
     text_(padding_, text),
-    bVCenterVisually_(true),
+    bVCenterVisually_(false),
     lineLength_(-1)
 {
     int fSize = (faceSize < 0) ? std::max(1, size.y - 2) : faceSize;
