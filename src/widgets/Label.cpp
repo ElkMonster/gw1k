@@ -41,7 +41,7 @@ Label::Label(
     else
     {
         Point s = size - Point(2, 2) - padding_ - padding_;
-        text_.GuiObject::setSize(s);
+        text_.setSize(s.x, s.y);
         updateTextAlignment();
     }
 
@@ -139,7 +139,8 @@ Label::setPadding(const Point& padding)
     }
     else
     {
-        GuiObject::setSize(getSize());
+        const Point& s = getSize();
+        GuiObject::setSize(s.x, s.y);
         updateTextAlignment();
     }
 }
@@ -223,7 +224,7 @@ Label::adaptToTextSize()
 {
     Point s = text_.getSize() + padding_ + padding_ + Point(2, 2);
 
-    WiBox::setSize(s);
+    WiBox::setSize(s.x, s.y);
     textBox_.setSize(s.x - 2, s.y - 2);
 
     updateTextAlignment();

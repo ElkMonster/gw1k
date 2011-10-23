@@ -157,7 +157,7 @@ ScrollPane::resizePaneAndSliders()
         Point(vOverlaps ? 20 : 0, hOverlaps ? 20 : 0));
 
     Point newPaneSize = size - sliderSpace;
-    pane_->GuiObject::setSize(newPaneSize);
+    pane_->GuiObject::setSize(newPaneSize.x, newPaneSize.y);
 
     const Point& hSliderSize = hSlider_->setSize(size.x - sliderSpace.x, 20);
     hSlider_->setPos(0, size.y - hSliderSize.y);

@@ -14,8 +14,8 @@ namespace gw1k
 Box::Box(const Point& pos, const Point& size)
 :   Renderable()
 {
-    setPos(pos);
-    setSize(size);
+    setPos(pos.x, pos.y);
+    setSize(size.x, size.y);
 }
 
 

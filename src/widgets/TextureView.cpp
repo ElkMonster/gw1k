@@ -27,7 +27,7 @@ TextureView::TextureView(
     loadTexture(filename);
     if (bResizeToImageSize)
     {
-        GuiObject::setSize(imgSize_);
+        GuiObject::setSize(imgSize_.x, imgSize_.y);
     }
 }
 
@@ -47,7 +47,8 @@ TextureView::setAspectRatioAutoResize(AspectRatioAutoAdapt a)
     if (a != aspectRatioAutoAdapt_)
     {
         aspectRatioAutoAdapt_ = a;
-        GuiObject::setSize(getSize());
+        const Point& size = getSize();
+        GuiObject::setSize(size.x, size.y);
     }
 }
 
