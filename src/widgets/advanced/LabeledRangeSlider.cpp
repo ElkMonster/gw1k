@@ -19,12 +19,12 @@ LabeledRangeSlider::LabeledRangeSlider(
     slider_ = new RangeSlider(Point(0, h), Point(size.x, h),
         range, rangeTye, colorScheme);
 
-    int lh = gw1k::round_pos(h * 0.8f);
     range = slider_->getRange();
-    lLabel_ = new NumberLabel(Point(0, h - lh), Point(50, lh), range[0]);
-    rLabel_ = new NumberLabel(Point(size.x - 50, h - lh), Point(50, lh), range[1]);
+    lLabel_ = new NumberLabel(Point(), Point(0, h), range[0]);
+    rLabel_ = new NumberLabel(Point(), Point(0, h), range[1]);
     lLabel_->setAutoSized(true);
     rLabel_->setAutoSized(true);
+    updateLabels();
 
     addSubObject(slider_);
     addSubObject(lLabel_);
@@ -89,6 +89,7 @@ LabeledRangeSlider::setLabelPrecision(int left, int right)
 {
     lLabel_->setPrecision(left);
     rLabel_->setPrecision(right);
+    updateLabels();
 }
 
 
