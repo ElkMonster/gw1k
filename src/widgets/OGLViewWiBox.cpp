@@ -69,7 +69,7 @@ OGLViewWiBox::~OGLViewWiBox()
 const Point&
 OGLViewWiBox::setSize(float width, float height)
 {
-    const Point& newSize = setSize(width, height);
+    const Point& newSize = WiBox::setSize(width, height);
     oglRenderer_->setSize(newSize.x - 2, newSize.y - 2);
     return newSize;
 }
