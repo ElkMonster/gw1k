@@ -116,12 +116,12 @@ ClippingBox::addSubObject(GuiObject* o)
     if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
     {
         newRealOrigin.x = 0;
-        newRealSize.x = realSize_.x;
+        newRealSize.x = getSize().x;
     }
     else if (autoAdjustSize_ == ScrollPane::ADJUST_VERT)
     {
         newRealOrigin.y = 0;
-        newRealSize.y = realSize_.y;
+        newRealSize.y = getSize().y;
     }
 
     // Keep viewing window at its position
@@ -238,25 +238,25 @@ void
 ClippingBox::autoAdjustSubObj(GuiObject* o)
 {
     const Point& end = getEnd();
-    const Point& pos = o->getPos();
-    const Point& size = o->getSize();
+    const Point& oPos = o->getPos();
+    const Point& oSize = o->getSize();
 
-    Point adjustedSize = size;
+    Point adjustedSize = oSize;
     bool bNeedsAdjustment = false;
 
     if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
     {
-        if (pos.x + size.x != end.x)
+        if (oPos.x + oSize.x != end.x)
         {
-            adjustedSize.x = end.x - pos.x;
+            adjustedSize.x = end.x - oPos.x;
             bNeedsAdjustment = true;
         }
     }
     else // ADJUST_VERT
     {
-        if (pos.y + size.y != end.y)
+        if (oPos.y + oSize.y != end.y)
         {
-            adjustedSize.y = end.y - pos.y;
+            adjustedSize.y = end.y - oPos.y;
             bNeedsAdjustment = true;
         }
     }
