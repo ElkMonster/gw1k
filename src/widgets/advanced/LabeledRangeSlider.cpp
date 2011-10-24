@@ -21,8 +21,8 @@ LabeledRangeSlider::LabeledRangeSlider(
 
     int lh = gw1k::round_pos(h * 0.8f);
     range = slider_->getRange();
-    lLabel_ = new NumberLabel(Point(), Point(50, lh), range[0]);
-    rLabel_ = new NumberLabel(Point(size.x - 50, 0), Point(50, lh), range[1]);
+    lLabel_ = new NumberLabel(Point(0, h - lh), Point(50, lh), range[0]);
+    rLabel_ = new NumberLabel(Point(size.x - 50, h - lh), Point(50, lh), range[1]);
     lLabel_->setAutoSized(true);
     rLabel_->setAutoSized(true);
 
@@ -119,6 +119,44 @@ LabeledRangeSlider::updateLabels()
 {
     lLabel_->setNumber(slider_->getLValue());
     rLabel_->setNumber(slider_->getRValue());
+
+    const WiBox* lHandle, *rHandle;
+    slider_->getHandles(lHandle, rHandle);
+
+    const Point& lsize = lLabel_->getSize();
+    const Point& rsize = rLabel_->getSize();
+
+    // Calculate handle centres
+    int lhc = lHandle->getPos().x + lHandle->getSize().x / 2;
+    int rhc = rHandle->getPos().x + rHandle->getSize().x / 2;
+
+    // Don't let Labels go offscreen (off-widget, that is)
+    int endx = slider_->getEnd().x;
+    int lx = std::min(std::max(lhc - lsize.x / 2, 0), endx - lsize.x);
+    int rx = std::min(std::max(rhc - rsize.x / 2, 0), endx - rsize.x);
+
+    // Prevent overlapping, keep a few pixels minimum distance
+    int overlap = lx + lsize.x - rx;
+    if (overlap > 0)
+    {
+        int d = overlap / 2 + 2;
+        lx -= d;
+        rx += d;
+        if (lx < 0)
+        {
+            rx += std::abs(lx);
+            lx = 0;
+        }
+        else if (rx + rsize.x  > endx)
+        {
+            lx -= rx + rsize.x - endx;
+            rx = endx - rsize.x;
+        }
+    }
+
+    lLabel_->setPos(lx, lLabel_->getPos().y);
+    rLabel_->setPos(rx, rLabel_->getPos().y);
+
 }
 
 
