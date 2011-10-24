@@ -57,10 +57,10 @@ ScrollPane::setSize(float width, float height)
 void
 ScrollPane::addSubObject(GuiObject* o)
 {
+    // Save whether objects fit before adding one in order to compare to the
+    // state after
     Point objsFit = pane_->getAccommodationStatus();
-
     pane_->addSubObject(o);
-
     revalidatePaneAndSliders(objsFit != pane_->getAccommodationStatus());
 }
 
@@ -68,10 +68,10 @@ ScrollPane::addSubObject(GuiObject* o)
 void
 ScrollPane::removeSubObject(GuiObject* o)
 {
+    // Save whether objects fit before removing one in order to compare to the
+    // state after
     Point objsFit = pane_->getAccommodationStatus();
-
     pane_->removeSubObject(o);
-
     revalidatePaneAndSliders(objsFit != pane_->getAccommodationStatus());
 }
 
@@ -80,9 +80,8 @@ void
 ScrollPane::sliderValueChanged(Slider* slider, float newVal, float delta)
 {
     Point offset = pane_->getClippingOffset();
-    Point paneSize = pane_->getSize();
-    Point realSize = pane_->getRealSize();
-    Point realOrigin = pane_->getRealOrigin();
+    const Point& paneSize = pane_->getSize();
+    const Point& realSize = pane_->getRealSize();
 
     Point range = realSize - paneSize;
 
@@ -101,10 +100,10 @@ ScrollPane::sliderValueChanged(Slider* slider, float newVal, float delta)
 void
 ScrollPane::refreshLayout()
 {
+    // Save whether objects fit before changing the layout in order to compare
+    // to the state after
     Point objsFit = pane_->getAccommodationStatus();
-
     pane_->recalculateBounds();
-
     revalidatePaneAndSliders(objsFit != pane_->getAccommodationStatus());
 }
 
@@ -143,8 +142,8 @@ ScrollPane::getVSlider()
 void
 ScrollPane::resizePaneAndSliders()
 {
-    Point size = getSize();
-    Point realPaneSize = pane_->getRealSize();
+    const Point& size = getSize();
+    const Point& realPaneSize = pane_->getRealSize();
 
     // Take into account auto-sizing (which will take effect not until
     // pane_->setSize() is called) for slider space calculation. realPaneSize
@@ -157,7 +156,7 @@ ScrollPane::resizePaneAndSliders()
         Point(vOverlaps ? 20 : 0, hOverlaps ? 20 : 0));
 
     Point newPaneSize = size - sliderSpace;
-    pane_->GuiObject::setSize(newPaneSize.x, newPaneSize.y);
+    pane_->setSize(newPaneSize.x, newPaneSize.y);
 
     const Point& hSliderSize = hSlider_->setSize(size.x - sliderSpace.x, 20);
     hSlider_->setPos(0, size.y - hSliderSize.y);
@@ -170,10 +169,9 @@ ScrollPane::resizePaneAndSliders()
 void
 ScrollPane::updateSliders()
 {
-    Point realSize = pane_->getRealSize();
-    Point realOrigin = pane_->getRealOrigin();
-    Point offset = pane_->getClippingOffset();
-    Point paneSize = pane_->getSize();
+    const Point& realSize = pane_->getRealSize();
+    const Point& offset = pane_->getClippingOffset();
+    const Point& paneSize = pane_->getSize();
 
     Point range = realSize - paneSize;
 
