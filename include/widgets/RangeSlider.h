@@ -31,6 +31,8 @@ public:
 
     float getRValue() const;
 
+    void getHandles(const WiBox*& lHandle, const WiBox*& rHandle) const;
+
     virtual void mouseMoved(MouseMovedEvent ev,
                             const Point& pos,
                             const Point& delta,

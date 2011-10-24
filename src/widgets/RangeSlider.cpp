@@ -94,6 +94,14 @@ RangeSlider::getRValue() const
 
 
 void
+RangeSlider::getHandles(const WiBox*& lHandle, const WiBox*& rHandle) const
+{
+    lHandle = lHandle_;
+    rHandle = rHandle_;
+}
+
+
+void
 RangeSlider::updateRangeBar()
 {
     const Point& s = lHandle_->getSize();
