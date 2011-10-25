@@ -28,13 +28,7 @@ KeyEventProvider::addKeyListener(KeyListener* kl)
 void
 KeyEventProvider::removeKeyListener(KeyListener* kl)
 {
-
-    KeyListnrIter i = std::find(keyListeners_.begin(), keyListeners_.end(), kl);
-
-    if (i != keyListeners_.end())
-    {
-        keyListeners_.remove(kl);
-    }
+    keyListeners_.remove(kl);
 }
 
 

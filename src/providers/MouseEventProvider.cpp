@@ -28,13 +28,7 @@ MouseEventProvider::addMouseListener(MouseListener* ml)
 void
 MouseEventProvider::removeMouseListener(MouseListener* ml)
 {
-    MouseListnrIter i = std::find(mouseListeners_.begin(),
-                                  mouseListeners_.end(), ml);
-
-    if (i != mouseListeners_.end())
-    {
-        mouseListeners_.remove(ml);
-    }
+    mouseListeners_.remove(ml);
 }
 
 

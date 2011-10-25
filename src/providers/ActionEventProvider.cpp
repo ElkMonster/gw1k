@@ -31,12 +31,7 @@ ActionEventProvider::addActionListener(ActionListener* al)
 void
 ActionEventProvider::removeActionListener(ActionListener* al)
 {
-    ALIter i = std::find(actionListeners_.begin(), actionListeners_.end(), al);
-
-    if (i != actionListeners_.end())
-    {
-        actionListeners_.remove(al);
-    }
+    actionListeners_.remove(al);
 }
 
 
