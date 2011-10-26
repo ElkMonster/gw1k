@@ -1,6 +1,7 @@
 #include "GuiObject.h"
 
 
+#include "WManager.h"
 #include "Math.h"
 #include "Helpers.h"
 #include "Exception.h"
@@ -23,7 +24,12 @@ GuiObject::GuiObject()
 
 
 GuiObject::~GuiObject()
-{}
+{
+    // Make sure that widget is not referenced anymore in case it was clicked or
+    // hovered (especially important when the "click" removes and deletes the
+    // widget, since no "release" must be trigger for it)
+    WManager::getInstance()->indicateRemovedObject(this);
+}
 
 
 void

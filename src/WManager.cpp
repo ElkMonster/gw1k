@@ -160,7 +160,6 @@ WManager::feedMouseMoveHandleNewHoveredObj(
 {
     if (hoveredObj_)
     {
-        MSG("WManager::feedMouseMoveInternal: o = " << (void*)o << ", hoveredObj_ = " << (void*)hoveredObj_);
         hoveredObj_->triggerMouseMovedEvent(
             hoveredObj_->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED, pos,
             delta);
