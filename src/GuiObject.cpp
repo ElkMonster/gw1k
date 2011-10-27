@@ -25,6 +25,7 @@ GuiObject::GuiObject()
 
 GuiObject::~GuiObject()
 {
+    MSG("~GuiObject: " << (void*) this);
     // Make sure that widget is not referenced anymore in case it was clicked or
     // hovered (especially important when the "click" removes and deletes the
     // widget, since no "release" must be trigger for it)
