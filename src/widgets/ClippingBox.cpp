@@ -141,8 +141,11 @@ void
 ClippingBox::removeSubObject(GuiObject* o)
 {
     GuiObject::removeSubObject(o);
-    // TODO keep viewing window at its position like in addSubObject
     recalculateBounds();
+
+    // Keep viewing window within bounding box of all sub-widgets
+    clippingOffset_ = max(clippingOffset_, realOrigin_);
+    clippingOffset_ = min(clippingOffset_, realOrigin_ + realSize_ - getSize());
 }
 
 
