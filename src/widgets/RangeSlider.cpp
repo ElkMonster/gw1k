@@ -144,6 +144,37 @@ RangeSlider::calculateValues()
 
 
 void
+RangeSlider::calculatePositions(int& left, int& right) const
+{
+    int w = getSize().x;
+    int hw = lHandle_->getSize().x;
+    left = round_pos(lValue_ * (w - hw - 2)) + 1;
+    right = round_pos(rValue_ * (w - hw - 2)) + 1;
+}
+
+
+const Point&
+RangeSlider::setSize(float width, float height)
+{
+    const Point& newSize = AbstractSliderBase::setSize(width, height);
+
+    float hdlW = std::max(round_pos(newSize.x * .05f), handleSize_);
+
+    lHandle_->setSize(hdlW, newSize.y - 2);
+    rHandle_->setSize(hdlW, newSize.y - 2);
+
+    int lx, rx;
+    calculatePositions(lx, rx);
+    lHandle_->setPos(lx, 1);
+    rHandle_->setPos(rx, 1);
+
+    updateRangeBar();
+
+    return newSize;
+}
+
+
+void
 RangeSlider::mouseMoved(
     MouseMovedEvent ev,
     const Point& pos,

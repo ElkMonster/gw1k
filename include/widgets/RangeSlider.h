@@ -33,6 +33,8 @@ public:
 
     void getHandles(const WiBox*& lHandle, const WiBox*& rHandle) const;
 
+    virtual const Point& setSize(float width, float height);
+
     virtual void mouseMoved(MouseMovedEvent ev,
                             const Point& pos,
                             const Point& delta,
@@ -53,6 +55,8 @@ private:
     void restoreConsistency();
 
     void calculateValues();
+
+    void calculatePositions(int& left, int& right) const;
 
 private:
 
