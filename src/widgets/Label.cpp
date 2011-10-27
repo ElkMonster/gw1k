@@ -124,6 +124,27 @@ Label::setText(const std::string& text)
 
 
 void
+Label::setFontSize(int fontSize)
+{
+    if (text_.getFontSize() != fontSize)
+    {
+        text_.setFontSize(fontSize);
+
+        if (bAutoSized_)
+        {
+            adaptToTextSize();
+        }
+        else
+        {
+            // Update could be necessary if text's length has changed so much that
+            // the number of lines changed
+            updateTextAlignment();
+        }
+    }
+}
+
+
+void
 Label::setPadding(const Point& padding)
 {
     padding_ = padding;

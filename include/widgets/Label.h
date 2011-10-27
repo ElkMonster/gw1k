@@ -49,6 +49,8 @@ public:
 
     virtual void setText(const std::string& text);
 
+    void setFontSize(int fontSize);
+
     void setPadding(const Point& padding);
 
     const Point& getPadding() const;
