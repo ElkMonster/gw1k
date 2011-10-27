@@ -39,6 +39,8 @@ public:
 
     virtual void actionPerformed(GuiObject* receiver);
 
+    virtual const Point& setSize(float width, float height);
+
     void setColors(const char* colorScheme);
 
 protected:

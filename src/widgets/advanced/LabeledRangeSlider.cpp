@@ -20,8 +20,8 @@ LabeledRangeSlider::LabeledRangeSlider(
         range, rangeTye, colorScheme);
 
     range = slider_->getRange();
-    lLabel_ = new NumberLabel(Point(), Point(0, h), range[0]);
-    rLabel_ = new NumberLabel(Point(), Point(0, h), range[1]);
+    lLabel_ = new NumberLabel(Point(), Point(0, h), range[0], h - 2);
+    rLabel_ = new NumberLabel(Point(), Point(0, h), range[1], h - 2);
     lLabel_->setAutoSized(true);
     rLabel_->setAutoSized(true);
     updateLabels();
@@ -101,6 +101,21 @@ LabeledRangeSlider::actionPerformed(GuiObject* receiver)
         updateLabels();
         informActionListeners(this);
     }
+}
+
+
+const Point&
+LabeledRangeSlider::setSize(float width, float height)
+{
+    const Point& newSize = Box::setSize(width, height);
+    int h = newSize.y / 2;
+    slider_->setSize(newSize.x, h);
+
+    lLabel_->setFontSize(h - 2);
+    rLabel_->setFontSize(h - 2);
+
+    updateLabels();
+    return newSize;
 }
 
 
