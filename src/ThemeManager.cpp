@@ -61,7 +61,7 @@ ThemeManager::loadTheme(const char* themeName)
             Log::error("ThemeManager", Log::os() << "Lua: Unknown error: " << err);
             break;
         }
-                luaError();
+        luaError();
         return false;
     }
 
