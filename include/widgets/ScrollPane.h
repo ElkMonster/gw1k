@@ -89,6 +89,17 @@ public:
 
     Slider& getVSlider();
 
+    /**
+     * Sets the width of the vertical and the height of the horizontal slider.
+     */
+    void setSliderSize(int size);
+
+    /**
+     * Sets the margin between sliders and content. It is only applied if the
+     * according slider is visible.
+     */
+    void setSliderMargin(int margin);
+
 protected:
 
     /**
@@ -133,6 +144,17 @@ protected:
 
 
 protected:
+
+    /**
+     * The width of the vertical and the height of the horizontal slider in
+     * pixels.
+     */
+    int sliderSize_;
+
+    /**
+     * The space that is kept between sliders and pane_ in pixels.
+     */
+    int sliderMargin_;
 
     ClippingBox* pane_;
 

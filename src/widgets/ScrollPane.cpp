@@ -14,11 +14,13 @@ ScrollPane::ScrollPane(
     AutoAdjustSize autoAdjustSize,
     bool stickySliders)
 :   WiBox(pos, size),
-    hSlider_(new Slider(Point(0, size.y - 20), Point(size.x - 20, 20))),
-    vSlider_(new Slider(Point(size.x - 20, 0), Point(20, size.y - 20), true)),
+    sliderSize_(20),
+    sliderMargin_(0),
+    hSlider_(new Slider(Point(0, size.y - sliderSize_), Point(size.x - sliderSize_, sliderSize_))),
+    vSlider_(new Slider(Point(size.x - sliderSize_, 0), Point(sliderSize_, size.y - sliderSize_), true)),
     stickySliders_(stickySliders)
 {
-    Point sliderSpace = (stickySliders ? Point(20, 20) : Point(0, 0));
+    Point sliderSpace = (stickySliders ? Point(sliderSize_, sliderSize_) : Point(0, 0));
     pane_ = new ClippingBox(Point(), size - sliderSpace, autoAdjustSize);
 
     GuiObject::addSubObject(vSlider_);
@@ -140,6 +142,22 @@ ScrollPane::getVSlider()
 
 
 void
+ScrollPane::setSliderSize(int size)
+{
+    sliderSize_ = std::max(size, 1);
+    refreshLayout();
+}
+
+
+void
+ScrollPane::setSliderMargin(int margin)
+{
+    sliderMargin_ = std::max(margin, 0);
+    refreshLayout();
+}
+
+
+void
 ScrollPane::resizePaneAndSliders()
 {
     const Point& size = getSize();
@@ -152,16 +170,32 @@ ScrollPane::resizePaneAndSliders()
     bool hOverlaps = (aas == ADJUST_HORIZ) ? false : (realPaneSize.x > size.x);
     bool vOverlaps = (aas == ADJUST_VERT) ? false : (realPaneSize.y > size.y);
 
-    Point sliderSpace = (stickySliders_ ? Point(20, 20) :
-        Point(vOverlaps ? 20 : 0, hOverlaps ? 20 : 0));
+    Point sliderSpace, sliderMargin;
+    if (stickySliders_)
+    {
+        sliderSpace = Point(sliderSize_, sliderSize_);
+    }
+    else
+    {
+        if (vOverlaps)
+        {
+            sliderSpace.x = sliderSize_;
+            sliderMargin.x = sliderMargin_;
+        }
+        if (hOverlaps)
+        {
+            sliderSpace.y = sliderSize_;
+            sliderMargin.y = sliderMargin_;
+        }
+    }
 
-    Point newPaneSize = size - sliderSpace;
+    Point newPaneSize = size - sliderSpace - sliderMargin;
     pane_->setSize(newPaneSize.x, newPaneSize.y);
 
-    const Point& hSliderSize = hSlider_->setSize(size.x - sliderSpace.x, 20);
+    const Point& hSliderSize = hSlider_->setSize(size.x - sliderSpace.x, sliderSize_);
     hSlider_->setPos(0, size.y - hSliderSize.y);
 
-    const Point& vSliderSize = vSlider_->setSize(20, size.y - sliderSpace.y);
+    const Point& vSliderSize = vSlider_->setSize(sliderSize_, size.y - sliderSpace.y);
     vSlider_->setPos(size.x - vSliderSize.x, 0);
 }
 
