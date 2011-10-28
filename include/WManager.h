@@ -21,6 +21,11 @@ public:
 
     static WManager* getInstance();
 
+    /**
+     * Deletes the WManager.
+     */
+    static void cleanup();
+
 private:
 
     WManager();

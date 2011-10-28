@@ -56,7 +56,10 @@ Label::Label(
 
 
 Label::~Label()
-{}
+{
+    textBox_.removeSubObject(&text_);
+    removeSubObject(&textBox_);
+}
 
 
 void

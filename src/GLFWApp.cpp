@@ -2,6 +2,7 @@
 
 #include "WManager.h"
 #include "GLFWAdapter.h"
+#include "FTGLFontManager.h"
 
 #define GW1K_ENABLE_GL_ERROR_CHECKS
 #include "GLErrorCheck.h"
@@ -21,6 +22,9 @@ GLFWApp::GLFWApp()
 
 GLFWApp::~GLFWApp()
 {
+    WManager::cleanup();
+    FTGLFontManager::Instance().cleanup();
+
     glfwTerminate();
 
     pInstance_ = 0;

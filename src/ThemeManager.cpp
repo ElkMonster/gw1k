@@ -165,7 +165,8 @@ ThemeManager::getColor(
 
         //std::cout << "ThemeManager: request for key " << key << (colorMap_[key] ? "(success)" : "(fail)") << std::endl;
 
-        return colorMap_[key];
+        std::map<std::string, Color4i*>::iterator it = colorMap_.find(key);
+        return (it != colorMap_.end()) ? it->second : 0;
     }
     else
     {

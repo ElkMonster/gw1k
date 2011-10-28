@@ -41,6 +41,17 @@ WManager::getInstance()
 }
 
 
+/*static*/
+void
+WManager::cleanup()
+{
+    if (pInstance_)
+    {
+        delete pInstance_;
+    }
+}
+
+
 WManager::WManager()
 :   hoveredObj_(0),
     clickedObj_(0),

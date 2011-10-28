@@ -37,6 +37,7 @@ TextureView::~TextureView()
     if (pTex_)
     {
         glDeleteTextures(1, pTex_);
+        delete pTex_;
     }
 }
 
@@ -88,6 +89,7 @@ TextureView::createTexture()
 {
     if (pImgData_)
     {
+        DELETE_PTR(pTex_);
         pTex_ = new GLuint(0);
 
         glGenTextures(1, pTex_);

@@ -38,6 +38,10 @@ ScrollPane::ScrollPane(
 
 ScrollPane::~ScrollPane()
 {
+    GuiObject::removeSubObject(pane_);
+    GuiObject::removeSubObject(hSlider_);
+    GuiObject::removeSubObject(vSlider_);
+    delete pane_;
     delete hSlider_;
     delete vSlider_;
 
