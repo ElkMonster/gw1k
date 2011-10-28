@@ -5,6 +5,7 @@
 #include "Math.h"
 #include "Helpers.h"
 #include "Exception.h"
+#include "Log.h"
 #include <iostream>
 
 #define MSG(x) std::cout << x << std::endl
@@ -308,9 +309,12 @@ GuiObject::removeSubObject(GuiObject* o)
         {
             subObjects_.erase(i);
             o->parent_ = 0;
-            break;
+            return;
         }
     }
+    Log::warning("GuiObject", Log::os()
+        << "Attempt to remove sub-object " << (void*)o
+        << ", but couldn't be found in sub-object list");
 }
 
 
