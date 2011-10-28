@@ -57,13 +57,6 @@ public:
      */
     bool loadTexture(const std::string& filename);
 
-    /**
-     * Creates a texture from an image loaded by loadTexture(). This should only
-     * be called after the OpenGL context has been created. See loadTexture()
-     * for information on this.
-     */
-    void createTexture();
-
     void setTexMulColor(const Color4i* c);
 
     const Point& getTextureSize() const;
@@ -73,6 +66,15 @@ public:
     virtual void renderOGLContent() const;
 
     virtual const Point& setSize(float width, float height);
+
+protected:
+
+    /**
+     * Creates a texture from an image loaded by loadTexture(). This should only
+     * be called after the OpenGL context has been created. See loadTexture()
+     * for information on this.
+     */
+    void createTexture();
 
 private:
 
