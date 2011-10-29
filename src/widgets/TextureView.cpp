@@ -49,7 +49,7 @@ TextureView::setAspectRatioAutoResize(AspectRatioAutoAdapt a)
     {
         aspectRatioAutoAdapt_ = a;
         const Point& size = getSize();
-        GuiObject::setSize(size.x, size.y);
+        setSize(size.x, size.y);
     }
 }
 
