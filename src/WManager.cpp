@@ -360,16 +360,24 @@ WManager::registerForPreRenderUpdate(GuiObject* o)
 void
 WManager::indicateRemovedObject(const GuiObject* o)
 {
-    if (o == hoveredObj_)
-    {
-        MSG("WManager::indicateRemovedObject [hoveredObj_]: " << (void*)hoveredObj_);
-        hoveredObj_ = 0;
-    }
-
     if (o == clickedObj_)
     {
         MSG("WManager::indicateRemovedObject [clickedObj_]: " << (void*)clickedObj_);
         clickedObj_ = 0;
+    }
+
+    if (o == hoveredObj_)
+    {
+        MSG("WManager::indicateRemovedObject [hoveredObj_]: " << (void*)hoveredObj_);
+        hoveredObj_ = 0;
+
+        // Make sure that we're not left in a state where no object is hovered.
+        // This can happen when widgets are deleted outside of event handler
+        // code (e.g., if a close button only queues a widget for removal, but
+        // it is actually removed later; the removed widget would disappear, but
+        // leave hoveredObj_ set to 0 because of GuiObject's call to
+        // indicateRemovedObject()).
+        feedMouseMoveInternal(mousePos_, Point(), 0);
     }
 }
 

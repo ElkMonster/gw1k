@@ -20,6 +20,7 @@ GuiObject::GuiObject()
     bIsVisible_(true),
     parent_(0),
     bIsEmbedded_(false),
+    bContainsMouse_(false),
     bIsInteractive_(true)
 {}
 
@@ -67,6 +68,13 @@ bool
 GuiObject::containsMouse(const Point& p) const
 {
     return rect_.containsPoint(p);
+}
+
+
+bool
+GuiObject::containsMouse() const
+{
+    return bContainsMouse_;
 }
 
 
@@ -321,7 +329,10 @@ GuiObject::removeSubObject(GuiObject* o)
 GuiObject*
 GuiObject::getContainingObject(const Point& p)
 {
-    if (bIsVisible_ && bIsInteractive_ && containsMouse(p))
+    bool bContainsMouseBefore = bContainsMouse_;
+    bContainsMouse_ = bIsVisible_ && containsMouse(p);
+
+    if (bContainsMouse_ && bIsInteractive_)
     {
         GuiObject* containingSubObj = 0;
 
@@ -341,6 +352,13 @@ GuiObject::getContainingObject(const Point& p)
     }
     else
     {
+        // When mouse has left, recursively inform all sub-objects
+        if (bContainsMouseBefore && !bContainsMouse_)
+        {
+            MSG("not containing mouse anymore: "<<(void*)this);
+            resetSubObjContainsMouseStatus();
+        }
+
         return 0;
     }
 }
@@ -405,6 +423,21 @@ GuiObject::setEmbedded(bool b)
         {
             // TODO better exception
             throw "Embedded object has no non-embedded parent!";
+        }
+    }
+}
+
+
+void
+GuiObject::resetSubObjContainsMouseStatus()
+{
+    for (std::vector<GuiObject*>::iterator i = subObjects_.begin();
+        i != subObjects_.end(); ++i)
+    {
+        if ((*i)->bContainsMouse_)
+        {
+            (*i)->resetSubObjContainsMouseStatus();
+            (*i)->bContainsMouse_ = false;
         }
     }
 }

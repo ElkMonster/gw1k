@@ -36,7 +36,20 @@ public:
 
     void removeResizeListener(ResizeListener* rl);
 
+    /**
+     * Gets whether this widget contains the given point. The point must refer
+     * to relative coordinates (i.e., the coordinate system used has its origin
+     * at the top-left of the widget).
+     * This function should usually only be used internally by the GuiObject
+     * class. To get the latest mouse-containment status, use containsMouse().
+     */
     virtual bool containsMouse(const Point& p) const;
+
+    /**
+     * Gets whether this object was found to contain the mouse at the last
+     * update. The returned value is kept updated by getContainingObject().
+     */
+    bool containsMouse() const;
 
     virtual void setPos(float x, float y);
 
@@ -62,6 +75,10 @@ public:
 
     bool isVisible() const;
 
+    /**
+     * Sets whether this widget can be interacted with. Non-interactive widgets
+     * don't react to mouse actions, including their sub-objects(!).
+     */
     void setInteractive(bool state = true);
 
     bool isInteractive() const;
@@ -119,6 +136,13 @@ public:
      */
     void setEmbedded(bool b = true);
 
+private:
+
+    /**
+     * Recursively resets all sub-objects' bContainsMouse_ to false.
+     */
+    void resetSubObjContainsMouseStatus();
+
 protected:
 
     std::vector<GuiObject*> subObjects_;
@@ -134,6 +158,13 @@ protected:
     GuiObject* parent_;
 
     bool bIsEmbedded_;
+
+    /**
+     * Tells whether the mouse is currently within the bounds of this widget.
+     * The value is refreshed every time getContainingObject() is called on this
+     * widget.
+     */
+    bool bContainsMouse_;
 
 private:
 
