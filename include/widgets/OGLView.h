@@ -2,7 +2,7 @@
 #define GW1K_OGLVIEW_H_
 
 #include "Box.h"
-#include "geometry/include/Point2D.h"
+#include <geometry/include/Point2D.h>
 
 namespace gw1k
 {

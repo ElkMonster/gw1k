@@ -3,7 +3,7 @@
 
 #include "Color4i.h"
 
-#include "geometry/include/Point2D.h"
+#include <geometry/include/Point2D.h>
 
 namespace gw1k
 {
