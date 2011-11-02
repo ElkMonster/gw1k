@@ -8,7 +8,7 @@
 #include "Log.h"
 #include <iostream>
 
-#define MSG(x) std::cout << x << std::endl
+#define MSG(x) //std::cout << x << std::endl
 
 namespace gw1k
 {
@@ -94,7 +94,7 @@ GuiObject::setPos(float x, float y)
         }
     }
 
-    rect_.pos(round_pos(x), round_pos(y));
+    rect_.pos(round(x), round(y));
 }
 
 
@@ -355,7 +355,7 @@ GuiObject::getContainingObject(const Point& p)
         // When mouse has left, recursively inform all sub-objects
         if (bContainsMouseBefore && !bContainsMouse_)
         {
-            MSG("not containing mouse anymore: "<<(void*)this);
+            //MSG("not containing mouse anymore: "<<(void*)this);
             resetSubObjContainsMouseStatus();
         }
 
