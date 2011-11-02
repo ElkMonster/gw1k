@@ -24,8 +24,8 @@ public:
     /**
      * Calls the renderOGLContent() method of the OGLViewWiBox passed in as
      * parent in the constructor. Thus, OGLViewWiBox, despite only being a
-     * normal WiBox, will get its renderOGLContent() method executed even though
-     * it is derived from OGLView.
+     * normal WiBox and not derived from OGLView, will get its renderOGLContent()
+     * method executed.
      */
     virtual void renderOGLContent() const
     {
@@ -45,7 +45,7 @@ private:
 
     OGLViewWiBox* parentWiBox_;
 
-};
+}; // OGLViewWiBox_OGLRenderer
 
 
 OGLViewWiBox::OGLViewWiBox(
@@ -67,12 +67,74 @@ OGLViewWiBox::~OGLViewWiBox()
 }
 
 
+void
+OGLViewWiBox::setTranslation(const geom::Point2D& t)
+{
+    oglRenderer_->setTranslation(t);
+}
+
+
+const geom::Point2D&
+OGLViewWiBox::getTranslation() const
+{
+    return oglRenderer_->getTranslation();
+}
+
+
+void
+OGLViewWiBox::setZoomFactor(float z)
+{
+    oglRenderer_->setZoomFactor(z);
+}
+
+
+float
+OGLViewWiBox::getZoomFactor() const
+{
+    return oglRenderer_->getZoomFactor();
+}
+
+
+void
+OGLViewWiBox::relativeTranslateBy(const Point& delta)
+{
+
+}
+
+
+void
+OGLViewWiBox::allowMouseControl(bool enabled)
+{
+    oglRenderer_->allowMouseControl(enabled);
+}
+
+
 const Point&
 OGLViewWiBox::setSize(float width, float height)
 {
     const Point& newSize = WiBox::setSize(width, height);
     oglRenderer_->setSize(newSize.x - 2, newSize.y - 2);
     return newSize;
+}
+
+
+geom::Point2D
+OGLViewWiBox::pxToGLPos(const Point& relPos) const
+{
+    return oglRenderer_->pxToGLPos(relPos);
+}
+
+
+geom::Point2D
+OGLViewWiBox::pxToGLDelta(const Point& delta) const
+{
+    return oglRenderer_->pxToGLDelta(delta);
+}
+
+Point
+OGLViewWiBox::glPosToPx(const geom::Point2D& pos) const
+{
+    return oglRenderer_->glPosToPx(pos);
 }
 
 
