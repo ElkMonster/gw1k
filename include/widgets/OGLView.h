@@ -48,13 +48,33 @@ public:
 
     virtual void mouseWheeled(int delta, GuiObject* receiver);
 
+    /**
+     * Gets the OpenGL coordinate that correspond to the given pixel position.
+     * Pixel position must be relative to widget position, i.e., in order to get
+     * the GL coordinate for the top-left widget corner, relPos must be (0,0).
+     * Example using this function with a mouse listener:
+     *
+     * mouseMoved(MouseMovedEvent ev, const Point& pos, ...)
+     * {
+     *     Point relPos = pos - widget->getGlobalPos();
+     *     geom::Point2D glPos = pxToGLPos(relPos);
+     *     ...
+     * }
+     *
+     */
+    geom::Point2D pxToGLPos(const Point& relPos) const;
+
+    geom::Point2D pxToGLDelta(const Point& delta) const;
+
+    /**
+     * Gets the pixel position that corresponds to the given OpenGL coordinate.
+     * The returned pixel position is relative to widget position.
+     */
+    Point glPosToPx(const geom::Point2D& pos) const;
+
 protected:
 
     virtual void renderOGLContent() const;
-
-    geom::Point2D pxToGLPos(const gw1k::Point& pos) const;
-
-    geom::Point2D pxToGLDelta(const gw1k::Point& delta) const;
 
 protected:
 
@@ -75,6 +95,11 @@ private:
      */
     float widgToRelSize_;
 
+    geom::Point2D gWidgSize_;
+
+    geom::Point2D gHalfGLSize_;
+
+    geom::Point2D gGLTopLeft_;
 };
 
 

@@ -1,6 +1,8 @@
 #include "widgets/OGLView.h"
 
 #include "Render.h"
+#include "Helpers.h"
+#include "Math.h"
 
 #include <GL/gl.h>
 #include <iostream>
@@ -34,6 +36,19 @@ OGLView::setSize(float width, float height)
 
     minDimSize_ = std::min(newSize.x, newSize.y);
     widgToRelSize_ = 1.f / minDimSize_;
+
+    gWidgSize_ = pointToGeomPoint2D(newSize);
+
+    // Half of the basic size (width/2, height/2) in GL coordinate space
+    gHalfGLSize_ = gWidgSize_ * widgToRelSize_;
+
+    // Top-left point in basic GL coordinate space (corresponds to widget
+    // coordinate (0,0))
+    gGLTopLeft_ = geom::Point2D(-gHalfGLSize_.x, gHalfGLSize_.y);
+
+    // Apply transformation so glTopLeft corresponds to the GL coordinate system
+    // point that is actually visible currently
+    gGLTopLeft_ = (gGLTopLeft_ - transl_) / zoom_;
 
     return newSize;
 }
@@ -129,6 +144,12 @@ OGLView::mouseMoved(
             relativeTranslateBy(delta);
         }
     }
+
+    /*
+    Point globPos = getGlobalPos();
+    geom::Point2D glp = pxToGLPos(pos - globPos);
+    MSG(" mouse pos: " << pos << "  rel mouse pos: " << (pos - globPos) << "  gl pos: " << glp << "  gl pos to px pos: " << glPosToPx(glp));
+    */
 }
 
 
@@ -156,64 +177,69 @@ OGLView::mouseWheeled(int delta, GuiObject* receiver)
 void
 OGLView::renderOGLContent() const
 {
+    // Render x and y axis and a 1x1-sized box starting at the (OpenGL) origin
     using namespace geom;
+    glColor4f(1.f, 0.f, 0.f, 0.33f);
+    fillRect(Point2D(0.f, 0.f), Point2D(1.f, 1.f));
     glColor3f(1.f, 0.f, 0.f);
-    fillRect(Point2D(-0.5f, 0.f), Point2D(0.5f, 1.f));
+    glBegin(GL_LINES);
+    {
+        glVertex2f(-100.f, 0.f);
+        glVertex2f(100.f, 0.f);
+
+        glVertex2f(0.f, -100.f);
+        glVertex2f(0.f, 100.f);
+    }
+    glEnd();
 }
 
 
 geom::Point2D
-OGLView::pxToGLPos(const gw1k::Point& pos) const
+OGLView::pxToGLPos(const Point& relPos) const
 {
     using namespace geom;
-
-    const gw1k::Point& widgSize = getSize();
-    Point2D gWidgSize(widgSize.x, widgSize.y);
-
-    // Half of the basic size (width/2, height/2) in GL coordinate space
-    Point2D halfGLSize = gWidgSize * widgToRelSize_;
-
-    // Top-left point in basic GL coordinate space (corresponds to widget
-    // coordinate (0,0))
-    Point2D glTopLeft(-halfGLSize.x, halfGLSize.y);
-
-    // Apply transformation so glTopLeft corresponds to the GL coordinate system
-    // point that is actually visible currently
-    glTopLeft = (glTopLeft - transl_) / zoom_;
-
     // Calculate relative position of pos in the widget, invert y to match GL
     // coordinate system (y axis points up)
-    Point2D pRel = Point2D(pos.x, -pos.y) / gWidgSize;
+    Point2D pRel = Point2D(relPos.x, -relPos.y) / gWidgSize_;
 
     // Transform relative position in widget to a vector that is based on the
     // currently visible GL coordinate system detail
-    pRel *= halfGLSize * 2.f / zoom_;
+    pRel *= gHalfGLSize_ * 2.f / zoom_;
 
-    return glTopLeft + pRel;
+    return gGLTopLeft_ + pRel;
 }
 
 
 geom::Point2D
-OGLView::pxToGLDelta(const gw1k::Point& delta) const
+OGLView::pxToGLDelta(const Point& delta) const
 {
     // TODO fix comments
     using namespace geom;
 
-    const gw1k::Point& widgSize = getSize();
-    Point2D gWidgSize(widgSize.x, widgSize.y);
-
     // Half of the basic size (width/2, height/2) in GL coordinate space
-    Point2D glSize = gWidgSize * widgToRelSize_ * 2.f;
+    Point2D glSize = gWidgSize_ * widgToRelSize_ * 2.f;
 
     // Calculate relative position of pos in the widget, invert y to match GL
     // coordinate system (y axis points up)
-    Point2D dRel = Point2D(delta.x, -delta.y) / gWidgSize;
+    Point2D dRel = Point2D(delta.x, -delta.y) / gWidgSize_;
 
     // Transform relative delta in widget to a vector that is based on the
     // currently visible GL coordinate system detail
     dRel *= glSize / zoom_;
 
     return dRel;
+}
+
+
+Point
+OGLView::glPosToPx(const geom::Point2D& pos) const
+{
+    geom::Point2D p = pos - gGLTopLeft_;
+    p /= gHalfGLSize_ * 2.f / zoom_;
+    p *= gWidgSize_;
+    p.y = -p.y;
+
+    return Point(round(p.x), round(p.y));
 }
 
 
