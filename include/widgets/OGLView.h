@@ -86,6 +86,10 @@ protected:
 
 private:
 
+    void updateTopLeft();
+
+private:
+
     int minDimSize_;
 
     /**

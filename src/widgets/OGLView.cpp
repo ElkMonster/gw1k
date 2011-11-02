@@ -42,13 +42,7 @@ OGLView::setSize(float width, float height)
     // Half of the basic size (width/2, height/2) in GL coordinate space
     gHalfGLSize_ = gWidgSize_ * widgToRelSize_;
 
-    // Top-left point in basic GL coordinate space (corresponds to widget
-    // coordinate (0,0))
-    gGLTopLeft_ = geom::Point2D(-gHalfGLSize_.x, gHalfGLSize_.y);
-
-    // Apply transformation so glTopLeft corresponds to the GL coordinate system
-    // point that is actually visible currently
-    gGLTopLeft_ = (gGLTopLeft_ - transl_) / zoom_;
+    updateTopLeft();
 
     return newSize;
 }
@@ -58,6 +52,7 @@ void
 OGLView::setTranslation(const geom::Point2D& t)
 {
     transl_ = t;
+    updateTopLeft();
 }
 
 
@@ -74,6 +69,7 @@ OGLView::setZoomFactor(float z)
     if (z > 0.f)
     {
         zoom_ = z;
+        updateTopLeft();
     }
     MSG(zoom_);
 }
@@ -90,6 +86,7 @@ void
 OGLView::relativeTranslateBy(const Point& delta)
 {
     transl_ += geom::Point2D(delta.x, -delta.y) * widgToRelSize_ * 2;
+    updateTopLeft();
 }
 
 
@@ -145,11 +142,11 @@ OGLView::mouseMoved(
         }
     }
 
-    /*
+
     Point globPos = getGlobalPos();
     geom::Point2D glp = pxToGLPos(pos - globPos);
     MSG(" mouse pos: " << pos << "  rel mouse pos: " << (pos - globPos) << "  gl pos: " << glp << "  gl pos to px pos: " << glPosToPx(glp));
-    */
+
 }
 
 
@@ -240,6 +237,19 @@ OGLView::glPosToPx(const geom::Point2D& pos) const
     p.y = -p.y;
 
     return Point(round(p.x), round(p.y));
+}
+
+
+void
+OGLView::updateTopLeft()
+{
+    // Top-left point in basic GL coordinate space (corresponds to widget
+    // coordinate (0,0))
+    gGLTopLeft_ = geom::Point2D(-gHalfGLSize_.x, gHalfGLSize_.y);
+
+    // Apply transformation so glTopLeft corresponds to the GL coordinate system
+    // point that is actually visible currently
+    gGLTopLeft_ = (gGLTopLeft_ - transl_) / zoom_;
 }
 
 
