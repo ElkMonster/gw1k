@@ -142,10 +142,9 @@ OGLView::mouseMoved(
         }
     }
 
-
-    Point globPos = getGlobalPos();
-    geom::Point2D glp = pxToGLPos(pos - globPos);
-    MSG(" mouse pos: " << pos << "  rel mouse pos: " << (pos - globPos) << "  gl pos: " << glp << "  gl pos to px pos: " << glPosToPx(glp));
+    //Point globPos = getGlobalPos();
+    //geom::Point2D glp = pxToGLPos(pos - globPos);
+    //MSG(" mouse pos: " << pos << "  rel mouse pos: " << (pos - globPos) << "  gl pos: " << glp << "  gl pos to px pos: " << glPosToPx(glp));
 
 }
 
