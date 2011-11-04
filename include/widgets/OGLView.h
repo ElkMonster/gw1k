@@ -29,11 +29,11 @@ public:
 
     float getZoomFactor() const;
 
-    void relativeTranslateBy(const Point& delta);
+    void translateViewByPx(const Point& delta);
+
+    void centerViewAt(const geom::Point2D& p);
 
     void allowMouseControl(bool enabled = true);
-
-    //virtual void renderFg(const Point& offset) const;
 
     virtual void renderContent(const Point& offset) const;
 
@@ -86,7 +86,9 @@ protected:
 
 private:
 
-    void updateTopLeft();
+    void updateTopLeftAndPxToGLFactor();
+
+    void updateInternalVars();
 
 private:
 
@@ -98,6 +100,14 @@ private:
      * calculated each time setSize() is called.
      */
     float widgToRelSize_;
+
+    /**
+     * Holds a factor that can be multiplied with a pixel coordinate to obtain
+     * the equivalent value in GL coordinate space based in the current widget
+     * size and zoom. The reverse (GL to pixel) can be calculated by dividing by
+     * the factor.
+     */
+    float pxToGLFactor_;
 
     geom::Point2D gWidgSize_;
 

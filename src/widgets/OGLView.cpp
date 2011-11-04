@@ -17,10 +17,9 @@ OGLView::OGLView(const Point& pos, const Point& size)
 :   Box(pos, size),
     transl_(geom::Point2D(0.f, 0.f)),
     zoom_(1.f),
-    bMouseControl_(false),
-    minDimSize_(std::min(size.x, size.y)),
-    widgToRelSize_(1.f / minDimSize_)
+    bMouseControl_(false)
 {
+    updateInternalVars();
     addMouseListener(this);
 }
 
@@ -33,17 +32,7 @@ const Point&
 OGLView::setSize(float width, float height)
 {
     const Point& newSize = Box::setSize(width, height);
-
-    minDimSize_ = std::min(newSize.x, newSize.y);
-    widgToRelSize_ = 1.f / minDimSize_;
-
-    gWidgSize_ = pointToGeomPoint2D(newSize);
-
-    // Half of the basic size (width/2, height/2) in GL coordinate space
-    gHalfGLSize_ = gWidgSize_ * widgToRelSize_;
-
-    updateTopLeft();
-
+    updateInternalVars();
     return newSize;
 }
 
@@ -52,7 +41,7 @@ void
 OGLView::setTranslation(const geom::Point2D& t)
 {
     transl_ = t;
-    updateTopLeft();
+    updateTopLeftAndPxToGLFactor();
 }
 
 
@@ -69,7 +58,7 @@ OGLView::setZoomFactor(float z)
     if (z > 0.f)
     {
         zoom_ = z;
-        updateTopLeft();
+        updateTopLeftAndPxToGLFactor();
     }
     MSG(zoom_);
 }
@@ -83,10 +72,17 @@ OGLView::getZoomFactor() const
 
 
 void
-OGLView::relativeTranslateBy(const Point& delta)
+OGLView::translateViewByPx(const Point& delta)
 {
-    transl_ += geom::Point2D(delta.x, -delta.y) * widgToRelSize_ * 2;
-    updateTopLeft();
+    transl_ += pxToGLDelta(delta);
+    updateTopLeftAndPxToGLFactor();
+}
+
+
+void
+OGLView::centerViewAt(const geom::Point2D& p)
+{
+    setTranslation(-p);
 }
 
 
@@ -113,13 +109,17 @@ OGLView::renderContent(const Point& offset) const
         glScalef(0.5f * minDimSize_, -0.5f * minDimSize_, 1.f);
         glTranslatef(size.x * widgToRelSize_, -size.y * widgToRelSize_, 0.f);
 
-        // Apply our transformations
-        glTranslatef(transl_.x, transl_.y, 0.f);
-        glScalef(zoom_, zoom_, 1.f);
-
         glPushMatrix();
         {
-            renderOGLContent();
+            // Apply our transformations
+            glScalef(zoom_, zoom_, 1.f);
+            glTranslatef(transl_.x, transl_.y, 0.f);
+
+            glPushMatrix();
+            {
+                renderOGLContent();
+            }
+            glPopMatrix();
         }
         glPopMatrix();
     }
@@ -138,7 +138,7 @@ OGLView::mouseMoved(
     {
         if ((receiver == this) && isClicked())
         {
-            relativeTranslateBy(delta);
+            translateViewByPx(delta);
         }
     }
 
@@ -194,64 +194,58 @@ OGLView::renderOGLContent() const
 geom::Point2D
 OGLView::pxToGLPos(const Point& relPos) const
 {
-    using namespace geom;
-    // Calculate relative position of pos in the widget, invert y to match GL
-    // coordinate system (y axis points up)
-    Point2D pRel = Point2D(relPos.x, -relPos.y) / gWidgSize_;
-
-    // Transform relative position in widget to a vector that is based on the
-    // currently visible GL coordinate system detail
-    pRel *= gHalfGLSize_ * 2.f / zoom_;
-
-    return gGLTopLeft_ + pRel;
+    return gGLTopLeft_ + geom::Point2D(relPos.x, -relPos.y) * pxToGLFactor_;
 }
 
 
 geom::Point2D
 OGLView::pxToGLDelta(const Point& delta) const
 {
-    // TODO fix comments
-    using namespace geom;
-
-    // Half of the basic size (width/2, height/2) in GL coordinate space
-    Point2D glSize = gWidgSize_ * widgToRelSize_ * 2.f;
-
-    // Calculate relative position of pos in the widget, invert y to match GL
-    // coordinate system (y axis points up)
-    Point2D dRel = Point2D(delta.x, -delta.y) / gWidgSize_;
-
-    // Transform relative delta in widget to a vector that is based on the
-    // currently visible GL coordinate system detail
-    dRel *= glSize / zoom_;
-
-    return dRel;
+    return geom::Point2D(delta.x, -delta.y) * pxToGLFactor_;
 }
 
 
 Point
 OGLView::glPosToPx(const geom::Point2D& pos) const
 {
-    geom::Point2D p = pos - gGLTopLeft_;
-    p /= gHalfGLSize_ * 2.f / zoom_;
-    p *= gWidgSize_;
-    p.y = -p.y;
-
-    return Point(round(p.x), round(p.y));
+    geom::Point2D p = (pos - gGLTopLeft_) / pxToGLFactor_;
+    return Point(round(p.x), round(-p.y));
 }
 
 
 void
-OGLView::updateTopLeft()
+OGLView::updateTopLeftAndPxToGLFactor()
 {
-    // Top-left point in basic GL coordinate space (corresponds to widget
-    // coordinate (0,0))
-    gGLTopLeft_ = geom::Point2D(-gHalfGLSize_.x, gHalfGLSize_.y);
+    using namespace geom;
 
-    // Apply transformation so glTopLeft corresponds to the GL coordinate system
-    // point that is actually visible currently
-    gGLTopLeft_ = (gGLTopLeft_ - transl_) / zoom_;
+    // Top-left is calculated by taking the top-left point in initial state
+    // (i.e., where GL coordinate system origin is centred in our widget and the
+    // shorter edge dimension extends from +1 to -1), which corresponds to
+    // the widget coordinate (0,0), and applying transformation to it so
+    // glTopLeft corresponds to the GL coordinate system point that is currently
+    // located at the widget's (0,0) coordinate
+    gGLTopLeft_ = Point2D(-gHalfGLSize_.x, gHalfGLSize_.y) / zoom_ - transl_;
+
+    pxToGLFactor_ = widgToRelSize_ * 2.f / zoom_;
 }
 
+
+void
+OGLView::updateInternalVars()
+{
+    const Point& size = getSize();
+    minDimSize_ = std::min(size.x, size.y);
+
+    gWidgSize_ = pointToGeomPoint2D(size);
+
+    widgToRelSize_ = 1.f / minDimSize_;
+
+    // Half of the basic size (width/2, height/2) in GL coordinate space
+    gHalfGLSize_ = gWidgSize_ * widgToRelSize_;
+
+    updateTopLeftAndPxToGLFactor();
+
+}
 
 } // namespace gw1k
 
