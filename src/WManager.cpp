@@ -377,7 +377,10 @@ WManager::indicateRemovedObject(const GuiObject* o)
         // it is actually removed later; the removed widget would disappear, but
         // leave hoveredObj_ set to 0 because of GuiObject's call to
         // indicateRemovedObject()).
-        feedMouseMoveInternal(mousePos_, Point(), 0);
+        if (o != mainWin_)
+        {
+            feedMouseMoveInternal(mousePos_, Point(), 0);
+        }
     }
 }
 
