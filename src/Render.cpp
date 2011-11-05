@@ -181,9 +181,10 @@ void fillEllipse(
         glTranslatef(center.x, center.y, 0.f);
         glScalef(radius.x, radius.y, 1.f);
 
+
         glBegin(GL_TRIANGLE_FAN);
         {
-            glVertex2f(center.x, center.y);
+            glVertex2f(0.f, 0.f);
 
             for (int i = 0; i != size - 1; ++i)
             {
