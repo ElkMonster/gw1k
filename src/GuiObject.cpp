@@ -173,6 +173,14 @@ GuiObject::getGlobalPos() const
 }
 
 
+void
+GuiObject::moveBy(const Point& delta)
+{
+    Point p = getPos() + delta;
+    setPos(p.x, p.y);
+}
+
+
 bool
 GuiObject::isHovered() const
 {

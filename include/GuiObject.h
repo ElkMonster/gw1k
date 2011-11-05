@@ -63,6 +63,11 @@ public:
 
     Point getGlobalPos() const;
 
+    /**
+     * Convenience method calling setPos() with the result of getPos() + delta.
+     */
+    void moveBy(const Point& delta);
+
     void setHovered(bool state = true);
 
     bool isHovered() const;
