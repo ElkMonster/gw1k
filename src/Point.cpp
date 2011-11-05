@@ -60,6 +60,20 @@ Point::operator-(const Point& other) const
 
 
 const Point
+Point::operator*(int factor) const
+{
+    return Point(x * factor, y * factor);
+}
+
+
+const Point
+Point::operator/(int divisor) const
+{
+    return Point(x / divisor, y / divisor);
+}
+
+
+const Point
 Point::operator-() const
 {
     return Point(-x, -y);

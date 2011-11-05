@@ -29,6 +29,10 @@ public:
 
     const Point operator-(const Point& other) const;
 
+    const Point operator*(int factor) const;
+
+    const Point operator/(int divisor) const;
+
     const Point operator-() const;
 
     bool operator==(const Point& rhs) const;
