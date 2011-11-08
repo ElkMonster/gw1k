@@ -204,6 +204,13 @@ OGLView::pxToGLDelta(const Point& delta) const
 }
 
 
+geom::Point2D
+OGLView::pxToGLUnit(const Point& v) const
+{
+    return geom::Point2D(v.x, v.y) * pxToGLFactor_;
+}
+
+
 Point
 OGLView::glPosToPx(const geom::Point2D& pos) const
 {
