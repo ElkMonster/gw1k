@@ -25,8 +25,9 @@ StateEvent glfwToGw1kStateEvent(int glfwStateEvent)
     switch(glfwStateEvent)
     {
     case GLFW_PRESS: return GW1K_PRESSED;
-    case GLFW_RELEASE: return GW1K_RELEASED;
-    default: return GW1K_UNDEFINED;
+    case GLFW_RELEASE:
+    default:
+        return GW1K_RELEASED;
     }
 }
 
