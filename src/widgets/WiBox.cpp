@@ -1,6 +1,6 @@
 #include "widgets/WiBox.h"
 
-#include "Helpers.h"
+#include "utils/Helpers.h"
 #include "Render.h"
 #include "ThemeManager.h"
 

@@ -2,7 +2,7 @@
 
 #include <GL/gl.h>
 
-#include "Helpers.h"
+#include "utils/Helpers.h"
 #include "ThemeManager.h"
 
 //#define GW1K_ENABLE_GL_ERROR_CHECKS
@@ -14,12 +14,6 @@ namespace gw1k
 
 
 Renderable::Renderable(const char* colorScheme)
-:   fgCol_(0),
-    bgCol_(0),
-    hoveredFgCol_(0),
-    hoveredBgCol_(0),
-    clickedFgCol_(0),
-    clickedBgCol_(0)
 {
     setColors(colorScheme);
 }
@@ -27,12 +21,6 @@ Renderable::Renderable(const char* colorScheme)
 
 Renderable::~Renderable()
 {
-    DELETE_PTR(fgCol_);
-    DELETE_PTR(bgCol_);
-    DELETE_PTR(hoveredFgCol_);
-    DELETE_PTR(hoveredBgCol_);
-    DELETE_PTR(clickedFgCol_);
-    DELETE_PTR(clickedBgCol_);
 }
 
 
@@ -50,7 +38,7 @@ Renderable::render(const Point& offset) const
 Renderable&
 Renderable::setFgColor(const Color4i* col)
 {
-    setColor(col, fgCol_);
+    setColor(col, colorTable_.fgCol);
     return *this;
 }
 
@@ -58,7 +46,7 @@ Renderable::setFgColor(const Color4i* col)
 Renderable&
 Renderable::setBgColor(const Color4i* col)
 {
-    setColor(col, bgCol_);
+    setColor(col, colorTable_.bgCol);
     return *this;
 }
 
@@ -66,7 +54,7 @@ Renderable::setBgColor(const Color4i* col)
 Renderable&
 Renderable::setHoveredFgColor(const Color4i* col)
 {
-    setColor(col, hoveredFgCol_);
+    setColor(col, colorTable_.hoveredFgCol);
     return *this;
 }
 
@@ -74,7 +62,7 @@ Renderable::setHoveredFgColor(const Color4i* col)
 Renderable&
 Renderable::setHoveredBgColor(const Color4i* col)
 {
-    setColor(col, hoveredBgCol_);
+    setColor(col, colorTable_.hoveredBgCol);
     return *this;
 }
 
@@ -82,7 +70,7 @@ Renderable::setHoveredBgColor(const Color4i* col)
 Renderable&
 Renderable::setClickedFgColor(const Color4i* col)
 {
-    setColor(col, clickedFgCol_);
+    setColor(col, colorTable_.clickedFgCol);
     return *this;
 }
 
@@ -90,7 +78,7 @@ Renderable::setClickedFgColor(const Color4i* col)
 Renderable&
 Renderable::setClickedBgColor(const Color4i* col)
 {
-    setColor(col, clickedBgCol_);
+    setColor(col, colorTable_.clickedBgCol);
     return *this;
 }
 
@@ -105,19 +93,20 @@ Renderable::setColors(const char* colorScheme)
 void
 Renderable::queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const
 {
+    const ColorTable& c = colorTable_;
     switch (state)
     {
     case STATE_CLICKED:
-        fg = clickedFgCol_ ? clickedFgCol_ : (hoveredFgCol_ ? hoveredFgCol_ : fgCol_);
-        bg = clickedBgCol_ ? clickedBgCol_ : (hoveredBgCol_ ? hoveredBgCol_ : bgCol_);
+        fg = c.clickedFgCol ? c.clickedFgCol : (c.hoveredFgCol ? c.hoveredFgCol : c.fgCol);
+        bg = c.clickedBgCol ? c.clickedBgCol : (c.hoveredBgCol ? c.hoveredBgCol : c.bgCol);
         break;
     case STATE_HOVERED:
-        fg = hoveredFgCol_ ? hoveredFgCol_ : fgCol_;
-        bg = hoveredBgCol_ ? hoveredBgCol_ : bgCol_;
+        fg = c.hoveredFgCol ? c.hoveredFgCol : c.fgCol;
+        bg = c.hoveredBgCol ? c.hoveredBgCol : c.bgCol;
         break;
     case STATE_NORMAL:
-        fg = fgCol_;
-        bg = bgCol_;
+        fg = c.fgCol;
+        bg = c.bgCol;
         break;
     }
 }

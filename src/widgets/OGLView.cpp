@@ -1,7 +1,7 @@
 #include "widgets/OGLView.h"
 
 #include "Render.h"
-#include "Helpers.h"
+#include "utils/Helpers.h"
 #include "Math.h"
 
 #include <GL/gl.h>

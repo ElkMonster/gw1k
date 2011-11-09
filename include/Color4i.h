@@ -1,7 +1,7 @@
 #ifndef GW1K_COLOR4I_H_
 #define GW1K_COLOR4I_H_
 
-#include "Helpers.h"
+#include "utils/Helpers.h"
 
 
 #define F_FAC (1.f / 255.f)

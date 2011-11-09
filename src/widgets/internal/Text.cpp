@@ -1,7 +1,7 @@
 #include "widgets/internal/Text.h"
 #include "FTGLFontManager.h"
 
-#include "Helpers.h"
+#include "utils/Helpers.h"
 #include "WManager.h"
 #include "ThemeManager.h"
 #include "Math.h"
