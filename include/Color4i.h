@@ -46,6 +46,35 @@ struct Color4i
 };
 
 
+// TODO Put in extra .cpp
+/**
+ * Copies the value(s) of col to dest.
+ *
+ * The following cases are handled:
+ * - col != 0, dest == 0: Create new Color4i in dest and copy col's values
+ * - col == 0, dest != 0: Delete dest and set it to 0 as well
+ * - col != 0, dest != 0: Copy col's values to dest
+ *
+ */
+inline void
+setColor(const Color4i* col, Color4i*& dest)
+{
+    if (col && !dest)
+    {
+        dest = new Color4i(*col);
+    }
+    else if (!col && dest)
+    {
+        delete dest;
+        dest = 0;
+    }
+    else if (col && dest)
+    {
+        *dest = *col;
+    }
+}
+
+
 namespace color
 {
 

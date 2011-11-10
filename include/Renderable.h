@@ -95,8 +95,6 @@ protected:
      */
     virtual void renderBg(const Point& offset) const = 0;
 
-    void setColor(const Color4i* col, Color4i*& dest);
-
     /**
      * Calls queryColors() with the current state of this Renderable.
      */

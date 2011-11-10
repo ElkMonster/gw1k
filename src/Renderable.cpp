@@ -152,25 +152,6 @@ Renderable::renderContent(const Point& offset) const
 
 
 void
-Renderable::setColor(const Color4i* col, Color4i*& dest)
-{
-    if (col && !dest)
-    {
-        dest = new Color4i(*col);
-    }
-    else if (!col && dest)
-    {
-        delete dest;
-        dest = 0;
-    }
-    else if (col && dest)
-    {
-        *dest = *col;
-    }
-}
-
-
-void
 Renderable::selectColors(Color4i*& fg, Color4i*& bg) const
 {
     ColorState state = (bIsClicked_ ? STATE_CLICKED : (bIsHovered_ ? STATE_HOVERED : STATE_NORMAL));
