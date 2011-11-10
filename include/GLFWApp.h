@@ -21,14 +21,14 @@ namespace gw1k
  * work. Creating a second GLFWApp instance will overwrite the instance variable
  * and leave the first instance without input. Therefore, no more than one
  * instance should be created.
- * A GLFWApp can based basically consist of only two calls, init() and
- * mainLoop(). init() should be called before doing anything related to GLFW.
- * mainLoop() calls preMainLoop() and postMainLoop() before starting and after
- * leaving the loop, respectively. Any custom code for application setup and
- * cleanup should be put there. Widget initialisation should always be performed
- * after init() has been called, otherwise widgets that depend on an initialised
- * GL state might fail to work correctly. For example, the Text widget will only
- * produce garbled glyphs when used before init().
+ * A GLFWApp can basically consist of only two calls, init() and mainLoop().
+ * init() should be called before doing anything related to GLFW. mainLoop()
+ * calls preMainLoop() and postMainLoop() before starting and after  leaving the
+ * loop, respectively. Any custom code for application setup and cleanup should
+ * be put there. Widget initialisation should always be performed after init()
+ * has been called, otherwise widgets that depend on an initialised GL state
+ * might fail to work correctly. For example, the Text widget will only produce
+ * garbled glyphs when used before init().
  */
 class GLFWApp
 {
@@ -191,8 +191,6 @@ private:
      * Registers GLFWApp's static callback methods with GLFW.
      */
     void registerGLFWCallbacks();
-
-private:
 
 public:
 
