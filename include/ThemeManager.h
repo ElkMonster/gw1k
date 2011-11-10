@@ -2,6 +2,8 @@
 #define GW1K_THEMEMANAGER_H_
 
 #include "Renderable.h"
+#include "ColorTable.h"
+
 
 extern "C" {
 #include <lua.h>
@@ -34,6 +36,10 @@ public:
     bool loadTheme(const char* themeName);
 
     void setColors(Renderable* r,
+                   const char* colorScheme,
+                   const char* fallbackScheme);
+
+    void setColors(ColorTable& ct,
                    const char* colorScheme,
                    const char* fallbackScheme);
 

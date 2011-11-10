@@ -96,6 +96,21 @@ ThemeManager::setColors(
 }
 
 
+void
+ThemeManager::setColors(
+    ColorTable& ct,
+    const char* colorScheme,
+    const char* fallbackScheme)
+{
+    setColor(getFgColor(colorScheme, fallbackScheme), ct.fgCol);
+    setColor(getBgColor(colorScheme, fallbackScheme), ct.bgCol);
+    setColor(getHoveredFgColor(colorScheme, fallbackScheme), ct.hoveredFgCol);
+    setColor(getHoveredBgColor(colorScheme, fallbackScheme), ct.hoveredBgCol);
+    setColor(getClickedFgColor(colorScheme, fallbackScheme), ct.clickedFgCol);
+    setColor(getClickedBgColor(colorScheme, fallbackScheme), ct.clickedBgCol);
+}
+
+
 const Color4i*
 ThemeManager::getFgColor(
     const char* colorScheme,
