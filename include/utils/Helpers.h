@@ -1,7 +1,7 @@
 #ifndef GW1K_HELPERS_H_
 #define GW1K_HELPERS_H_
 
-#include "Point.h"
+#include "../Point.h"
 
 #include <geometry/include/Point2D.h>
 
