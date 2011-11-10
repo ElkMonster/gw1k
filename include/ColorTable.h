@@ -9,9 +9,17 @@ namespace gw1k
 
 struct ColorTable
 {
+
+    enum ColorState { STATE_NORMAL, STATE_HOVERED, STATE_CLICKED };
+
     ColorTable();
 
     ~ColorTable();
+
+    /**
+     * Gets foreground and background colours specified for the given state.
+     */
+    void queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const;
 
     Color4i* fgCol;
     Color4i* bgCol;

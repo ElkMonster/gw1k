@@ -91,28 +91,6 @@ Renderable::setColors(const char* colorScheme)
 
 
 void
-Renderable::queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const
-{
-    const ColorTable& c = colorTable_;
-    switch (state)
-    {
-    case STATE_CLICKED:
-        fg = c.clickedFgCol ? c.clickedFgCol : (c.hoveredFgCol ? c.hoveredFgCol : c.fgCol);
-        bg = c.clickedBgCol ? c.clickedBgCol : (c.hoveredBgCol ? c.hoveredBgCol : c.bgCol);
-        break;
-    case STATE_HOVERED:
-        fg = c.hoveredFgCol ? c.hoveredFgCol : c.fgCol;
-        bg = c.hoveredBgCol ? c.hoveredBgCol : c.bgCol;
-        break;
-    case STATE_NORMAL:
-        fg = c.fgCol;
-        bg = c.bgCol;
-        break;
-    }
-}
-
-
-void
 Renderable::renderSelf(const Point& offset) const
 {
     Color4i* fg, * bg;
@@ -154,8 +132,10 @@ Renderable::renderContent(const Point& offset) const
 void
 Renderable::selectColors(Color4i*& fg, Color4i*& bg) const
 {
-    ColorState state = (bIsClicked_ ? STATE_CLICKED : (bIsHovered_ ? STATE_HOVERED : STATE_NORMAL));
-    queryColors(fg, bg, state);
+    ColorTable::ColorState state =
+        (bIsClicked_ ? ColorTable::STATE_CLICKED :
+            (bIsHovered_ ? ColorTable::STATE_HOVERED : ColorTable::STATE_NORMAL));
+    colorTable_.queryColors(fg, bg, state);
 }
 
 

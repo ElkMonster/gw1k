@@ -41,13 +41,6 @@ public:
 
     virtual void setColors(const char* colorScheme);
 
-    enum ColorState { STATE_NORMAL, STATE_HOVERED, STATE_CLICKED };
-
-    /**
-     * Gets foreground and background colours specified for the given state.
-     */
-    void queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const;
-
 protected:
 
     /**

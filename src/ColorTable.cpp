@@ -27,4 +27,25 @@ ColorTable::~ColorTable()
 }
 
 
+void
+ColorTable::queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const
+{
+    switch (state)
+    {
+    case STATE_CLICKED:
+        fg = clickedFgCol ? clickedFgCol : (hoveredFgCol ? hoveredFgCol : fgCol);
+        bg = clickedBgCol ? clickedBgCol : (hoveredBgCol ? hoveredBgCol : bgCol);
+        break;
+    case STATE_HOVERED:
+        fg = hoveredFgCol ? hoveredFgCol : fgCol;
+        bg = hoveredBgCol ? hoveredBgCol : bgCol;
+        break;
+    case STATE_NORMAL:
+        fg = fgCol;
+        bg = bgCol;
+        break;
+    }
+}
+
+
 } // namespace gw1k
