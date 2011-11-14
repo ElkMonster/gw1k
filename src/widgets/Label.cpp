@@ -40,7 +40,7 @@ Label::Label(
     }
     else
     {
-        Point s = size - Point(2, 2) - padding_ - padding_;
+        Point s = size - Point(2, 2) - padding_ * 2;
         text_.setSize(s.x, s.y);
         updateTextAlignment();
     }

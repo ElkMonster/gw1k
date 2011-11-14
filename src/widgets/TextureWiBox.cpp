@@ -45,7 +45,7 @@ const Point&
 TextureWiBox::setSize(float width, float height)
 {
     const Point& size = WiBox::setSize(width, height);
-    Point texSize = size - Point(2, 2) - padding_ -padding_;
+    Point texSize = size - Point(2, 2) - padding_ * 2;
     const Point& size2 = texView_->setSize(texSize.x, texSize.y) + Point(2, 2);
 
     return (size2 == size) ? size : WiBox::setSize(size2.x + 2 * padding_.x, size2.y + 2 * padding_.y);
