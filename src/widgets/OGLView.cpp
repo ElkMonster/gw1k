@@ -74,7 +74,14 @@ OGLView::getZoomFactor() const
 void
 OGLView::translateViewByPx(const Point& delta)
 {
-    transl_ += pxToGLDelta(delta);
+    translateViewByGLUnits(pxToGLDelta(delta));
+}
+
+
+void
+OGLView::translateViewByGLUnits(const geom::Point2D& delta)
+{
+    transl_ += delta;
     updateTopLeftAndPxToGLFactor();
 }
 

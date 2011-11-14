@@ -31,6 +31,8 @@ public:
 
     void translateViewByPx(const Point& delta);
 
+    void translateViewByGLUnits(const geom::Point2D& delta);
+
     void centerViewAt(const geom::Point2D& p);
 
     void allowMouseControl(bool enabled = true);
