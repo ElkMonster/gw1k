@@ -47,6 +47,7 @@
 			<Add before="touch include/listeners/SliderListener.h" />
 		</ExtraCommands>
 		<Unit filename="include/Color4i.h" />
+		<Unit filename="include/ColorTable.h" />
 		<Unit filename="include/Exception.h" />
 		<Unit filename="include/FTGLFontManager.h" />
 		<Unit filename="include/GLErrorCheck.h" />
@@ -54,7 +55,6 @@
 		<Unit filename="include/GLFWApp.h" />
 		<Unit filename="include/GuiObject.h" />
 		<Unit filename="include/Gw1kConstants.h" />
-		<Unit filename="include/Helpers.h" />
 		<Unit filename="include/Log.h" />
 		<Unit filename="include/Math.h" />
 		<Unit filename="include/Point.h" />
@@ -90,6 +90,7 @@
 		<Unit filename="include/widgets/advanced/NumberLabel.h" />
 		<Unit filename="include/widgets/internal/AbstractSliderBase.h" />
 		<Unit filename="include/widgets/internal/Text.h" />
+		<Unit filename="src/ColorTable.cpp" />
 		<Unit filename="src/FTGLFontManager.cpp" />
 		<Unit filename="src/GLFWAdapter.cpp" />
 		<Unit filename="src/GLFWApp.cpp" />
