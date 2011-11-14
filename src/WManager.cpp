@@ -79,11 +79,16 @@ void
 WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject* o)
 {
     MSG("WManager::feedMouseMoveInternal [begin]: o = " << (void*)o);
+
     // A clicked object receives all the mouse movement events regardless of the
     // mouse leaving it. This allows for things like sliders which will follow
     // mouse movement even if their area is left.
     if (clickedObj_)
     {
+        // Refresh the containsMouse status to prevent that objects claim to
+        // contain the mouse when they actually don't
+        mainWin_->getContainingObject(pos);
+
         MSG("WManager::feedMouseMoveInternal: clickedObj_ = " << (void*)clickedObj_);
         clickedObj_->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
 
@@ -142,15 +147,13 @@ WManager::feedMouseMoveHandleOldHoveredObj(
     {
         hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
 
-        // Check which embedded parents have also been left and trigger event
+        // Check which embedded parents have been left as well and trigger event
         // for them. After the loop, hPar will point to the non-embedded parent.
         GuiObject* hPar = hoveredObj_->getParent();
         while (hPar->isEmbedded())
         {
-            if (!hPar->containsMouse())
-            {
-                hPar->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
-            }
+            hPar->triggerMouseMovedEvent(
+                hPar->containsMouse() ? GW1K_M_HOVERED : GW1K_M_LEFT, pos, delta);
             hPar = hPar->getParent();
         }
 
@@ -167,6 +170,10 @@ WManager::feedMouseMoveHandleOldHoveredObj(
         if (!newHoveredObj || (hPar != nPar))
         {
             hPar->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+        }
+        else
+        {
+            hPar->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
         }
     }
     else // hoveredObj_ NOT embedded
