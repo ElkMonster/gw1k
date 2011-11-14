@@ -2,6 +2,7 @@
 #define GW1K_COLORTABLE_H_
 
 #include "Color4i.h"
+#include "GuiObject.h"
 
 namespace gw1k
 {
@@ -20,6 +21,8 @@ struct ColorTable
      * Gets foreground and background colours specified for the given state.
      */
     void queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const;
+
+    void queryColors(Color4i*& fg, Color4i*& bg, const GuiObject* o) const;
 
     Color4i* fgCol;
     Color4i* bgCol;

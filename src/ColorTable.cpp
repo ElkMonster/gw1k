@@ -48,4 +48,13 @@ ColorTable::queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const
 }
 
 
+void
+ColorTable::queryColors(Color4i*& fg, Color4i*& bg, const GuiObject* o) const
+{
+    ColorState s = o->isClicked() ?
+        STATE_CLICKED : (o->isHovered() ? STATE_HOVERED : STATE_NORMAL);
+    queryColors(fg, bg, s);
+}
+
+
 } // namespace gw1k
