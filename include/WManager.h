@@ -106,10 +106,10 @@ private:
 
     void feedMouseMoveHandleOldHoveredObj(const Point& pos,
                                           const Point& delta,
-                                          const GuiObject* newHoveredObj);
+                                          const GuiObject* newHoveredObj) const;
 
     void feedMouseMoveHandleNewHoveredObj(const Point& pos,
-                                          const Point& delta);
+                                          const Point& delta) const;
 
 private:
 

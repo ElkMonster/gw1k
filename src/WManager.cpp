@@ -89,8 +89,14 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
 
         if (clickedObj_->isEmbedded())
         {
-            getNonEmbeddedParent(clickedObj_)
-                ->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
+            // Trigger mouse event for all embedded parents and the first non-
+            // embedded parent
+            GuiObject* p = clickedObj_->getParent();
+            while (p)
+            {
+                p->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
+                p = p->isEmbedded() ? p->getParent() : 0;
+            }
         }
     }
     else
@@ -125,40 +131,53 @@ void
 WManager::feedMouseMoveHandleOldHoveredObj(
     const Point& pos,
     const Point& delta,
-    const GuiObject* newHoveredObj)
+    const GuiObject* newHoveredObj) const
 {
-    if (hoveredObj_)
+    if (!hoveredObj_)
     {
-        if (hoveredObj_->isEmbedded())
+        return;
+    }
+
+    if (hoveredObj_->isEmbedded())
+    {
+        hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+
+        // Check which embedded parents have also been left and trigger event
+        // for them. After the loop, hPar will point to the non-embedded parent.
+        GuiObject* hPar = hoveredObj_->getParent();
+        while (hPar->isEmbedded())
         {
-            hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
-
-            // Check if the containing non-embedded parent is also left; this is
-            // either true when there is no new hovered object, or when the new
-            // hovered object is not embedded, or when it is embedded, but in
-            // another parent
-            GuiObject* hPar = getNonEmbeddedParent(hoveredObj_);
-            GuiObject* nPar = 0;
-            if (newHoveredObj && newHoveredObj->isEmbedded())
-            {
-                nPar = getNonEmbeddedParent(newHoveredObj);
-            }
-
-            if (!newHoveredObj || (hPar != nPar))
+            if (!hPar->containsMouse())
             {
                 hPar->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
             }
+            hPar = hPar->getParent();
         }
-        else // hoveredObj_ NOT embedded
+
+        GuiObject* nPar = 0;
+        if (newHoveredObj && newHoveredObj->isEmbedded())
         {
-            // If new hovered object is an embedded sub-object of hoveredObj_,
-            // do nothing (that is, no LEFT event), otherwise trigger LEFT event
-            bool bIsEmbeddedSubObj = newHoveredObj && newHoveredObj->isEmbedded()
-                && (getNonEmbeddedParent(newHoveredObj) == hoveredObj_);
-            if (!bIsEmbeddedSubObj)
-            {
-                hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
-            }
+            nPar = getNonEmbeddedParent(newHoveredObj);
+        }
+
+        // Check if the containing non-embedded parent is also left; this is
+        // either true if there is no new hovered object, or if the new
+        // hovered object is not embedded (but has the same parent), or when
+        // it is embedded, but in another parent
+        if (!newHoveredObj || (hPar != nPar))
+        {
+            hPar->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
+        }
+    }
+    else // hoveredObj_ NOT embedded
+    {
+        // If new hovered object is an embedded sub-object of hoveredObj_,
+        // do nothing (that is, no LEFT event), otherwise trigger LEFT event
+        bool bIsEmbeddedSubObj = newHoveredObj && newHoveredObj->isEmbedded()
+            && (getNonEmbeddedParent(newHoveredObj) == hoveredObj_);
+        if (!bIsEmbeddedSubObj)
+        {
+            hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
         }
     }
 }
@@ -167,7 +186,7 @@ WManager::feedMouseMoveHandleOldHoveredObj(
 void
 WManager::feedMouseMoveHandleNewHoveredObj(
     const Point& pos,
-    const Point& delta)
+    const Point& delta) const
 {
     if (hoveredObj_)
     {
@@ -177,9 +196,15 @@ WManager::feedMouseMoveHandleNewHoveredObj(
 
         if (hoveredObj_->isEmbedded())
         {
-            GuiObject* hPar = getNonEmbeddedParent(hoveredObj_);
-            hPar->triggerMouseMovedEvent(
-                hPar->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED, pos, delta);
+            // Trigger events for all embedded parents and first non-embedded
+            // parent
+            GuiObject* p = hoveredObj_->getParent();
+            while (p)
+            {
+                p->triggerMouseMovedEvent(
+                    p->isHovered() ? GW1K_M_HOVERED : GW1K_M_ENTERED, pos, delta);
+                p = p->isEmbedded() ? p->getParent() : 0;
+            }
         }
     }
 }
@@ -201,7 +226,14 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
 
             if (clickedObj_->isEmbedded())
             {
-                getNonEmbeddedParent(clickedObj_)->triggerMouseButtonEvent(b, ev);
+                // Trigger event for all embedded parents and first non-
+                // embedded parent
+                GuiObject* p = clickedObj_->getParent();
+                while (p)
+                {
+                    p->triggerMouseButtonEvent(b, ev);
+                    p = p->isEmbedded() ? p->getParent() : 0;
+                }
             }
             clickedObj_ = 0;
         }
@@ -233,7 +265,14 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
 
         if (currHoveredObj->isEmbedded())
         {
-            getNonEmbeddedParent(currHoveredObj)->triggerMouseButtonEvent(b, ev);
+            // Trigger event for all embedded parents and first non-embedded one
+            GuiObject* p = currHoveredObj->getParent();
+            while (p)
+            {
+                p->triggerMouseButtonEvent(b, ev);
+                p = p->isEmbedded() ? p->getParent() : 0;
+            }
+
         }
     }
     MSG("WManager::feedMouseClick [end]: clickedObj_ = " << (void*)clickedObj_);
@@ -258,7 +297,13 @@ WManager::feedMouseWheelEvent(int pos)
         hoveredObj_->triggerMouseWheelEvent(delta);
         if (hoveredObj_->isEmbedded())
         {
-            getNonEmbeddedParent(hoveredObj_)->triggerMouseWheelEvent(delta);
+            // Trigger event for all embedded parents and first non-embedded one
+            GuiObject* p = hoveredObj_->getParent();
+            while (p)
+            {
+                p->triggerMouseWheelEvent(delta);
+                p = p->isEmbedded() ? p->getParent() : 0;
+            }
         }
     }
 
