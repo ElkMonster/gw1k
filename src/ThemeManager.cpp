@@ -71,6 +71,7 @@ ThemeManager::loadTheme(const char* themeName)
     err = lua_pcall(l_, 0, 0, 0);
     if (err)
     {
+        Log::error("ThemeManager", "There is something wrong in your theme file");
         luaError();
         return false;
     }
@@ -203,7 +204,8 @@ ThemeManager::loadLua()
 void
 ThemeManager::luaError()
 {
-    Log::error("ThemeManager", Log::os() << "Lua error:\n" << lua_tostring(l_, -1));
+    Log::error("ThemeManager", Log::os() << "Lua error message:\n"
+        << lua_tostring(l_, -1));
 }
 
 
