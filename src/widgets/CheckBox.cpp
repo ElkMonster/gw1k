@@ -30,9 +30,12 @@ public:
             int h = getSize().y - 8;
             Color4i* fg, * bg;
             selectColors(fg, bg);
-            setGLColor(fg);
-            fillRect(pointToGeomPoint2D(pos + Point(4, 4)),
-                     pointToGeomPoint2D(pos + Point(4+h, 4+h)));
+            if (fg)
+            {
+                setGLColor(fg);
+                fillRect(pointToGeomPoint2D(pos + Point(4, 4)),
+                    pointToGeomPoint2D(pos + Point(4 + h, 4 + h)));
+            }
         }
     };
 
