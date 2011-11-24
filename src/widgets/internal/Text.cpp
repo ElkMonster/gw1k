@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <cstring>
 
 namespace gw1k
 {
@@ -220,7 +221,8 @@ Text::setColors(const char* colorScheme)
 void
 Text::updateBBox()
 {
-    ftBB_ = (font_ && text_) ? layout_->BBox(text_) : FTBBox();
+    ftBB_ = (font_ && text_ && (std::strcmp(text_, "") != 0))
+        ? layout_->BBox(text_) : FTBBox();
 }
 
 
