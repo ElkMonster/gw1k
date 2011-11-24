@@ -33,8 +33,14 @@ public:
 
 public:
 
+    /**
+     * Sets the number of digits to display after the decimal point
+     */
     void setPrecision(int precision);
 
+    /**
+     * Sets the number to display.
+     */
     void setNumber(float number);
 
     /**
@@ -43,10 +49,21 @@ public:
      */
     void setNumber(int number);
 
+    /**
+     * Sets the string to display to the left of the number.
+     */
     void setPreamble(const std::string& preamble);
 
+    /**
+     * Sets the string to display to the right of the number.
+     */
     void setUnit(const std::string& unit);
 
+    /**
+     * Sets the number of characters that the number should at least fill. If
+     * the number is shorter than n, spaces are used to fill the remaining space.
+     * This allows to align the number to the right.
+     */
     void setNumberSpace(int n);
 
 private:
@@ -63,6 +80,11 @@ private:
 
     std::string unit_;
 
+    /**
+     * The number of characters that the displayed number string should have. If
+     * the number is shorter than numberSpace_, spaces are used to fill the
+     * remaining space. If the number is longer, numberSpace_ is ignored.
+     */
     unsigned int numberSpace_;
 };
 
