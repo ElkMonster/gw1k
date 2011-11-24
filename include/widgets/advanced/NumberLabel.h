@@ -19,6 +19,16 @@ public:
                 bool autoSize = false,
                 const char* colorScheme = 0);
 
+    NumberLabel(const Point& pos,
+                const Point& size,
+                float number,
+                const std::string& preamble,
+                const std::string& unit,
+                int faceSize = -1,
+                const std::string& fontName = "arial.ttf",
+                bool autoSize = false,
+                const char* colorScheme = 0);
+
     ~NumberLabel();
 
 public:
@@ -33,6 +43,12 @@ public:
      */
     void setNumber(int number);
 
+    void setPreamble(const std::string& preamble);
+
+    void setUnit(const std::string& unit);
+
+    void setNumberSpace(int n);
+
 private:
 
     std::string toStr(float f) const;
@@ -43,6 +59,11 @@ private:
 
     int precision_;
 
+    std::string preamble_;
+
+    std::string unit_;
+
+    unsigned int numberSpace_;
 };
 
 
