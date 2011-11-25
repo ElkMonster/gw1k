@@ -11,13 +11,13 @@ LabeledRangeSlider::LabeledRangeSlider(
     const Point& pos,
     const Point& size,
     const float range[2],
-    RangeSlider::RangeType rangeTye,
+    MapType mapTye,
     const char* colorScheme)
 :   Box(pos, size)
 {
     int h = size.y / 2;
-    slider_ = new RangeSlider(Point(0, h), Point(size.x, h),
-        range, rangeTye, colorScheme);
+    slider_ = new RangeSlider(Point(0, h), Point(size.x, h), range, mapTye,
+        colorScheme);
 
     range = slider_->getRange();
     lLabel_ = new NumberLabel(Point(), Point(0, h), range[0], h - 2);

@@ -13,9 +13,9 @@ RangeSlider::RangeSlider(
     const Point& pos,
     const Point& size,
     const float range[2],
-    RangeType rangeType,
+    MapType mapType,
     const char* colorScheme)
-:   AbstractSliderBase(pos, size, range, rangeType, colorScheme),
+:   AbstractSliderBase(pos, size, range, mapType, colorScheme),
     handleSize_(3)
 {
     lValue_ = 0.f;

@@ -16,7 +16,7 @@ public:
     RangeSlider(const Point& pos,
                 const Point& size,
                 const float range[2],
-                RangeType rangeTye = MAP_LINEAR,
+                MapType mapType = MAP_LINEAR,
                 const char* colorScheme = 0);
 
     virtual ~RangeSlider();

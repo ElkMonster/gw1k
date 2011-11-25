@@ -20,7 +20,7 @@ public:
     LabeledRangeSlider(const Point& pos,
                        const Point& size,
                        const float range[2],
-                       RangeSlider::RangeType rangeTye = RangeSlider::MAP_LINEAR,
+                       MapType mapTye = MAP_LINEAR,
                        const char* colorScheme = 0);
 
     ~LabeledRangeSlider();

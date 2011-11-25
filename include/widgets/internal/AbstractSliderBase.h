@@ -3,6 +3,8 @@
 
 #include "../WiBox.h"
 
+#include "../../utils/FloatMapper.h"
+
 namespace gw1k
 {
 
@@ -33,15 +35,10 @@ class AbstractSliderBase : public WiBox, public MouseListener
 
 public:
 
-    enum RangeType
-    {
-        MAP_CUBICRT, MAP_SQRT, MAP_LINEAR, MAP_QUADRATIC, MAP_CUBIC
-    };
-
     AbstractSliderBase(const Point& pos,
                        const Point& size,
                        const float range[2],
-                       RangeType rangeTye = MAP_LINEAR,
+                       MapType mapType = MAP_LINEAR,
                        const char* colorScheme = 0);
 
     virtual ~AbstractSliderBase();
@@ -70,7 +67,7 @@ protected:
 
 protected:
 
-    RangeType rangeType_;
+    MapType mapType_;
 
     float range_[2];
 
