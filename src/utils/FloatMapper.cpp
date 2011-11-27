@@ -6,28 +6,28 @@ namespace gw1k
 {
 
 float
-mapValue(float nonMappedVal, const float range[2], MapType mapping)
+mapValue(float inputVal, const float range[2], MapType mapping)
 {
     float d = range[1] - range[0];
     float v = 0.f;
-    if (nonMappedVal > 0.f)
+    if (inputVal > 0.f)
     {
         switch(mapping)
         {
         case MAP_LINEAR:
-            v = nonMappedVal;
+            v = inputVal;
             break;
         case MAP_QUADRATIC:
-            v = nonMappedVal * nonMappedVal;
+            v = inputVal * inputVal;
             break;
         case MAP_CUBIC:
-            v = nonMappedVal * nonMappedVal * nonMappedVal;
+            v = inputVal * inputVal * inputVal;
             break;
         case MAP_SQRT:
-            v = std::sqrt(nonMappedVal);
+            v = std::sqrt(inputVal);
             break;
         case MAP_CUBICRT:
-            v = std::pow(nonMappedVal, 1.f / 3.f);
+            v = std::pow(inputVal, 1.f / 3.f);
             break;
         }
     }
@@ -40,6 +40,10 @@ float
 unmapValue(float mappedVal, const float range[2], MapType mapping)
 {
     float d = range[1] - range[0];
+    if (d == 0.f)
+    {
+        return 0.f;
+    }
     float v = 0.f;
     float r = (mappedVal - range[0]) / d;
 
