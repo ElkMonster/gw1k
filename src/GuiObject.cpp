@@ -437,6 +437,16 @@ GuiObject::setEmbedded(bool b)
 
 
 void
+GuiObject::moveOnTop()
+{
+    if (parent_)
+    {
+        parent_->moveOnTop(this);
+    }
+}
+
+
+void
 GuiObject::resetSubObjContainsMouseStatus()
 {
     for (std::vector<GuiObject*>::iterator i = subObjects_.begin();
@@ -447,6 +457,27 @@ GuiObject::resetSubObjContainsMouseStatus()
             (*i)->resetSubObjContainsMouseStatus();
             (*i)->bContainsMouse_ = false;
         }
+    }
+}
+
+
+void
+GuiObject::moveOnTop(GuiObject* newTopSubObj)
+{
+    std::vector<GuiObject*>::iterator i = subObjects_.begin();
+    unsigned int c = 0;
+    for (; (*i != newTopSubObj) && (i != subObjects_.end()); ++i)
+    {
+        ++c;
+    }
+
+    if (i != subObjects_.end())
+    {
+        for (; c < subObjects_.size() - 1; ++c)
+        {
+            subObjects_[c] = subObjects_[c + 1];
+        }
+        subObjects_[c] = newTopSubObj;
     }
 }
 

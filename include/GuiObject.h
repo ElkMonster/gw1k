@@ -141,12 +141,26 @@ public:
      */
     void setEmbedded(bool b = true);
 
+    /**
+     * Moves this object to the last position in its parent's render order, so
+     * it is drawn after any of the other sub-objects.
+     * This changes the internal order of sub-objects, so use it carefully. Once
+     * changed, the previous order cannot be re-established.
+     */
+    void moveOnTop();
+
 private:
 
     /**
      * Recursively resets all sub-objects' bContainsMouse_ to false.
      */
     void resetSubObjContainsMouseStatus();
+
+    /**
+     * Puts the given sub-object in the last position in subObjects_, moving all
+     * sub-objects behind it closer to the front.
+     */
+    void moveOnTop(GuiObject* newTopSubObj);
 
 protected:
 
