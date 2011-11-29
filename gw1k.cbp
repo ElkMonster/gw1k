@@ -72,6 +72,8 @@
 		<Unit filename="include/providers/ActionEventProvider.h" />
 		<Unit filename="include/providers/KeyEventProvider.h" />
 		<Unit filename="include/providers/MouseEventProvider.h" />
+		<Unit filename="include/utils/FloatMapper.h" />
+		<Unit filename="include/utils/Helpers.h" />
 		<Unit filename="include/utils/PNGLoader.h" />
 		<Unit filename="include/utils/StringHelpers.h" />
 		<Unit filename="include/widgets/Box.h" />
@@ -106,6 +108,7 @@
 		<Unit filename="src/providers/ActionEventProvider.cpp" />
 		<Unit filename="src/providers/KeyEventProvider.cpp" />
 		<Unit filename="src/providers/MouseEventProvider.cpp" />
+		<Unit filename="src/utils/FloatMapper.cpp" />
 		<Unit filename="src/utils/PNGLoader.cpp" />
 		<Unit filename="src/widgets/Box.cpp" />
 		<Unit filename="src/widgets/CheckBox.cpp" />
