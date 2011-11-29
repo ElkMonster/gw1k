@@ -2,6 +2,7 @@
 
 #include "utils/StringHelpers.h"
 
+
 namespace gw1k
 {
 
@@ -16,7 +17,8 @@ NumberLabel::NumberLabel(
     const char* colorScheme)
 :   Label(pos, size, "", faceSize, fontName, autoSize, colorScheme),
     number_(number),
-    precision_(3)
+    precision_(3),
+    numberSpace_(0)
 {
     setNumber(number);
 }
@@ -36,7 +38,8 @@ NumberLabel::NumberLabel(
     number_(number),
     precision_(3),
     preamble_(preamble),
-    unit_(unit)
+    unit_(unit),
+    numberSpace_(0)
 {
     setNumber(number);
 }

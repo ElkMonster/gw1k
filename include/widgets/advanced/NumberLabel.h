@@ -82,8 +82,9 @@ private:
 
     /**
      * The number of characters that the displayed number string should have. If
-     * the number is shorter than numberSpace_, spaces are used to fill the
-     * remaining space. If the number is longer, numberSpace_ is ignored.
+     * the number string is shorter than numberSpace_, spaces are used to fill
+     * the remaining space. If the number string is longer, numberSpace_ is
+     * ignored.
      */
     unsigned int numberSpace_;
 };
