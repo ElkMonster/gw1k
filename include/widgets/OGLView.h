@@ -80,6 +80,12 @@ protected:
 
     virtual void renderOGLContent() const;
 
+private:
+
+    void updateTopLeftAndPxToGLFactor();
+
+    void updateInternalVars();
+
 protected:
 
     geom::Point2D transl_;
@@ -88,11 +94,9 @@ protected:
 
     bool bMouseControl_;
 
-private:
+    geom::Point2D gHalfGLSize_;
 
-    void updateTopLeftAndPxToGLFactor();
-
-    void updateInternalVars();
+    geom::Point2D gGLTopLeft_;
 
 private:
 
@@ -115,9 +119,6 @@ private:
 
     geom::Point2D gWidgSize_;
 
-    geom::Point2D gHalfGLSize_;
-
-    geom::Point2D gGLTopLeft_;
 };
 
 
