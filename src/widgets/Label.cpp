@@ -246,7 +246,7 @@ Label::setTextProperty(TextProperty p)
 void
 Label::adaptToTextSize()
 {
-    Point s = text_.getSize() + padding_ + padding_ + Point(2, 2);
+    Point s = text_.getSize() + padding_ * 2 + Point(2, 2);
 
     WiBox::setSize(s.x, s.y);
     textBox_.setSize(s.x - 2, s.y - 2);
