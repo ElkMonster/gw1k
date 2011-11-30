@@ -27,7 +27,6 @@ public:
 
     Text(const Point& pos,
          const std::string& text,
-         const std::string& fontName = "arial.ttf",
          const char* colorScheme = 0);
 
     virtual ~Text();
@@ -36,7 +35,7 @@ public:
 
     void setText(const std::string& text);
 
-    void setFontSize(int fontSize);
+    void setFontSize(unsigned int fontSize);
 
     /**
      * Gets the font size, or -1 if no font is set.

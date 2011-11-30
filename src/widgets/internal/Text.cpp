@@ -1,6 +1,7 @@
 #include "widgets/internal/Text.h"
 #include "FTGLFontManager.h"
 
+#include "Gw1kSettings.h"
 #include "utils/Helpers.h"
 #include "WManager.h"
 #include "ThemeManager.h"
@@ -19,7 +20,6 @@ namespace gw1k
 Text::Text(
     const Point& pos,
     const std::string& text,
-    const std::string& fontName,
     const char* colorScheme)
 :   Renderable(colorScheme),
     font_(0),
@@ -28,14 +28,19 @@ Text::Text(
     text_(0),
     size_(0, 0),
     bLineLengthSet_(false),
-    fontName_(fontName)
+    fontName_(Gw1kSettings::defaultFontName)
 {
+    typedef Gw1kSettings GS;
+
     setPos(pos.x, pos.y);
 
     setHorizontalAlignment(GW1K_ALIGN_LEFT);
     setColors(colorScheme);
-    setFont(fontName_, 12);
 
+    unsigned int faceSize = (GS::defaultFontSize < 0)
+        ? 10 : Gw1kSettings::defaultFontSize;
+
+    setFont(fontName_, faceSize);
     setText(text);
 }
 
@@ -68,7 +73,7 @@ Text::setText(const std::string& text)
 
 
 void
-Text::setFontSize(int fontSize)
+Text::setFontSize(unsigned int fontSize)
 {
     if (font_)
     {
