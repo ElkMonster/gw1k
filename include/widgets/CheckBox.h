@@ -22,8 +22,6 @@ public:
              const Point& size,
              const std::string& text,
              bool checked = false,
-             int faceSize = -1,
-             const std::string& fontname = "arial.ttf",
              const char* colorScheme = 0);
 
     virtual ~CheckBox();
@@ -33,6 +31,8 @@ public:
     bool isChecked() const;
 
     void setChecked(bool checked = true);
+
+    void setFontSize(unsigned int size);
 
     virtual void setText(const std::string& text);
 

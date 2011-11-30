@@ -11,11 +11,9 @@ NumberLabel::NumberLabel(
     const Point& pos,
     const Point& size,
     float number,
-    int faceSize,
-    const std::string& fontName,
     bool autoSize,
     const char* colorScheme)
-:   Label(pos, size, "", faceSize, fontName, autoSize, colorScheme),
+:   Label(pos, size, "", autoSize, colorScheme),
     number_(number),
     precision_(3),
     numberSpace_(0)
@@ -30,11 +28,9 @@ NumberLabel::NumberLabel(
     float number,
     const std::string& preamble,
     const std::string& unit,
-    int faceSize,
-    const std::string& fontName,
     bool autoSize,
     const char* colorScheme)
-:   Label(pos, size, "", faceSize, fontName, autoSize, colorScheme),
+:   Label(pos, size, "", autoSize, colorScheme),
     number_(number),
     precision_(3),
     preamble_(preamble),

@@ -14,8 +14,6 @@ public:
     NumberLabel(const Point& pos,
                 const Point& size,
                 float number,
-                int faceSize = -1,
-                const std::string& fontname = "arial.ttf",
                 bool autoSize = false,
                 const char* colorScheme = 0);
 
@@ -24,8 +22,6 @@ public:
                 float number,
                 const std::string& preamble,
                 const std::string& unit,
-                int faceSize = -1,
-                const std::string& fontName = "arial.ttf",
                 bool autoSize = false,
                 const char* colorScheme = 0);
 

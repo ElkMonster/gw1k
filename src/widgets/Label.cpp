@@ -1,5 +1,6 @@
 #include "widgets/Label.h"
 
+#include "Gw1kSettings.h"
 #include "Gw1kConstants.h"
 #include "Math.h"
 #include "Color4i.h"
@@ -16,8 +17,6 @@ Label::Label(
     const Point& pos,
     const Point& size,
     const std::string& text,
-    int faceSize,
-    const std::string& fontName,
     bool autoSize,
     const char* colorScheme)
 :   WiBox(pos, size),
@@ -29,8 +28,8 @@ Label::Label(
     bVCenterVisually_(false),
     lineLength_(-1)
 {
-    int fSize = (faceSize < 0) ? std::max(1, size.y - 2) : faceSize;
-    text_.setFont(fontName, fSize);
+    int faceSize = calculateFaceSize(Gw1kSettings::defaultFontSize);
+    text_.setFont(Gw1kSettings::defaultFontName, faceSize);
     setTextProperty(GW1K_ALIGN_CENTER);
     setTextProperty(GW1K_ALIGN_VERT_CENTER);
 
@@ -374,6 +373,13 @@ Label::updateTextAlignment()
     }
 
     text_.setPos(x + padding_.x, y + padding_.y);
+}
+
+
+unsigned int
+Label::calculateFaceSize(int fontSize) const
+{
+    return (fontSize < 0) ? std::max(1, getSize().y - 2) : fontSize;
 }
 
 

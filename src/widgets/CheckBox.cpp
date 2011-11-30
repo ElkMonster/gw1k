@@ -52,15 +52,13 @@ CheckBox::CheckBox(
     const Point& size,
     const std::string& text,
     bool checked,
-    int faceSize,
-    const std::string& fontname,
     const char* colorScheme)
 :   WiBox(pos, size, colorScheme),
     checked_(checked)
 {
     checkField_ = new CheckField(Point(3, 3), Point(size.y - 6, size.y - 6), this);
     label_ = new Label(Point(size.y, 1), Point(size.x - size.y - 1, size.y - 2),
-                       text, faceSize, fontname);
+                       text);
     addSubObject(checkField_);
     addSubObject(label_);
 
@@ -95,6 +93,12 @@ CheckBox::setChecked(bool checked)
     checked_ = checked;
 }
 
+
+void
+CheckBox::setFontSize(unsigned int fontSize)
+{
+    label_->setFontSize(fontSize);
+}
 
 void
 CheckBox::setText(const std::string& text)

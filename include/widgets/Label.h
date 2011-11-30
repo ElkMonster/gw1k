@@ -20,8 +20,6 @@ public:
     Label(const Point& pos,
           const Point& size,
           const std::string& text,
-          int faceSize = -1,
-          const std::string& fontname = "arial.ttf",
           bool autoSize = false,
           const char* colorScheme = 0);
 
@@ -49,6 +47,11 @@ public:
 
     virtual void setText(const std::string& text);
 
+    /**
+     * If fontSize is -1, the actual font size used is calculated based on the
+     * current height of the widget. Any widget size changes after this call do
+     * not modify font size.
+     */
     void setFontSize(int fontSize);
 
     void setPadding(const Point& padding);
@@ -83,6 +86,8 @@ private:
     void adaptToTextSize();
 
     void updateWrappedTextLayout();
+
+    unsigned int calculateFaceSize(int fontSize) const;
 
 private:
 
