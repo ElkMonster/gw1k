@@ -70,6 +70,8 @@ public:
 
     geom::Point2D pxToGLUnit(const Point& v) const;
 
+    Point glUnitToPx(const geom::Point2D& p) const;
+
     /**
      * Gets the pixel position that corresponds to the given OpenGL coordinate.
      * The returned pixel position is relative to widget position.

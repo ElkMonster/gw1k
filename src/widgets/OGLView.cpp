@@ -219,6 +219,14 @@ OGLView::pxToGLUnit(const Point& v) const
 
 
 Point
+OGLView::glUnitToPx(const geom::Point2D& p) const
+{
+    geom::Point2D q = p / pxToGLFactor_;
+    return Point(round(q.x), round(-q.y));
+}
+
+
+Point
 OGLView::glPosToPx(const geom::Point2D& pos) const
 {
     geom::Point2D p = (pos - gGLTopLeft_) / pxToGLFactor_;
