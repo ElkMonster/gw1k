@@ -83,10 +83,30 @@ public:
     /**
      * Sets whether this widget can be interacted with. Non-interactive widgets
      * don't react to mouse actions, including their sub-objects(!).
+     * The sub-widgets' contains-mouse status is not updated when this property
+     * is set.
+     * The interactive property can be used for widgets that solely display
+     * information, or that are (temporarily) disabled.
+     * See setClickTrough() for a less strict variant that still forwards mouse
+     * actions to sub-widgets.
      */
     void setInteractive(bool state = true);
 
     bool isInteractive() const;
+
+    /**
+     * Sets whether this widget can receive mouse actions, but doesn't block
+     * mouse actions occuring on sub-widgets. This basically means that one can
+     * "click through" the object, resulting in a click on the object behind.
+     * See setInteractive() for a more strict variant that entirely blocks the
+     * widget and all its sub-widgets from reacting to mouse events.
+     * Note that enabling the click-through property automatically enables the
+     * interactive property.
+     *
+     */
+    void setClickThrough(bool state = true);
+
+    bool isClickThrough() const;
 
     void triggerMouseMovedEvent(MouseMovedEvent ev,
                                 const Point& pos,
@@ -190,6 +210,8 @@ private:
     Rect rect_;
 
     bool bIsInteractive_;
+
+    bool bIsClickThrough_;
 
 };
 

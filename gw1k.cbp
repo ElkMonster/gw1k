@@ -55,6 +55,7 @@
 		<Unit filename="include/GLFWApp.h" />
 		<Unit filename="include/GuiObject.h" />
 		<Unit filename="include/Gw1kConstants.h" />
+		<Unit filename="include/Gw1kSettings.h" />
 		<Unit filename="include/Log.h" />
 		<Unit filename="include/Math.h" />
 		<Unit filename="include/Point.h" />
@@ -97,6 +98,7 @@
 		<Unit filename="src/GLFWAdapter.cpp" />
 		<Unit filename="src/GLFWApp.cpp" />
 		<Unit filename="src/GuiObject.cpp" />
+		<Unit filename="src/Gw1kSettings.cpp" />
 		<Unit filename="src/Log.cpp" />
 		<Unit filename="src/Point.cpp" />
 		<Unit filename="src/Rect.cpp" />

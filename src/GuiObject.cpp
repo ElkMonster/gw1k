@@ -21,7 +21,8 @@ GuiObject::GuiObject()
     parent_(0),
     bIsEmbedded_(false),
     bContainsMouse_(false),
-    bIsInteractive_(true)
+    bIsInteractive_(true),
+    bIsClickThrough_(false)
 {}
 
 
@@ -237,6 +238,24 @@ GuiObject::isInteractive() const
 
 
 void
+GuiObject::setClickThrough(bool state)
+{
+    if (state && !bIsInteractive_)
+    {
+        bIsInteractive_ = true;
+    }
+    bIsClickThrough_ = state;
+}
+
+
+bool
+GuiObject::isClickThrough() const
+{
+    return bIsClickThrough_;
+}
+
+
+void
 GuiObject::triggerMouseMovedEvent(
     MouseMovedEvent ev, const Point& pos, const Point& delta)
 {
@@ -356,7 +375,8 @@ GuiObject::getContainingObject(const Point& p)
             }
         }
 
-        return (containingSubObj ? containingSubObj : this);
+        return
+            (containingSubObj ? containingSubObj : (bIsClickThrough_ ? 0 : this));
     }
     else
     {
