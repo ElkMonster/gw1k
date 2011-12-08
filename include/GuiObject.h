@@ -3,7 +3,6 @@
 
 #include "providers/MouseEventProvider.h"
 #include "providers/KeyEventProvider.h"
-#include "listeners/ResizeListener.h"
 #include "Point.h"
 #include "Rect.h"
 
@@ -31,10 +30,6 @@ public:
      *  via WManager's registerForPreRenderUpdate().
      */
     virtual void preRenderUpdate();
-
-    void addResizeListener(ResizeListener* rl);
-
-    void removeResizeListener(ResizeListener* rl);
 
     /**
      * Gets whether this widget contains the given point. The point must refer
@@ -185,8 +180,6 @@ private:
 protected:
 
     std::vector<GuiObject*> subObjects_;
-
-    std::vector<ResizeListener*> resizeListeners_;
 
     bool bIsHovered_;
 
