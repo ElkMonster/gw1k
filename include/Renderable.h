@@ -41,6 +41,11 @@ public:
 
     virtual void setColors(const char* colorScheme);
 
+    /**
+     * Calls queryColors() with the current state of this Renderable.
+     */
+    void selectColors(Color4i*& fg, Color4i*& bg) const;
+
 protected:
 
     /**
@@ -87,11 +92,6 @@ protected:
      * renderContent().
      */
     virtual void renderBg(const Point& offset) const = 0;
-
-    /**
-     * Calls queryColors() with the current state of this Renderable.
-     */
-    void selectColors(Color4i*& fg, Color4i*& bg) const;
 
 protected:
 
