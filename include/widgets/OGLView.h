@@ -8,6 +8,13 @@ namespace gw1k
 {
 
 
+/**
+ * Question: I've derived a custom widget from OGLView and it behaves strange
+ * when clicking and moving it - it seems to move twice!?
+ * Answer: Check if you're adding the widget to its own mouse listeners. OGLView
+ * already implements MouseListener and "listens to itself", so adding it again
+ * causes the mouse handler methods to be called twice per event.
+ */
 class OGLView : public Box, public MouseListener
 {
 
