@@ -31,7 +31,7 @@ public:
     TextureView(const Point& pos,
                 const Point& size,
                 const std::string& filename,
-                bool bImageSizeOnCreate = false);
+                bool bResizeToImageSize = false);
 
     virtual ~TextureView();
 
