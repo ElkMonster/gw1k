@@ -206,6 +206,8 @@ ThemeManager::luaError()
 {
     Log::error("ThemeManager", Log::os() << "Lua error message:\n"
         << lua_tostring(l_, -1));
+    Log::info("ThemeManager", Log::os() <<
+        "Check for missing commas at the line numbers given in the error message");
 }
 
 
