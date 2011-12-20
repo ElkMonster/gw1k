@@ -410,21 +410,6 @@ void
 GuiObject::setEmbedded(bool b)
 {
     bIsEmbedded_ = b;
-
-    // Check for correctly embedded objects
-    if (bIsEmbedded_)
-    {
-        GuiObject* parent = parent_;
-        while (parent && parent->bIsEmbedded_)
-        {
-            parent = parent->parent_;
-        }
-        if (!parent)
-        {
-            // TODO better exception
-            throw "Embedded object has no non-embedded parent!";
-        }
-    }
 }
 
 
