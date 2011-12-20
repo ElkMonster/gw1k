@@ -24,6 +24,8 @@ bool loadPngImage(const char* filename, int& width, int& height, bool& alpha, un
 
     if (!pFile)
     {
+        Log::warning("PNGLoader", Log::os()
+            << "Could not open file " << filename);
         return false;
     }
 
@@ -32,12 +34,16 @@ bool loadPngImage(const char* filename, int& width, int& height, bool& alpha, un
     fread(header, 1, 8, pFile);
     if (png_sig_cmp(header, 0, 8) != 0)
     {
+        Log::warning("PNGLoader", Log::os()
+            << "Invalid PNG signature in " << filename);
         return false;
     }
 
     pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!pngPtr)
     {
+        Log::warning("PNGLoader", Log::os()
+            << "Failed to set up image data of " << filename);
         fclose(pFile);
         return false;
     }
@@ -45,12 +51,16 @@ bool loadPngImage(const char* filename, int& width, int& height, bool& alpha, un
     pngInfoPtr = png_create_info_struct(pngPtr);
     if (!pngInfoPtr)
     {
+        Log::warning("PNGLoader", Log::os()
+            << "Failed to set up image info of " << filename);
         fclose(pFile);
         png_destroy_read_struct(&pngPtr, NULL, NULL);
         return false;
     }
 
     if (setjmp(png_jmpbuf(pngPtr))) {
+        Log::warning("PNGLoader", Log::os()
+            << "Error processing image " << filename);
         fclose(pFile);
         png_destroy_read_struct(&pngPtr, &pngInfoPtr, NULL);
         return false;
@@ -80,7 +90,7 @@ bool loadPngImage(const char* filename, int& width, int& height, bool& alpha, un
             alpha = false;
             break;
         default:
-            Log::error("PNGLoader", Log::os()
+            Log::warning("PNGLoader", Log::os()
                 << "Unsupported colour type " << colorType
                 << " in file " << filename);
             png_destroy_read_struct(&pngPtr, &pngInfoPtr, NULL);
