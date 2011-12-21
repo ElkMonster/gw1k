@@ -14,6 +14,7 @@ namespace gw1k
 
 
 Renderable::Renderable(const char* colorScheme)
+:   bColorAccordingToParentStatus_(false)
 {
     setColors(colorScheme);
 }
@@ -21,6 +22,20 @@ Renderable::Renderable(const char* colorScheme)
 
 Renderable::~Renderable()
 {
+}
+
+
+void
+Renderable::setChooseEmbeddedColorsByParentStatus(bool enabled)
+{
+    bColorAccordingToParentStatus_ = enabled;
+}
+
+
+bool
+Renderable::choosesEmbeddedColorsByParentStatus() const
+{
+    return bColorAccordingToParentStatus_;
 }
 
 
@@ -132,9 +147,18 @@ Renderable::renderContent(const Point& offset) const
 void
 Renderable::selectColors(Color4i*& fg, Color4i*& bg) const
 {
-    ColorTable::ColorState state =
-        (bIsClicked_ ? ColorTable::STATE_CLICKED :
+    ColorTable::ColorState state;
+    if (bIsEmbedded_ && bColorAccordingToParentStatus_)
+    {
+        GuiObject* parent = getNonEmbeddedParent();
+        state = (parent->isClicked() ? ColorTable::STATE_CLICKED :
+            (parent->isHovered() ? ColorTable::STATE_HOVERED : ColorTable::STATE_NORMAL));
+    }
+    else
+    {
+        state = (bIsClicked_ ? ColorTable::STATE_CLICKED :
             (bIsHovered_ ? ColorTable::STATE_HOVERED : ColorTable::STATE_NORMAL));
+    }
     colorTable_.queryColors(fg, bg, state);
 }
 

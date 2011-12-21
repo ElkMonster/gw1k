@@ -22,6 +22,14 @@ public:
 public:
 
     /**
+     * Sets whether this Renderable, if embedded, chooses its colours based on
+     * its non-embedded parent's hovered or clicked state.
+     */
+    void setChooseEmbeddedColorsByParentStatus(bool enabled = true);
+
+    bool choosesEmbeddedColorsByParentStatus() const;
+
+    /**
      * If this object is visible, then this method calls renderSelf() and
      * renderSubObjects().
      */
@@ -96,6 +104,10 @@ protected:
 protected:
 
     ColorTable colorTable_;
+
+private:
+
+    bool bColorAccordingToParentStatus_;
 
 };
 
