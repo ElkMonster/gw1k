@@ -2,6 +2,7 @@
 
 #include "utils/PNGLoader.h"
 #include "WManager.h"
+#include "ThemeManager.h"
 #include "Render.h"
 #include "Log.h"
 
@@ -21,7 +22,6 @@ TextureView::TextureView(
     pTex_(0),
     pImgData_(0),
     bReqLoadTexture_(false),
-    texMulColor_(255, 255, 255, 255),
     aspectRatioAutoAdapt_(AR_NO_ADAPT)
 {
     loadTexture(filename);
@@ -29,6 +29,8 @@ TextureView::TextureView(
     {
         GuiObject::setSize(imgSize_.x, imgSize_.y);
     }
+    // Set default texMul colours
+    setTexMulColorScheme(0);
 }
 
 
@@ -116,9 +118,21 @@ TextureView::createTexture()
 
 
 void
-TextureView::setTexMulColor(const Color4i* c)
+TextureView::setTexMulColors(const ColorTable& colorTable)
 {
-    texMulColor_ = (c ? *c : Color4i(0, 0, 0, 0));
+    colorTable_ = colorTable;
+    Color4i defCol(255, 255, 255, 255);
+    if (!colorTable_.fgCol) { colorTable_.fgCol = new Color4i(defCol); }
+    if (!colorTable_.hoveredFgCol) { colorTable_.hoveredFgCol = new Color4i(defCol); }
+    if (!colorTable_.clickedFgCol) { colorTable_.clickedFgCol = new Color4i(defCol); }
+}
+
+
+void
+TextureView::setTexMulColorScheme(const char* colorScheme)
+{
+    ThemeManager* tm = ThemeManager::getInstance();
+    tm->setColors(texMulColorTable_, colorScheme, "TextureView.TexMul");
 }
 
 
@@ -142,32 +156,35 @@ TextureView::preRenderUpdate()
 void
 TextureView::renderOGLContent() const
 {
-    // Reset colour because texture's colour values are multiplied with the
-    // current colour
-    setGLColor(&texMulColor_);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, *pTex_);
-    glPushMatrix();
+    if (pTex_)
     {
-        float m = 1.f / std::min(imgSize_.x, imgSize_.y);
-        glScalef(imgSize_.x * m, imgSize_.y * m, 1.f);
-        glBegin(GL_QUADS);
-        {
-            glTexCoord2f(0.0, 0.0);
-            glVertex3f(-1.0, -1.0, 0.0);
-            glTexCoord2f(0.0, 1.0);
-            glVertex3f(-1.0, 1.0, 0.0);
-            glTexCoord2f(1.0, 1.0);
-            glVertex3f(1.0, 1.0, 0.0);
-            glTexCoord2f(1.0, 0.0);
-            glVertex3f(1.0, -1.0, 0.0);
-        }
-        glEnd();
-    }
-    glPopMatrix();
+        Color4i* texMulCol, *foo;
+        texMulColorTable_.queryColors(texMulCol, foo, this);
+        setGLColor(texMulCol);
 
-    glDisable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *pTex_);
+        glPushMatrix();
+        {
+            float m = 1.f / std::min(imgSize_.x, imgSize_.y);
+            glScalef(imgSize_.x * m, imgSize_.y * m, 1.f);
+            glBegin(GL_QUADS);
+            {
+                glTexCoord2f(0.0, 0.0);
+                glVertex3f(-1.0, -1.0, 0.0);
+                glTexCoord2f(0.0, 1.0);
+                glVertex3f(-1.0, 1.0, 0.0);
+                glTexCoord2f(1.0, 1.0);
+                glVertex3f(1.0, 1.0, 0.0);
+                glTexCoord2f(1.0, 0.0);
+                glVertex3f(1.0, -1.0, 0.0);
+            }
+            glEnd();
+        }
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+    }
 }
 
 

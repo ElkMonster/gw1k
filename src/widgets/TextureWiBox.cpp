@@ -69,9 +69,16 @@ TextureWiBox::loadTexture(const std::string& filename)
 
 
 void
-TextureWiBox::setTexMulColor(const Color4i* c)
+TextureWiBox::setTexMulColors(const ColorTable& colorTable)
 {
-    texView_->setTexMulColor(c);
+    texView_->setTexMulColors(colorTable);
+}
+
+
+void
+TextureWiBox::setTexMulColorScheme(const char* colorScheme)
+{
+    texView_->setTexMulColorScheme(colorScheme);
 }
 
 

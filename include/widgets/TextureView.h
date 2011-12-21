@@ -57,7 +57,9 @@ public:
      */
     bool loadTexture(const std::string& filename);
 
-    void setTexMulColor(const Color4i* c);
+    void setTexMulColors(const ColorTable& colorTable);
+
+    void setTexMulColorScheme(const char* colorScheme);
 
     const Point& getTextureSize() const;
 
@@ -91,7 +93,7 @@ private:
     /** If this is true, a call to preRenderUpdate() will create the texture */
     bool bReqLoadTexture_;
 
-    Color4i texMulColor_;
+    ColorTable texMulColorTable_;
 
     AspectRatioAutoAdapt aspectRatioAutoAdapt_;
 };
