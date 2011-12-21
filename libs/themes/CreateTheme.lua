@@ -64,6 +64,25 @@ local function log_and_keep(s)
     CreateTheme_errors = CreateTheme_errors .. s .. "\n"
 end
 
+
+local get_theme_file_as_string = function(filename)
+    local f, err_msg = io.open(filename, "r")
+    if f == nil then
+        return nil, err_msg
+    end
+
+    local t = { "" }
+    local i = 1
+    for line in f:lines() do
+        t[i] = line
+        i = i + 1
+    end
+
+    f:close()
+    return table.concat(t, "\n"), err_msg
+end
+
+
 log("==== Theme Loader: Starting... =============================")
 
 
@@ -116,8 +135,6 @@ require("libs/themes/Color")
 -- variable.
 local function build_theme_def()
 
-    log("Reading theme file...")
-
     -- Redirect all variable definitions made in the theme file to our themeDef
     -- table (instead of putting them in the global environment)
     local mt = {
@@ -145,26 +162,41 @@ local function build_theme_def()
     local old_mt = getmetatable(_G)
     setmetatable(_G, mt)
 
-    local theme_file, err_msg = io.open("themes/"..theme_name .. ".theme", "r")
+    log("Reading gw1k default theme file (default.theme) ...")
 
-    if theme_file == nil then
+    local theme_code, err_msg = get_theme_file_as_string("themes/default.theme")
+    if theme_code == nil then
         log(err_msg)
+        log("Default theme config file cannot be read or is broken")
+        log("==== Theme Loader: Aborted theme processing due to error ===")
         return false
     end
 
-    -- Load theme file, replacing occurrences of "#" by "_nocolor", and execute
-    -- the loaded code
-    local theme_code = ""
-    for line in theme_file:lines() do
-        line = string.gsub(line, "#", "_nocolor")
-        theme_code = theme_code .. "\n" .. line
-    end
+    -- Replace occurrences of "#" by "_nocolor"
+    theme_code = string.gsub(theme_code, "#", "_nocolor")
 
-    log("Executing theme file...")
+    log("Executing default theme file...")
 
     assert(loadstring(theme_code))()
 
-    theme_file:close()
+    if theme_name ~= "default" then
+        log("Reading theme file (" .. theme_name .. ".theme) ...")
+
+        theme_code = nil
+        err_msg = nil
+        theme_code, err_msg = get_theme_file_as_string("themes/" .. theme_name .. ".theme")
+        if theme_code == nil then
+            log(err_msg)
+            log(theme_name .. ".theme cannot be read or contains broken code")
+        else
+            -- Replace occurrences of "#" by "_nocolor"
+            theme_code = string.gsub(theme_code, "#", "_nocolor")
+
+            log("Executing theme file...")
+
+            assert(loadstring(theme_code))()
+        end
+    end
 
     -- Restore metatable to what it was initially
     setmetatable(_G, old_mt)
@@ -383,9 +415,7 @@ end
 log("Theme file: ", theme_name .. ".theme")
 
 local success = build_theme_def()
-
 log("Processing theme...")
-
 success = success and process_theme(nil, nil, themeDef)
 
 log("==== Theme Loader: Done processing theme... ================")
