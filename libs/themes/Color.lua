@@ -11,6 +11,7 @@ local tostring = tostring
 local print = print
 local error = error
 local math = math
+local unpack = unpack
 
 module("Color")
 
@@ -55,6 +56,66 @@ local function only_numbers(t)
         end
     end
     return true
+end
+
+
+local function to_rgb(hsv)
+    if hsv.s == 0 then return Color.new(hsv.v * 255, hsv.a) end
+
+    local hi = math.floor(hsv.h / 60)
+    local f = hsv.h / 60 - hi
+    local p = hsv.v * (1 - hsv.s)
+    local q = hsv.v * (1 - hsv.s * f)
+    local t = hsv.v * (1 - hsv.s * (1 - f))
+
+    print(hi, f, p, q, t)
+    local rgb;
+    if hi == 0 or hi == 6 then
+        rgb = { hsv.v, t, p }
+    elseif hi == 1 then
+        rgb = { q, hsv.v, p }
+    elseif hi == 2 then
+        rgb = { p, hsv.v, t }
+    elseif hi == 3 then
+        rgb = { p, q, hsv.v }
+    elseif hi == 4 then
+        rgb = { t, p, hsv.v }
+    elseif hi == 5 then
+        rgb = { hsv.v, p, q }
+    end
+
+    local r, g, b
+    r, g, b = unpack(rgb)
+
+    return Color.new(r * 255, g * 255, b * 255, hsv.a);
+end
+
+local function to_hsv(rgb)
+    local r, g, b;
+    r = rgb.rgba[1] / 255
+    g = rgb.rgba[2] / 255
+    b = rgb.rgba[3] / 255
+
+    local h, s, v
+    local max = math.max(math.max(r, g), b)
+    local min = math.min(math.min(r, g), b)
+
+    if max == min then
+        h = 0
+    elseif max == r then
+        h = 60 * (g - b) / (max - min)
+    elseif max == g then
+        h = 60 * ( 2 + (b - r) / (max - min))
+    elseif max == b then
+        h = 60 * ( 4 + (r - g) / (max - min))
+    end
+    if h < 0 then h = h + 360 end
+
+    s = (max == 0) and 0 or ((max - min) / max)
+
+    v = max
+
+    return { h = h, s = s, v = v, a = rgb.rgba[4] }
 end
 
 
@@ -133,7 +194,41 @@ Color = {
 
     a = function(self, a)
         return self:alpha(a)
+    end,
+
+    value = function(self, v)
+        local hsv = to_hsv(self)
+        if v == nil then return hsv.v end
+        hsv.v = v
+        return to_rgb(hsv)
+    end,
+
+    v = function(self, v)
+        return self:value(v)
+    end,
+
+    saturation = function(self, s)
+        local hsv = to_hsv(self)
+        if s == nil then return hsv.s end
+        hsv.s = s
+        return to_rgb(hsv)
+    end,
+
+    s = function(self, s)
+        return self:saturation(s)
+    end,
+
+    hue = function(self, h)
+        local hsv = to_hsv(self)
+        if h == nil then return hsv.h end
+        hsv.h = h
+        return to_rgb(hsv)
+    end,
+
+    h = function(self, h)
+        return self:hue(h)
     end
+
 
 }
 
