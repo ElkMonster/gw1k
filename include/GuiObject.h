@@ -132,6 +132,11 @@ public:
 
     GuiObject* getParent() const;
 
+    /**
+     * Gets the first non-embedded parent in this GuiObject's parent hierarchy.
+     */
+    GuiObject* getNonEmbeddedParent() const;
+
     bool isEmbedded() const;
 
     /**

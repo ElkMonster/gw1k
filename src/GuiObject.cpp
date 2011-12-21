@@ -399,6 +399,18 @@ GuiObject::getParent() const
 }
 
 
+GuiObject*
+GuiObject::getNonEmbeddedParent() const
+{
+    GuiObject* p = parent_;
+    while (p && p->bIsEmbedded_)
+    {
+        p = p->parent_;
+    }
+    return p;
+}
+
+
 bool
 GuiObject::isEmbedded() const
 {
