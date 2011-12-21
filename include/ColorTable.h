@@ -15,7 +15,11 @@ struct ColorTable
 
     ColorTable();
 
+    ColorTable(const ColorTable& ct);
+
     ~ColorTable();
+
+    ColorTable& operator=(const ColorTable& rhs);
 
     /**
      * Gets foreground and background colours specified for the given state.
@@ -30,6 +34,7 @@ struct ColorTable
     Color4i* hoveredBgCol;
     Color4i* clickedFgCol;
     Color4i* clickedBgCol;
+
 };
 
 

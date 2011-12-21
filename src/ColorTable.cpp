@@ -16,6 +16,12 @@ ColorTable::ColorTable()
 {}
 
 
+ColorTable::ColorTable(const ColorTable& ct)
+{
+    *this = ct;
+}
+
+
 ColorTable::~ColorTable()
 {
     DELETE_PTR(fgCol);
@@ -24,6 +30,19 @@ ColorTable::~ColorTable()
     DELETE_PTR(hoveredBgCol);
     DELETE_PTR(clickedFgCol);
     DELETE_PTR(clickedBgCol);
+}
+
+
+ColorTable&
+ColorTable::operator=(const ColorTable& rhs)
+{
+    setColor(rhs.fgCol, fgCol);
+    setColor(rhs.bgCol, bgCol);
+    setColor(rhs.hoveredFgCol, hoveredFgCol);
+    setColor(rhs.hoveredBgCol, hoveredBgCol);
+    setColor(rhs.clickedFgCol, clickedFgCol);
+    setColor(rhs.clickedBgCol, clickedBgCol);
+    return *this;
 }
 
 
