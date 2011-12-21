@@ -7,24 +7,6 @@
 #define MSG(x)
 
 
-namespace
-{
-
-
-inline gw1k::GuiObject* getNonEmbeddedParent(const gw1k::GuiObject* o)
-{
-    gw1k::GuiObject* p = o->getParent();
-    while (p && p->isEmbedded())
-    {
-        p = p->getParent();
-    }
-    return p;
-}
-
-
-} // namespace
-
-
 namespace gw1k
 {
 
@@ -160,7 +142,7 @@ WManager::feedMouseMoveHandleOldHoveredObj(
         GuiObject* nPar = 0;
         if (newHoveredObj && newHoveredObj->isEmbedded())
         {
-            nPar = getNonEmbeddedParent(newHoveredObj);
+            nPar = newHoveredObj->getNonEmbeddedParent();
         }
 
         // Check if the containing non-embedded parent is also left; this is
@@ -181,7 +163,7 @@ WManager::feedMouseMoveHandleOldHoveredObj(
         // If new hovered object is an embedded sub-object of hoveredObj_,
         // do nothing (that is, no LEFT event), otherwise trigger LEFT event
         bool bIsEmbeddedSubObj = newHoveredObj && newHoveredObj->isEmbedded()
-            && (getNonEmbeddedParent(newHoveredObj) == hoveredObj_);
+            && (newHoveredObj->getNonEmbeddedParent() == hoveredObj_);
         if (!bIsEmbeddedSubObj)
         {
             hoveredObj_->triggerMouseMovedEvent(GW1K_M_LEFT, pos, delta);
