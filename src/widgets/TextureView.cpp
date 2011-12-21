@@ -120,11 +120,20 @@ TextureView::createTexture()
 void
 TextureView::setTexMulColors(const ColorTable& colorTable)
 {
-    colorTable_ = colorTable;
+    texMulColorTable_ = colorTable;
     Color4i defCol(255, 255, 255, 255);
-    if (!colorTable_.fgCol) { colorTable_.fgCol = new Color4i(defCol); }
-    if (!colorTable_.hoveredFgCol) { colorTable_.hoveredFgCol = new Color4i(defCol); }
-    if (!colorTable_.clickedFgCol) { colorTable_.clickedFgCol = new Color4i(defCol); }
+    if (!texMulColorTable_.fgCol)
+    {
+        texMulColorTable_.fgCol = new Color4i(defCol);
+    }
+    if (!texMulColorTable_.hoveredFgCol)
+    {
+        texMulColorTable_.hoveredFgCol = new Color4i(defCol);
+    }
+    if (!texMulColorTable_.clickedFgCol)
+    {
+        texMulColorTable_.clickedFgCol = new Color4i(defCol);
+    }
 }
 
 
@@ -132,7 +141,10 @@ void
 TextureView::setTexMulColorScheme(const char* colorScheme)
 {
     ThemeManager* tm = ThemeManager::getInstance();
-    tm->setColors(texMulColorTable_, colorScheme, "TextureView.TexMul");
+    // Make sure that foreground colours are not null by calling setTexMulColors()
+    ColorTable ct;
+    tm->setColors(ct, colorScheme, "TextureView.TexMul");
+    setTexMulColors(ct);
 }
 
 
