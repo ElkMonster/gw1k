@@ -1,5 +1,6 @@
 #include "ColorTable.h"
 
+#include "Renderable.h"
 #include "utils/Helpers.h"
 
 namespace gw1k
@@ -68,11 +69,22 @@ ColorTable::queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const
 
 
 void
-ColorTable::queryColors(Color4i*& fg, Color4i*& bg, const GuiObject* o) const
+ColorTable::queryColors(Color4i*& fg, Color4i*& bg, const Renderable* r) const
 {
-    ColorState s = o->isClicked() ?
-        STATE_CLICKED : (o->isHovered() ? STATE_HOVERED : STATE_NORMAL);
-    queryColors(fg, bg, s);
+    ColorState state;
+    if (r->isEmbedded() && r->choosesEmbeddedColorsByParentStatus())
+    {
+        GuiObject* parent = r->getNonEmbeddedParent();
+        state = (parent->isClicked() ? ColorTable::STATE_CLICKED :
+            (parent->isHovered() ?
+                ColorTable::STATE_HOVERED : ColorTable::STATE_NORMAL));
+    }
+    else
+    {
+        state = r->isClicked() ?
+            STATE_CLICKED : (r->isHovered() ? STATE_HOVERED : STATE_NORMAL);
+    }
+    queryColors(fg, bg, state);
 }
 
 

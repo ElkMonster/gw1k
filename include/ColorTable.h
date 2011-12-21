@@ -2,10 +2,12 @@
 #define GW1K_COLORTABLE_H_
 
 #include "Color4i.h"
-#include "GuiObject.h"
 
 namespace gw1k
 {
+
+
+class Renderable;
 
 
 struct ColorTable
@@ -26,7 +28,7 @@ struct ColorTable
      */
     void queryColors(Color4i*& fg, Color4i*& bg, ColorState state) const;
 
-    void queryColors(Color4i*& fg, Color4i*& bg, const GuiObject* o) const;
+    void queryColors(Color4i*& fg, Color4i*& bg, const Renderable* r) const;
 
     Color4i* fgCol;
     Color4i* bgCol;
