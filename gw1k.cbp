@@ -68,7 +68,6 @@
 		<Unit filename="include/listeners/ActionListener.h" />
 		<Unit filename="include/listeners/KeyListener.h" />
 		<Unit filename="include/listeners/MouseListener.h" />
-		<Unit filename="include/listeners/ResizeListener.h" />
 		<Unit filename="include/listeners/SliderListener.h" />
 		<Unit filename="include/providers/ActionEventProvider.h" />
 		<Unit filename="include/providers/KeyEventProvider.h" />
