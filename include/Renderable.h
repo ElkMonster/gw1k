@@ -22,12 +22,19 @@ public:
 public:
 
     /**
-     * Sets whether this Renderable, if embedded, chooses its colours based on
-     * its non-embedded parent's hovered or clicked state.
+     * ADAPT_SELF: Set colours based on own state
+     * ADAPT_PARENT: Set colours based on parent's state
+     * ADAPT_NON_EMBEDDED_PARENT: Set colours based on first non-embedded
+     * parent's state in the parent hierarchys
      */
-    void setChooseEmbeddedColorsByParentStatus(bool enabled = true);
+    enum AdaptMode { ADAPT_SELF, ADAPT_PARENT, ADAPT_NON_EMBEDDED_PARENT };
 
-    bool choosesEmbeddedColorsByParentStatus() const;
+    /**
+     * Sets how this Renderable chooses colours when rendered.
+     */
+    void setAdaptMode(AdaptMode mode);
+
+    AdaptMode getAdaptMode() const;
 
     /**
      * If this object is visible, then this method calls renderSelf() and
@@ -107,7 +114,7 @@ protected:
 
 private:
 
-    bool bColorAccordingToParentStatus_;
+    AdaptMode adaptMode_;
 
 };
 

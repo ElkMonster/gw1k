@@ -72,9 +72,11 @@ void
 ColorTable::queryColors(Color4i*& fg, Color4i*& bg, const Renderable* r) const
 {
     ColorState state;
-    if (r->isEmbedded() && r->choosesEmbeddedColorsByParentStatus())
+    Renderable::AdaptMode mode = r->getAdaptMode();
+    if (mode != Renderable::ADAPT_SELF)
     {
-        GuiObject* parent = r->getNonEmbeddedParent();
+        GuiObject* parent = (mode == Renderable::ADAPT_PARENT) ?
+            r->getParent() : r->getNonEmbeddedParent();
         state = (parent->isClicked() ? ColorTable::STATE_CLICKED :
             (parent->isHovered() ?
                 ColorTable::STATE_HOVERED : ColorTable::STATE_NORMAL));

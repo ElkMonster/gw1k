@@ -140,8 +140,9 @@ TextureView::setTexMulColors(const ColorTable& colorTable)
 void
 TextureView::setTexMulColorScheme(const char* colorScheme)
 {
+    // Ensure that foreground colours are not null by calling setTexMulColors()
+    // at the end
     ThemeManager* tm = ThemeManager::getInstance();
-    // Make sure that foreground colours are not null by calling setTexMulColors()
     ColorTable ct;
     tm->setColors(ct, colorScheme, "TextureView.TexMul");
     setTexMulColors(ct);

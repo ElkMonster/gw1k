@@ -15,7 +15,7 @@ TextureWiBox::TextureWiBox(
     texView_ = new TextureView(Point(1, 1), size - Point(2, 2), filename, bResizeToImageSize);
     addSubObject(texView_);
     texView_->setEmbedded();
-    texView_->setChooseEmbeddedColorsByParentStatus();
+    texView_->setAdaptMode(Renderable::ADAPT_PARENT);
 
     if (bResizeToImageSize)
     {

@@ -14,7 +14,7 @@ namespace gw1k
 
 
 Renderable::Renderable(const char* colorScheme)
-:   bColorAccordingToParentStatus_(false)
+:   adaptMode_(ADAPT_SELF)
 {
     setColors(colorScheme);
 }
@@ -26,16 +26,16 @@ Renderable::~Renderable()
 
 
 void
-Renderable::setChooseEmbeddedColorsByParentStatus(bool enabled)
+Renderable::setAdaptMode(AdaptMode mode)
 {
-    bColorAccordingToParentStatus_ = enabled;
+    adaptMode_ = mode;
 }
 
 
-bool
-Renderable::choosesEmbeddedColorsByParentStatus() const
+Renderable::AdaptMode
+Renderable::getAdaptMode() const
 {
-    return bColorAccordingToParentStatus_;
+    return adaptMode_;
 }
 
 
@@ -148,9 +148,10 @@ void
 Renderable::selectColors(Color4i*& fg, Color4i*& bg) const
 {
     ColorTable::ColorState state;
-    if (bIsEmbedded_ && bColorAccordingToParentStatus_)
+    if (adaptMode_ != ADAPT_SELF)
     {
-        GuiObject* parent = getNonEmbeddedParent();
+        GuiObject* parent =
+            (adaptMode_ == ADAPT_PARENT) ? parent_ : getNonEmbeddedParent();
         state = (parent->isClicked() ? ColorTable::STATE_CLICKED :
             (parent->isHovered() ? ColorTable::STATE_HOVERED : ColorTable::STATE_NORMAL));
     }
