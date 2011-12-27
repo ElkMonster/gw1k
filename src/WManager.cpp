@@ -2,6 +2,7 @@
 
 #include <GL/gl.h>
 #include <iostream>
+#include <sys/time.h>
 
 //#define MSG(x) std::cout << x << std::endl
 #define MSG(x)
@@ -370,6 +371,8 @@ WManager::render()
 {
     //MSG("WManager::render()");
 
+    checkTimers();
+
     // Use iterator instead of index access here so to make sure that additional
     // preRenderUpdate targets added during processing of the queue will also
     // be processed
@@ -415,6 +418,96 @@ WManager::indicateRemovedObject(const GuiObject* o)
         {
             feedMouseMoveInternal(mousePos_, Point(), 0);
         }
+    }
+
+    // Remove all timers running for this GuiObject
+    for (std::list<Timer*>::iterator i = timerList_.begin();
+        i != timerList_.end(); )
+    {
+        if ((*i)->target == o)
+        {
+            i = timerList_.erase(i);
+        }
+        else
+        {
+            ++i;
+        }
+    }
+}
+
+
+void
+WManager::addTimer(double seconds, GuiObject* target, int userdata)
+{
+    Timer* timer = new Timer(seconds, target, userdata);
+
+    if (timerList_.size() == 0)
+    {
+        timerList_.push_back(timer);
+    }
+    else
+    {
+        for (std::list<Timer*>::iterator i = timerList_.begin();
+            i != timerList_.end(); ++i)
+        {
+            if (*timer >= (*i)->getExpirationTime())
+            {
+                // Insert before i
+                timerList_.insert(i, timer);
+                break;
+            }
+        }
+    }
+}
+
+
+void
+WManager::removeTimers(GuiObject* target)
+{
+    for (std::list<Timer*>::iterator i = timerList_.begin();
+        i != timerList_.end(); )
+    {
+        if ((*i)->target == target)
+        {
+            i = timerList_.erase(i);
+        }
+        else
+        {
+            ++i;
+        }
+    }
+}
+
+
+void
+WManager::removeTimers(GuiObject* target, int userdata)
+{
+    for (std::list<Timer*>::iterator i = timerList_.begin();
+        i != timerList_.end(); )
+    {
+        if (((*i)->target == target) && ((*i)->userdata == userdata))
+        {
+            i = timerList_.erase(i);
+        }
+        else
+        {
+            ++i;
+        }
+    }
+}
+
+
+void
+WManager::checkTimers()
+{
+    timeval now;
+    gettimeofday(&now, 0);
+
+    while (!timerList_.empty() && timerList_.front()->expired(now))
+    {
+        Timer* t = timerList_.front();
+        t->target->timerExpired(t->userdata);
+        timerList_.pop_front();
     }
 }
 

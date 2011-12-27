@@ -471,5 +471,12 @@ GuiObject::moveOnTop(GuiObject* newTopSubObj)
 }
 
 
+void
+GuiObject::timerExpired(int userdata)
+{
+    // Default implementation
+}
+
+
 } // namespace gw1k
 

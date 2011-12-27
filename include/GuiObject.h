@@ -169,6 +169,11 @@ public:
      */
     void moveOnTop();
 
+    /**
+     *
+     */
+    virtual void timerExpired(int userdata);
+
 private:
 
     /**

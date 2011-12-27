@@ -5,6 +5,7 @@
 #include "widgets/Box.h"
 #include "Point.h"
 #include "WindowStack.h"
+#include "Timer.h"
 
 #include <vector>
 
@@ -98,6 +99,12 @@ public:
      */
     void indicateRemovedObject(const GuiObject* o);
 
+    void addTimer(double seconds, GuiObject* target, int userdata);
+
+    void removeTimers(GuiObject* target);
+
+    void removeTimers(GuiObject* target, int userdata);
+
 private:
 
     void feedMouseMoveInternal(const Point& pos,
@@ -110,6 +117,8 @@ private:
 
     void feedMouseMoveHandleNewHoveredObj(const Point& pos,
                                           const Point& delta) const;
+
+    void checkTimers();
 
 private:
 
@@ -132,6 +141,8 @@ private:
     int mouseWheelPos_;
 
     std::vector<GuiObject*> preRenderUpdateQueue_;
+
+    std::list<Timer*> timerList_;
 
 };
 
