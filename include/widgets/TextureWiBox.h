@@ -13,6 +13,10 @@ class TextureWiBox : public WiBox
 
 public:
 
+    /**
+     * If colorScheme is given, the enclosed TextureView's texMulColorScheme
+     * path defaults to <colorScheme>.TexMul.
+     */
     TextureWiBox(const Point& pos,
                  const Point& size,
                  const std::string& filename,

@@ -12,10 +12,17 @@ TextureWiBox::TextureWiBox(
     const char* colorScheme)
 :   WiBox(pos, size, colorScheme)
 {
-    texView_ = new TextureView(Point(1, 1), size - Point(2, 2), filename, bResizeToImageSize);
-    addSubObject(texView_);
+    std::string sMulColScheme;
+    if (colorScheme)
+    {
+        sMulColScheme = std::string(colorScheme) + ".TexMul";
+    }
+
+    texView_ = new TextureView(Point(1, 1), size - Point(2, 2), filename,
+        bResizeToImageSize, colorScheme ? sMulColScheme.c_str() : 0);
     texView_->setEmbedded();
     texView_->setAdaptMode(Renderable::ADAPT_PARENT);
+    addSubObject(texView_);
 
     if (bResizeToImageSize)
     {

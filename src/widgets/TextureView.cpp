@@ -16,7 +16,8 @@ TextureView::TextureView(
     const Point& pos,
     const Point& size,
     const std::string& filename,
-    bool bResizeToImageSize)
+    bool bResizeToImageSize,
+    const char* texMulColorScheme)
 :   OGLView(pos, size),
     filename_(filename),
     pTex_(0),
@@ -29,8 +30,8 @@ TextureView::TextureView(
     {
         GuiObject::setSize(imgSize_.x, imgSize_.y);
     }
-    // Set default texMul colours
-    setTexMulColorScheme(0);
+
+    setTexMulColorScheme(texMulColorScheme);
 }
 
 

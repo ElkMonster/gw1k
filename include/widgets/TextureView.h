@@ -31,7 +31,8 @@ public:
     TextureView(const Point& pos,
                 const Point& size,
                 const std::string& filename,
-                bool bResizeToImageSize = false);
+                bool bResizeToImageSize = false,
+                const char* texMulColorScheme = 0);
 
     virtual ~TextureView();
 
