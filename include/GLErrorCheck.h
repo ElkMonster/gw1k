@@ -1,7 +1,12 @@
 #ifndef GW1K_GLERRORCHECK_H_
 #define GW1K_GLERRORCHECK_H_
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include <string>
 #include <iostream>
 

@@ -5,7 +5,12 @@
 #define GW1K_ENABLE_GL_ERROR_CHECKS
 #include "GLErrorCheck.h"
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include <iostream>
 
 #define MSG(x) std::cout << x << std::endl

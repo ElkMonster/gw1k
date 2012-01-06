@@ -4,7 +4,12 @@
 #include "utils/Helpers.h"
 #include "Math.h"
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include <iostream>
 
 #define MSG(x) std::cout << x << std::endl

@@ -1,7 +1,11 @@
 #include "Render.h"
 
 #include <cmath>
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 //#define GW1K_ENABLE_GL_ERROR_CHECKS
 #include "GLErrorCheck.h"
