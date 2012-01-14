@@ -42,7 +42,8 @@ unmapValue(float mappedVal, const float range[2], MapType mapping)
     float d = range[1] - range[0];
     if (d == 0.f)
     {
-        return 0.f;
+        // There is only one value to unmap to
+        return range[0];
     }
     float v = 0.f;
     float r = (mappedVal - range[0]) / d;
