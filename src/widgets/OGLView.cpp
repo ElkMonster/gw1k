@@ -21,7 +21,7 @@ namespace gw1k
 OGLView::OGLView(const Point& pos, const Point& size)
 :   Box(pos, size),
     transl_(geom::Point2D(0.f, 0.f)),
-    zoom_(1.f),
+    zoom_(1.f, 1.f),
     bMouseControl_(false)
 {
     updateInternalVars();
@@ -62,15 +62,32 @@ OGLView::setZoomFactor(float z)
 {
     if (z > 0.f)
     {
-        zoom_ = z;
+        zoom_.x = z;
+        zoom_.y = z;
         updateTopLeftAndPxToGLFactor();
     }
-    MSG(zoom_);
+    MSG(zoom_.x);
+}
+
+
+void
+OGLView::setZoom(const geom::Point2D& z)
+{
+    zoom_ = max(geom::Point2D(0.f, 0.f), z);
+    updateTopLeftAndPxToGLFactor();
+    MSG(zoom_.x << ", " << zoom_.y);
 }
 
 
 float
 OGLView::getZoomFactor() const
+{
+    return zoom_.x;
+}
+
+
+const geom::Point2D&
+OGLView::getZoom() const
 {
     return zoom_;
 }
@@ -119,12 +136,12 @@ OGLView::renderContent(const Point& offset) const
         // longer edge will have a greater range, depending on the aspect ratio)
         const Point& size = getSize();
         glScalef(0.5f * minDimSize_, -0.5f * minDimSize_, 1.f);
-        glTranslatef(size.x * widgToRelSize_, -size.y * widgToRelSize_, 0.f);
+        glTranslatef(size.x * widgToRelSize_.x, -size.y * widgToRelSize_.y, 0.f);
 
         glPushMatrix();
         {
             // Apply our transformations
-            glScalef(zoom_, zoom_, 1.f);
+            glScalef(zoom_.x, zoom_.y, 1.f);
             glTranslatef(transl_.x, transl_.y, 0.f);
 
             glPushMatrix();
@@ -175,8 +192,32 @@ OGLView::mouseWheeled(int delta, GuiObject* receiver)
     {
         if (receiver == this)
         {
-            float z = zoom_ + delta * 0.05f;
-            setZoomFactor(z);
+            float fdelta = delta * 0.05f;
+            if (zoom_.x == zoom_.y)
+            {
+                float z = zoom_.x + fdelta;
+                setZoomFactor(z);
+            }
+            else
+            {
+                geom::Point2D z;
+                // Warning: When the two zoom values are very close, the
+                // following could cause unexpected effects due to very big
+                // numbers resulting from the division
+                if (zoom_.x < zoom_.y)
+                {
+                    float d = zoom_.y / zoom_.x;
+                    z.x = zoom_.x + fdelta;
+                    z.y = zoom_.y + d * fdelta;
+                }
+                else // zoom_.x > zoom_.y
+                {
+                    float d = zoom_.x / zoom_.y;
+                    z.x = zoom_.x + d * fdelta;
+                    z.y = zoom_.y + fdelta;
+                }
+                setZoom(z);
+            }
         }
     }
 }
@@ -264,7 +305,7 @@ OGLView::updateInternalVars()
 
     gWidgSize_ = pointToGeomPoint2D(size);
 
-    widgToRelSize_ = 1.f / minDimSize_;
+    widgToRelSize_ = geom::Point2D(1.f, 1.f) / minDimSize_;
 
     // Half of the basic size (width/2, height/2) in GL coordinate space
     gHalfGLSize_ = gWidgSize_ * widgToRelSize_;
