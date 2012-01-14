@@ -34,7 +34,11 @@ public:
 
     void setZoomFactor(float z);
 
+    void setZoom(const geom::Point2D& z);
+
     float getZoomFactor() const;
+
+    const geom::Point2D& getZoom() const;
 
     void translateViewByPx(const Point& delta);
 
@@ -99,7 +103,7 @@ protected:
 
     geom::Point2D transl_;
 
-    float zoom_;
+    geom::Point2D zoom_;
 
     bool bMouseControl_;
 
@@ -116,7 +120,7 @@ private:
      * coordinate system) size. Its value is 1.0 / min(width, height). It is
      * calculated each time setSize() is called.
      */
-    float widgToRelSize_;
+    geom::Point2D widgToRelSize_;
 
     /**
      * Holds a factor that can be multiplied with a pixel coordinate to obtain
@@ -124,7 +128,7 @@ private:
      * size and zoom. The reverse (GL to pixel) can be calculated by dividing by
      * the factor.
      */
-    float pxToGLFactor_;
+    geom::Point2D pxToGLFactor_;
 
     geom::Point2D gWidgSize_;
 
