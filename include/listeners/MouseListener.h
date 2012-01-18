@@ -11,6 +11,16 @@ namespace gw1k
 class GuiObject;
 
 
+/**
+ * Warning: In general, it is not advisable to delete GuiObjects within a mouse
+ * callback, as this might delete the object that is the source of a callback.
+ * The main problem arises due to the way events are handled and distributed by
+ * WManager and GuiObject: Since all registered listeners are served the event,
+ * deleting the event source also deletes the list of listeners which is being
+ * iterated over in that very moment. This is clearly not a good idea.
+ * In order to remove and delete GuiObjects, use WManager's markForDeletion()
+ * method.
+ */
 class MouseListener
 {
 
