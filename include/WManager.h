@@ -87,6 +87,16 @@ public:
     void registerForPreRenderUpdate(GuiObject* o);
 
     /**
+     * Marks the given object for deletion before rendering the next frame.
+     * This method should be used when GuiObjects need to be removed and deleted
+     * in mouse and key callbacks (i.e., mouseClicked() etc.).
+     * The given object is removed from its parent and then deleted. This takes
+     * place in the render() method before the preRenderUpdate() calls are
+     * performed.
+     */
+    void markForDeletion(GuiObject* o);
+
+    /**
      * This method allows to point out removed objects to WManager. This is
      * useful for objects that are removed when clicked, e.g. a close button,
      * as gw1k would automatically trigger a Released event on the object,
@@ -141,6 +151,8 @@ private:
     int mouseWheelPos_;
 
     std::vector<GuiObject*> preRenderUpdateQueue_;
+
+    std::vector<GuiObject*> preRenderDeleteQueue_;
 
     std::list<Timer*> timerList_;
 

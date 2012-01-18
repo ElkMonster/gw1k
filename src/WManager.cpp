@@ -379,6 +379,21 @@ WManager::render()
     checkTimers();
 
     // Use iterator instead of index access here so to make sure that additional
+    // preRenderDeletion targets added during processing of the queue will also
+    // be processed
+    for (std::vector<GuiObject*>::iterator i = preRenderDeleteQueue_.begin();
+        i != preRenderDeleteQueue_.end(); ++i)
+    {
+        GuiObject* p = (*i)->getParent();
+        if (p)
+        {
+            p->removeSubObject(*i);
+        }
+        delete *i;
+    }
+    preRenderDeleteQueue_.clear();
+
+    // Use iterator instead of index access here so to make sure that additional
     // preRenderUpdate targets added during processing of the queue will also
     // be processed
     for (std::vector<GuiObject*>::iterator i = preRenderUpdateQueue_.begin();
@@ -396,6 +411,13 @@ void
 WManager::registerForPreRenderUpdate(GuiObject* o)
 {
     preRenderUpdateQueue_.push_back(o);
+}
+
+
+void
+WManager::markForDeletion(GuiObject* o)
+{
+    preRenderDeleteQueue_.push_back(o);
 }
 
 
