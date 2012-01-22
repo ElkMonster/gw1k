@@ -75,17 +75,6 @@ setColor(const Color4i* col, Color4i*& dest)
 }
 
 
-namespace color
-{
-
-    static const Color4i* const red = new Color4i(255, 0, 0, 255);
-    static const Color4i* const green = new Color4i(0, 255, 0, 255);
-    static const Color4i* const blue = new Color4i(0, 0, 255, 255);
-    static const Color4i* const black = new Color4i(0, 0, 0, 255);
-
-} // namespace color
-
-
 } // namespace gw1k
 
 
