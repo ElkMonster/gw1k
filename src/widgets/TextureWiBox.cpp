@@ -12,14 +12,14 @@ TextureWiBox::TextureWiBox(
     const char* colorScheme)
 :   WiBox(pos, size, colorScheme)
 {
-    std::string sMulColScheme;
+    std::string sShadeScheme;
     if (colorScheme)
     {
-        sMulColScheme = std::string(colorScheme) + ".TexMul";
+        sShadeScheme = std::string(colorScheme) + ".Shade";
     }
 
     texView_ = new TextureView(Point(1, 1), size - Point(2, 2), filename,
-        bResizeToImageSize, colorScheme ? sMulColScheme.c_str() : 0);
+        bResizeToImageSize, colorScheme ? sShadeScheme.c_str() : 0);
     //texView_->setEmbedded();
     texView_->setClickThrough();
     texView_->setAdaptMode(Renderable::ADAPT_PARENT);
@@ -78,16 +78,16 @@ TextureWiBox::loadTexture(const std::string& filename)
 
 
 void
-TextureWiBox::setTexMulColors(const ColorTable& colorTable)
+TextureWiBox::setShadeColors(const ColorTable& colorTable)
 {
-    texView_->setTexMulColors(colorTable);
+    texView_->setShadeColors(colorTable);
 }
 
 
 void
-TextureWiBox::setTexMulColorScheme(const char* colorScheme)
+TextureWiBox::setShadeColorScheme(const char* colorScheme)
 {
-    texView_->setTexMulColorScheme(colorScheme);
+    texView_->setShadeColorScheme(colorScheme);
 }
 
 

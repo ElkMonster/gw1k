@@ -131,10 +131,32 @@ OGLViewWiBox::pxToGLDelta(const Point& delta) const
     return oglRenderer_->pxToGLDelta(delta);
 }
 
+
+geom::Point2D
+OGLViewWiBox::pxToGLUnit(const Point& v) const
+{
+    return oglRenderer_->pxToGLUnit(v);
+}
+
+
 Point
 OGLViewWiBox::glPosToPx(const geom::Point2D& pos) const
 {
     return oglRenderer_->glPosToPx(pos);
+}
+
+
+void
+OGLViewWiBox::setShadeColors(const ColorTable& colorTable)
+{
+    oglRenderer_->setShadeColors(colorTable);
+}
+
+
+void
+OGLViewWiBox::setShadeColorScheme(const char* colorScheme)
+{
+    oglRenderer_->setShadeColorScheme(colorScheme);
 }
 
 

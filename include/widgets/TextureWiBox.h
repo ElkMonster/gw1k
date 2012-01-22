@@ -33,9 +33,9 @@ public:
 
     bool loadTexture(const std::string& filename);
 
-    void setTexMulColors(const ColorTable& colorTable);
+    void setShadeColors(const ColorTable& colorTable);
 
-    void setTexMulColorScheme(const char* colorScheme);
+    void setShadeColorScheme(const char* colorScheme);
 
     const Point& getTextureSize() const;
 

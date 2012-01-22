@@ -3,6 +3,7 @@
 #include "Render.h"
 #include "utils/Helpers.h"
 #include "Math.h"
+#include "ThemeManager.h"
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -18,7 +19,10 @@ namespace gw1k
 {
 
 
-OGLView::OGLView(const Point& pos, const Point& size)
+OGLView::OGLView(
+    const Point& pos,
+    const Point& size,
+    const char* shadeColorScheme)
 :   Box(pos, size),
     transl_(geom::Point2D(0.f, 0.f)),
     zoom_(1.f, 1.f),
@@ -26,6 +30,7 @@ OGLView::OGLView(const Point& pos, const Point& size)
 {
     updateInternalVars();
     addMouseListener(this);
+    setShadeColorScheme(shadeColorScheme);
 }
 
 
@@ -277,6 +282,38 @@ OGLView::glPosToPx(const geom::Point2D& pos) const
 {
     geom::Point2D p = (pos - gGLTopLeft_) / pxToGLFactor_;
     return Point(round(p.x), round(-p.y));
+}
+
+
+void
+OGLView::setShadeColors(const ColorTable& colorTable)
+{
+    shadeColorTable_ = colorTable;
+    Color4i defCol(255, 255, 255, 255);
+    if (!shadeColorTable_.fgCol)
+    {
+        shadeColorTable_.fgCol = new Color4i(defCol);
+    }
+    if (!shadeColorTable_.hoveredFgCol)
+    {
+        shadeColorTable_.hoveredFgCol = new Color4i(defCol);
+    }
+    if (!shadeColorTable_.clickedFgCol)
+    {
+        shadeColorTable_.clickedFgCol = new Color4i(defCol);
+    }
+}
+
+
+void
+OGLView::setShadeColorScheme(const char* colorScheme)
+{
+    // Ensure that foreground colours are not null by calling setShadeColors()
+    // at the end
+    ThemeManager* tm = ThemeManager::getInstance();
+    ColorTable ct;
+    tm->setColors(ct, colorScheme, "OGLView.Shade");
+    setShadeColors(ct);
 }
 
 

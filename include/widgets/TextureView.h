@@ -3,8 +3,6 @@
 
 #include "OGLView.h"
 
-#include "../Color4i.h"
-
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #else
@@ -36,7 +34,7 @@ public:
                 const Point& size,
                 const std::string& filename,
                 bool bResizeToImageSize = false,
-                const char* texMulColorScheme = 0);
+                const char* shadeColorScheme = 0);
 
     virtual ~TextureView();
 

@@ -20,7 +20,9 @@ class OGLView : public Box, public MouseListener
 
 public:
 
-    OGLView(const Point& pos, const Point& size);
+    OGLView(const Point& pos,
+            const Point& size,
+            const char* shadeColorScheme = 0);
 
     ~OGLView();
 
@@ -89,6 +91,10 @@ public:
      */
     Point glPosToPx(const geom::Point2D& pos) const;
 
+    void setShadeColors(const ColorTable& colorTable);
+
+    void setShadeColorScheme(const char* colorScheme);
+
 protected:
 
     virtual void renderOGLContent() const;
@@ -110,6 +116,8 @@ protected:
     geom::Point2D gHalfGLSize_;
 
     geom::Point2D gGLTopLeft_;
+
+    ColorTable shadeColorTable_;
 
 private:
 

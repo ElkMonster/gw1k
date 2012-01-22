@@ -43,7 +43,13 @@ public:
 
     geom::Point2D pxToGLDelta(const Point& delta) const;
 
+    geom::Point2D pxToGLUnit(const Point& v) const;
+
     Point glPosToPx(const geom::Point2D& pos) const;
+
+    void setShadeColors(const ColorTable& colorTable);
+
+    void setShadeColorScheme(const char* colorScheme);
 
 private:
 

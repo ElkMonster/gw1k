@@ -2,7 +2,6 @@
 
 #include "utils/PNGLoader.h"
 #include "WManager.h"
-#include "ThemeManager.h"
 #include "Render.h"
 #include "Log.h"
 
@@ -17,8 +16,8 @@ TextureView::TextureView(
     const Point& size,
     const std::string& filename,
     bool bResizeToImageSize,
-    const char* texMulColorScheme)
-:   OGLView(pos, size),
+    const char* shadeColorScheme)
+:   OGLView(pos, size, shadeColorScheme),
     filename_(filename),
     pTex_(0),
     pImgData_(0),
@@ -30,8 +29,6 @@ TextureView::TextureView(
     {
         GuiObject::setSize(imgSize_.x, imgSize_.y);
     }
-
-    setTexMulColorScheme(texMulColorScheme);
 }
 
 
@@ -118,38 +115,6 @@ TextureView::createTexture()
 }
 
 
-void
-TextureView::setTexMulColors(const ColorTable& colorTable)
-{
-    texMulColorTable_ = colorTable;
-    Color4i defCol(255, 255, 255, 255);
-    if (!texMulColorTable_.fgCol)
-    {
-        texMulColorTable_.fgCol = new Color4i(defCol);
-    }
-    if (!texMulColorTable_.hoveredFgCol)
-    {
-        texMulColorTable_.hoveredFgCol = new Color4i(defCol);
-    }
-    if (!texMulColorTable_.clickedFgCol)
-    {
-        texMulColorTable_.clickedFgCol = new Color4i(defCol);
-    }
-}
-
-
-void
-TextureView::setTexMulColorScheme(const char* colorScheme)
-{
-    // Ensure that foreground colours are not null by calling setTexMulColors()
-    // at the end
-    ThemeManager* tm = ThemeManager::getInstance();
-    ColorTable ct;
-    tm->setColors(ct, colorScheme, "TextureView.TexMul");
-    setTexMulColors(ct);
-}
-
-
 const Point&
 TextureView::getTextureSize() const
 {
@@ -167,14 +132,15 @@ TextureView::preRenderUpdate()
     }
 }
 
+
 void
 TextureView::renderOGLContent() const
 {
     if (pTex_)
     {
-        Color4i* texMulCol, *foo;
-        texMulColorTable_.queryColors(texMulCol, foo, this);
-        setGLColor(texMulCol);
+        Color4i* shadeCol, *foo;
+        shadeColorTable_.queryColors(shadeCol, foo, this);
+        setGLColor(shadeCol);
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, *pTex_);
