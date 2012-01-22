@@ -42,6 +42,10 @@ public:
 
     const geom::Point2D& getZoom() const;
 
+    void setMinZoomFactor(float minZoom);
+
+    void setMinZoom(const geom::Point2D& minZoom);
+
     void translateViewByPx(const Point& delta);
 
     void translateViewByGLUnits(const geom::Point2D& delta);
@@ -110,6 +114,8 @@ protected:
     geom::Point2D transl_;
 
     geom::Point2D zoom_;
+
+    geom::Point2D minZoom_;
 
     bool bMouseControl_;
 

@@ -26,6 +26,7 @@ OGLView::OGLView(
 :   Box(pos, size),
     transl_(geom::Point2D(0.f, 0.f)),
     zoom_(1.f, 1.f),
+    minZoom_(.01f, .01f),
     bMouseControl_(false)
 {
     updateInternalVars();
@@ -65,12 +66,9 @@ OGLView::getTranslation() const
 void
 OGLView::setZoomFactor(float z)
 {
-    if (z > 0.f)
-    {
-        zoom_.x = z;
-        zoom_.y = z;
-        updateTopLeftAndPxToGLFactor();
-    }
+    zoom_.x = std::max(z, minZoom_.x);
+    zoom_.y = zoom_.x;
+    updateTopLeftAndPxToGLFactor();
     MSG(zoom_.x);
 }
 
@@ -78,7 +76,7 @@ OGLView::setZoomFactor(float z)
 void
 OGLView::setZoom(const geom::Point2D& z)
 {
-    zoom_ = max(geom::Point2D(0.f, 0.f), z);
+    zoom_ = max(minZoom_, z);
     updateTopLeftAndPxToGLFactor();
     MSG(zoom_.x << ", " << zoom_.y);
 }
@@ -95,6 +93,31 @@ const geom::Point2D&
 OGLView::getZoom() const
 {
     return zoom_;
+}
+
+
+void
+OGLView::setMinZoomFactor(float minZoom)
+{
+    if (minZoom > 0.f)
+    {
+        minZoom_.x = minZoom;
+        minZoom_.y = minZoom;
+    }
+}
+
+
+void
+OGLView::setMinZoom(const geom::Point2D& minZoom)
+{
+    if (minZoom.x > 0.f)
+    {
+        minZoom_.x = minZoom.x;
+    }
+    if (minZoom.y > 0.f)
+    {
+        minZoom_.y = minZoom.y;
+    }
 }
 
 
