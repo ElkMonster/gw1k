@@ -14,8 +14,8 @@ class TextureWiBox : public WiBox
 public:
 
     /**
-     * If colorScheme is given, the enclosed TextureView's texMulColorScheme
-     * path defaults to <colorScheme>.TexMul.
+     * If colorScheme is given, the enclosed TextureView's shadeColorScheme
+     * path defaults to <colorScheme>.Shade.
      */
     TextureWiBox(const Point& pos,
                  const Point& size,
