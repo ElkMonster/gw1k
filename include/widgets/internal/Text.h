@@ -35,6 +35,8 @@ public:
 
     void setText(const std::string& text);
 
+    const std::string& getText() const;
+
     void setFontSize(unsigned int fontSize);
 
     /**
@@ -84,9 +86,7 @@ protected:
 
     FTSimpleLayout* layout_;
 
-    int textLength_;
-
-    char* text_;
+    std::string text_;
 
     FTBBox ftBB_;
 

@@ -28,8 +28,6 @@ Text::Text(
 :   Renderable(colorScheme),
     font_(0),
     layout_(new FTSimpleLayout()),
-    textLength_(0),
-    text_(0),
     size_(0, 0),
     bLineLengthSet_(false),
     fontName_(Gw1kSettings::defaultFontName)
@@ -51,11 +49,6 @@ Text::Text(
 
 Text::~Text()
 {
-    if (text_)
-    {
-        delete[] text_;
-    }
-
     delete layout_;
 }
 
@@ -63,16 +56,15 @@ Text::~Text()
 void
 Text::setText(const std::string& text)
 {
-    if (text_)
-    {
-        delete[] text_;
-    }
-
-    textLength_ = text.length();
-    text_ = new char[textLength_ + 1];
-    strncpy(text_, text.c_str(), textLength_ + 1);
-
+    text_ = text;
     update();
+}
+
+
+const std::string&
+Text::getText() const
+{
+    return text_;
 }
 
 
@@ -167,7 +159,7 @@ Text::getSize() const
 void
 Text::renderFg(const Point& offset) const
 {
-    if (font_ && text_)
+    if (font_ && !text_.empty())
     {
         glPushMatrix();
         {
@@ -199,7 +191,7 @@ Text::renderFg(const Point& offset) const
 
             glTranslatef(x, y, 0.f);
             glScalef(1.f, -1.f, 1.f);
-            layout_->Render(text_, textLength_);
+            layout_->Render(text_.c_str());
         }
         glPopMatrix();
     }
@@ -230,8 +222,7 @@ Text::setColors(const char* colorScheme)
 void
 Text::updateBBox()
 {
-    ftBB_ = (font_ && text_ && (std::strcmp(text_, "") != 0))
-        ? layout_->BBox(text_) : FTBBox();
+    ftBB_ = (font_ && !text_.empty()) ? layout_->BBox(text_.c_str()) : FTBBox();
 }
 
 
