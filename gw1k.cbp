@@ -43,9 +43,6 @@
 			<Add library="../geometry/bin/Debug/libgeometry.so" />
 			<Add library="lua" />
 		</Linker>
-		<ExtraCommands>
-			<Add before="touch include/Timer.h" />
-		</ExtraCommands>
 		<Unit filename="include/Color4i.h" />
 		<Unit filename="include/ColorTable.h" />
 		<Unit filename="include/Exception.h" />
@@ -81,6 +78,7 @@
 		<Unit filename="include/widgets/CheckBox.h" />
 		<Unit filename="include/widgets/ClippingBox.h" />
 		<Unit filename="include/widgets/Label.h" />
+		<Unit filename="include/widgets/Menu.h" />
 		<Unit filename="include/widgets/OGLView.h" />
 		<Unit filename="include/widgets/OGLViewWiBox.h" />
 		<Unit filename="include/widgets/RangeSlider.h" />
@@ -117,6 +115,7 @@
 		<Unit filename="src/widgets/CheckBox.cpp" />
 		<Unit filename="src/widgets/ClippingBox.cpp" />
 		<Unit filename="src/widgets/Label.cpp" />
+		<Unit filename="src/widgets/Menu.cpp" />
 		<Unit filename="src/widgets/OGLView.cpp" />
 		<Unit filename="src/widgets/OGLViewWiBox.cpp" />
 		<Unit filename="src/widgets/RangeSlider.cpp" />
