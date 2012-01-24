@@ -350,3 +350,16 @@ RangeSlider = {
     },
     Wibox
 }
+
+
+-- Menu widget
+-- ===========
+Menu = {
+    WiBox,
+    Entry = {
+        Label,
+        Selected = {
+            White, Text = { White }
+        }
+    }
+}
