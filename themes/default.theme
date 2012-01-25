@@ -356,10 +356,18 @@ RangeSlider = {
 -- ===========
 Menu = {
     WiBox,
+    Title = {
+        #, 230,
+        Text = { Black }
+    },
     Entry = {
         Label,
         Selected = {
             White, Text = { White }
+        },
+        Disabled = {
+            #, 100,
+            Text = { 200 }
         }
     }
 }
