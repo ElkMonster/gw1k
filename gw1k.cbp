@@ -88,9 +88,11 @@
 		<Unit filename="include/widgets/TextureView.h" />
 		<Unit filename="include/widgets/TextureWiBox.h" />
 		<Unit filename="include/widgets/WiBox.h" />
+		<Unit filename="include/widgets/advanced/DynamicMenu.h" />
 		<Unit filename="include/widgets/advanced/LabeledRangeSlider.h" />
 		<Unit filename="include/widgets/advanced/NumberLabel.h" />
 		<Unit filename="include/widgets/internal/AbstractSliderBase.h" />
+		<Unit filename="include/widgets/internal/MenuEntry.h" />
 		<Unit filename="include/widgets/internal/Text.h" />
 		<Unit filename="src/ColorTable.cpp" />
 		<Unit filename="src/FTGLFontManager.cpp" />
@@ -125,9 +127,11 @@
 		<Unit filename="src/widgets/TextureView.cpp" />
 		<Unit filename="src/widgets/TextureWiBox.cpp" />
 		<Unit filename="src/widgets/WiBox.cpp" />
+		<Unit filename="src/widgets/advanced/DynamicMenu.cpp" />
 		<Unit filename="src/widgets/advanced/LabeledRangeSlider.cpp" />
 		<Unit filename="src/widgets/advanced/NumberLabel.cpp" />
 		<Unit filename="src/widgets/internal/AbstractSliderBase.cpp" />
+		<Unit filename="src/widgets/internal/MenuEntry.cpp" />
 		<Unit filename="src/widgets/internal/Text.cpp" />
 		<Extensions>
 			<envvars />
