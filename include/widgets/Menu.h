@@ -1,10 +1,9 @@
 #ifndef GW1K_MENU_H_
 #define GW1K_MENU_H_
 
-#include "WiBox.h"
-#include "Label.h"
 #include "../providers/ActionEventProvider.h"
 #include "../listeners/MouseListenerImpl.h"
+#include "internal/MenuEntry.h"
 
 #include <string>
 
@@ -25,11 +24,18 @@ public:
 
 public:
 
-    int addEntry(const std::string& text, int token = -1, bool selected = false);
+    int addEntry(const std::string& text,
+                 int token = -1,
+                 bool disabled = false,
+                 bool selected = false);
 
     int getSelectedEntryToken() const;
 
     const std::string& getSelectedEntryText() const;
+
+    const std::string& getEntryColorSchemeName() const;
+
+    void setTitle(const std::string& title);
 
     virtual const Point& setSize(float width, float height);
 
@@ -43,29 +49,30 @@ private:
 
     int getValidToken(int suggestedToken);
 
-    void setEntryColors(Label* entry);
+    void selectEntry(MenuEntry* newSelectedEntry);
 
-    void selectEntry(Label* newSelectedEntry, int token);
+    void repositionEntriesAndResize();
 
 protected:
 
     Point padding_;
 
-    std::vector<Label*> entries_;
+    std::vector<MenuEntry*> entries_;
 
-    std::vector<int> entryTokens_;
-
-    Label* selectedEntry_;
-
-    int selectedEntryToken_;
+    MenuEntry* selectedEntry_;
 
 private:
 
     int unusedToken_;
 
+    std::string sColorScheme_;
+
     std::string sEntryColorScheme_;
 
+    Label* title_;
+
     typedef WiBox super;
+
 };
 
 } // namespace gw1k

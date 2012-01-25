@@ -8,8 +8,8 @@ Menu::Menu(int width, const Point& padding, const char* colorScheme)
 :   WiBox(Point(), Point(width, 2 * padding.y)),
     padding_(padding),
     selectedEntry_(0),
-    selectedEntryToken_(-1),
-    unusedToken_(0)
+    unusedToken_(0),
+    title_(0)
 {
     setColors(colorScheme);
 }
@@ -25,26 +25,26 @@ Menu::~Menu()
 
 
 int
-Menu::addEntry(const std::string& text, int token, bool selected)
+Menu::addEntry(const std::string& text, int token, bool disabled, bool selected)
 {
-    Point predEnd = entries_.empty() ? Point() : entries_.back()->getEnd();
+    int y = entries_.empty()
+        ? (title_ ? title_->getEnd().y : 0) : entries_.back()->getEnd().y;
+    Point ePos(padding_.x, y + padding_.y);
     Point eSize(getSize().x - 2 * padding_.x, 20);
-    Label* e = new Label(Point(padding_.x, predEnd.y + padding_.y), eSize, text);
+    MenuEntry* e = new MenuEntry(ePos, eSize, text, getValidToken(token), this,
+        disabled, selected);
     if (selected)
     {
-        selectEntry(e, token);
+        selectEntry(e);
     }
-    setEntryColors(e);
 
-    e->setFontSize(16);
+    e->setFontSize(12);
     e->setPadding(Point(2, 0));
     e->setTextProperty(GW1K_ALIGN_LEFT);
     e->setEmbedded();
     e->addMouseListener(this);
     addSubObject(e);
     entries_.push_back(e);
-    token = getValidToken(token);
-    entryTokens_.push_back(token);
 
     const Point& size = getSize();
     setSize(size.x, size.y + eSize.y);
@@ -56,7 +56,7 @@ Menu::addEntry(const std::string& text, int token, bool selected)
 int
 Menu::getSelectedEntryToken() const
 {
-    return selectedEntryToken_;
+    return selectedEntry_->getToken();
 }
 
 
@@ -67,10 +67,49 @@ Menu::getSelectedEntryText() const
 }
 
 
+const std::string&
+Menu::getEntryColorSchemeName() const
+{
+    return sEntryColorScheme_;
+}
+
+
+void
+Menu::setTitle(const std::string& title)
+{
+    if (!title.empty())
+    {
+        if (title_)
+        {
+            title_->setText(title);
+        }
+        else
+        {
+            Point size(getSize().x - 2 * padding_.x, 20);
+            title_ = new Label(padding_, size, title, false,
+                (sColorScheme_ + ".Title").c_str());
+            title_->setInteractive(false);
+            title_->setFontSize(12);
+            addSubObject(title_);
+            repositionEntriesAndResize();
+        }
+    }
+    else // title == ""
+    {
+        if (title_)
+        {
+            removeSubObject(title_);
+            title_ = 0;
+            repositionEntriesAndResize();
+        }
+    }
+}
+
+
 const Point&
 Menu::setSize(float width, float height)
 {
-    int h = 2 * padding_.y;
+    int h = (title_ ? title_->getSize().y : 0) + 2 * padding_.y;
     int entryH = 0;
     if (!entries_.empty())
     {
@@ -96,7 +135,7 @@ Menu::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
     {
         if (receiver == entries_[i])
         {
-            selectEntry(entries_[i], entryTokens_[i]);
+            selectEntry(entries_[i]);
             informActionListeners(this);
             return;
         }
@@ -107,14 +146,10 @@ Menu::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 void
 Menu::setColors(const char* colorScheme)
 {
-    std::string sColorScheme(colorScheme ? colorScheme : "Menu");
-    super::setColors(sColorScheme.c_str());
+    sColorScheme_ = colorScheme ? colorScheme : "Menu";
+    super::setColors(sColorScheme_.c_str());
 
-    sEntryColorScheme_ = std::string(sColorScheme + ".Entry");
-    for (unsigned int i = 0; i != entries_.size(); ++i)
-    {
-        setEntryColors(entries_[i]);
-    }
+    sEntryColorScheme_ = std::string(sColorScheme_ + ".Entry");
 }
 
 
@@ -127,9 +162,9 @@ Menu::getValidToken(int suggestedToken)
     while (!tokenOk)
     {
         tokenOk = true;
-        for (unsigned int i = 0; i != entryTokens_.size(); ++i)
+        for (unsigned int i = 0; i != entries_.size(); ++i)
         {
-            if (token == entryTokens_[i])
+            if (token == entries_[i]->getToken())
             {
                 token = ++unusedToken_;
                 tokenOk = false;
@@ -144,34 +179,32 @@ Menu::getValidToken(int suggestedToken)
 
 
 void
-Menu::setEntryColors(Label* entry)
+Menu::selectEntry(MenuEntry* newSelectedEntry)
 {
-    if (entry == selectedEntry_)
+    if (selectedEntry_ != newSelectedEntry)
     {
-        entry->setColors((sEntryColorScheme_ + ".Selected").c_str());
-    }
-    else
-    {
-        entry->setColors(sEntryColorScheme_.c_str());
+        MenuEntry* prevSelectedEntry = selectedEntry_;
+        selectedEntry_ = newSelectedEntry;
+        selectedEntry_->setSelected();
+
+        if (prevSelectedEntry)
+        {
+            prevSelectedEntry->setSelected(false);
+        }
     }
 }
 
 
 void
-Menu::selectEntry(Label* newSelectedEntry, int token)
+Menu::repositionEntriesAndResize()
 {
-    if (selectedEntry_ != newSelectedEntry)
+    Point pos(padding_.x, (title_ ? title_->getEnd().y : 0) + padding_.y);
+    for (unsigned int i = 0; i != entries_.size(); ++i)
     {
-        Label* prevSelectedEntry = selectedEntry_;
-        selectedEntry_ = newSelectedEntry;
-        selectedEntryToken_ = token;
-
-        setEntryColors(selectedEntry_);
-        if (prevSelectedEntry)
-        {
-            setEntryColors(prevSelectedEntry);
-        }
+        entries_[i]->setPos(pos.x, pos.y);
+        pos.y += entries_[i]->getSize().y + padding_.y;
     }
+    super::setSize(getSize().x, pos.y);
 }
 
 
