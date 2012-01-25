@@ -125,6 +125,13 @@ Label::setText(const std::string& text)
 }
 
 
+const std::string&
+Label::getText() const
+{
+    return text_.getText();
+}
+
+
 void
 Label::setFontSize(int fontSize)
 {

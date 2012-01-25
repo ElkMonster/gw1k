@@ -47,6 +47,8 @@ public:
 
     virtual void setText(const std::string& text);
 
+    const std::string& getText() const;
+
     /**
      * If fontSize is -1, the actual font size used is calculated based on the
      * current height of the widget. Any widget size changes after this call do
