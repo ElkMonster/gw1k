@@ -7,8 +7,8 @@
 
 
 
-/** Deletes the object referenced by ptr only if ptr != 0 */
-#define DELETE_PTR(ptr) if (ptr) delete (ptr)
+/** If ptr != 0, deletes the object referenced by ptr and sets ptr to 0  */
+#define DELETE_PTR(ptr) if (ptr) { delete (ptr); (ptr) = 0; }
 
 
 namespace gw1k
