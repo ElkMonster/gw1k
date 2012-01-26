@@ -81,6 +81,9 @@ protected:
      * Override this to perform actions (e.g., application setup) before the
      * main loop actually starts looping.
      * The default implementation is empty.
+     * preMainLoop() is the right place to set the window title with
+     * glfwSetWindowTitle(); make sure to call glfwPollEvents() afterwards to
+     * actually let it come into effect.
      */
     virtual void preMainLoop();
 
