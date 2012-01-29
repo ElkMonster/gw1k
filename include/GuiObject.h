@@ -3,6 +3,7 @@
 
 #include "providers/MouseEventProvider.h"
 #include "providers/KeyEventProvider.h"
+#include "listeners/TimerListener.h"
 #include "Point.h"
 #include "Rect.h"
 
@@ -13,7 +14,8 @@ namespace gw1k
 {
 
 
-class GuiObject : public MouseEventProvider, public KeyEventProvider
+class GuiObject : public MouseEventProvider, public KeyEventProvider,
+    public TimerListener
 {
 
 public:
@@ -169,10 +171,7 @@ public:
      */
     void moveOnTop();
 
-    /**
-     *
-     */
-    virtual void timerExpired(int userdata);
+    virtual void timerExpired(int token);
 
 private:
 

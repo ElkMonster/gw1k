@@ -472,7 +472,7 @@ GuiObject::moveOnTop(GuiObject* newTopSubObj)
 
 
 void
-GuiObject::timerExpired(int userdata)
+GuiObject::timerExpired(int token)
 {
     // Default implementation
 }

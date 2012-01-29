@@ -16,7 +16,7 @@ public:
     /**
      *
      */
-    virtual void timerExpired(int userdata) = 0;
+    virtual void timerExpired(int token) = 0;
 
 };
 

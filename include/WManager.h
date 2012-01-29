@@ -6,6 +6,7 @@
 #include "Point.h"
 #include "WindowStack.h"
 #include "Timer.h"
+#include "listeners/TimerListener.h"
 
 #include <vector>
 
@@ -109,11 +110,11 @@ public:
      */
     void indicateRemovedObject(const GuiObject* o);
 
-    void addTimer(double seconds, GuiObject* target, int userdata);
+    void addTimer(double seconds, TimerListener* target, int userdata);
 
-    void removeTimers(GuiObject* target);
+    void removeTimers(TimerListener* target);
 
-    void removeTimers(GuiObject* target, int userdata);
+    void removeTimers(TimerListener* target, int userdata);
 
 private:
 

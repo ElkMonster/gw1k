@@ -7,7 +7,7 @@ namespace gw1k
 {
 
 
-Timer::Timer(double seconds, GuiObject* target, int userdata)
+Timer::Timer(double seconds, TimerListener* target, int userdata)
 :   target(target),
     userdata(userdata)
 {

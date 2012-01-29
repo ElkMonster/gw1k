@@ -451,6 +451,7 @@ WManager::indicateRemovedObject(const GuiObject* o)
     for (std::list<Timer*>::iterator i = timerList_.begin();
         i != timerList_.end(); )
     {
+        // Cast to void* since we're comparing TimerListener* and GuiObject*
         if ((*i)->target == o)
         {
             i = timerList_.erase(i);
@@ -464,7 +465,7 @@ WManager::indicateRemovedObject(const GuiObject* o)
 
 
 void
-WManager::addTimer(double seconds, GuiObject* target, int userdata)
+WManager::addTimer(double seconds, TimerListener* target, int userdata)
 {
     Timer* timer = new Timer(seconds, target, userdata);
 
@@ -489,7 +490,7 @@ WManager::addTimer(double seconds, GuiObject* target, int userdata)
 
 
 void
-WManager::removeTimers(GuiObject* target)
+WManager::removeTimers(TimerListener* target)
 {
     for (std::list<Timer*>::iterator i = timerList_.begin();
         i != timerList_.end(); )
@@ -507,7 +508,7 @@ WManager::removeTimers(GuiObject* target)
 
 
 void
-WManager::removeTimers(GuiObject* target, int userdata)
+WManager::removeTimers(TimerListener* target, int userdata)
 {
     for (std::list<Timer*>::iterator i = timerList_.begin();
         i != timerList_.end(); )

@@ -1,13 +1,12 @@
 #ifndef GW1K_TIMER_H_
 #define GW1K_TIMER_H_
 
+#include "listeners/TimerListener.h"
+
 #include <sys/time.h>
 
 namespace gw1k
 {
-
-
-class GuiObject;
 
 
 class Timer
@@ -15,7 +14,7 @@ class Timer
 
 public:
 
-    Timer(double seconds, GuiObject* target, int userdata);
+    Timer(double seconds, TimerListener* target, int userdata);
 
     ~Timer();
 
@@ -39,7 +38,7 @@ public:
 
 public:
 
-    GuiObject* const target;
+    TimerListener* const target;
 
     const int userdata;
 
