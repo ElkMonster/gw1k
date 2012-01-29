@@ -14,7 +14,7 @@ class Timer
 
 public:
 
-    Timer(double seconds, TimerListener* target, int userdata);
+    Timer(double seconds, TimerListener* target, int token);
 
     ~Timer();
 
@@ -40,7 +40,7 @@ public:
 
     TimerListener* const target;
 
-    const int userdata;
+    const int token;
 
 private:
 

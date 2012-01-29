@@ -110,11 +110,11 @@ public:
      */
     void indicateRemovedObject(const GuiObject* o);
 
-    void addTimer(double seconds, TimerListener* target, int userdata);
+    void addTimer(double seconds, TimerListener* target, int token);
 
     void removeTimers(TimerListener* target);
 
-    void removeTimers(TimerListener* target, int userdata);
+    void removeTimers(TimerListener* target, int token);
 
 private:
 

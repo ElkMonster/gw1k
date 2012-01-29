@@ -508,12 +508,12 @@ WManager::removeTimers(TimerListener* target)
 
 
 void
-WManager::removeTimers(TimerListener* target, int userdata)
+WManager::removeTimers(TimerListener* target, int token)
 {
     for (std::list<Timer*>::iterator i = timerList_.begin();
         i != timerList_.end(); )
     {
-        if (((*i)->target == target) && ((*i)->userdata == userdata))
+        if (((*i)->target == target) && ((*i)->token == token))
         {
             i = timerList_.erase(i);
         }
@@ -534,7 +534,7 @@ WManager::checkTimers()
     while (!timerList_.empty() && timerList_.front()->expired(now))
     {
         Timer* t = timerList_.front();
-        t->target->timerExpired(t->userdata);
+        t->target->timerExpired(t->token);
         timerList_.pop_front();
     }
 }

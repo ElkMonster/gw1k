@@ -7,9 +7,9 @@ namespace gw1k
 {
 
 
-Timer::Timer(double seconds, TimerListener* target, int userdata)
+Timer::Timer(double seconds, TimerListener* target, int token)
 :   target(target),
-    userdata(userdata)
+    token(token)
 {
     newTimeout(seconds);
 }
