@@ -14,6 +14,8 @@ public:
 
     Rect();
 
+    Rect(const Rect& other);
+
     Rect(const Point& pos, const Point& size);
 
     ~Rect();

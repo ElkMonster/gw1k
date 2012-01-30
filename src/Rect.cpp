@@ -8,6 +8,13 @@ Rect::Rect()
 {}
 
 
+Rect::Rect(const Rect& other)
+:   pos_(other.pos_),
+    size_(other.size_),
+    end_(pos_ + size_)
+{}
+
+
 Rect::Rect(const Point& pos, const Point& size)
 :   pos_(pos),
     size_(size),
