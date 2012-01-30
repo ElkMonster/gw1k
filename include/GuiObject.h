@@ -171,7 +171,73 @@ public:
      */
     void moveOnTop();
 
+    /**
+     * This method is called by WManager when a Timer registered for the object
+     * has expired.
+     * \param token A number that identifies the timer
+     */
     virtual void timerExpired(int token);
+
+    /**
+     * Sets whether this object can be dragged.
+     *
+     * If not specified otherwise before via setDraggableArea(), the object's
+     * drag area equals the parent's area by default. Parent size changes are
+     * honoured automatically.
+     */
+    void setDraggable(bool state = true);
+
+    /**
+     * Gets whether this object can be dragged.
+     */
+    bool isDraggable() const;
+
+    /**
+     * Sets the area in which this object can be dragged around.
+     *
+     * Coordinates are relative to parent origin, i.e. (0,0) is the top-left
+     * corner of the parent.
+     * If area is 0, the whole parent area is used. If area is not 0, the passed
+     * Rect object describes an area within the parent.
+     * The padding parameter allows to specify a gap to the area borders that
+     * cannot be crossed by the dragged object. In contrast, negative padding
+     * values allow the dragged object to go beyond the specified area.
+     */
+    void setDraggableArea(const Rect* area,
+                          const Point& padding = Point(0, 0));
+
+    /**
+     * Gets the drag area and padding.
+     *
+     * For non-null arguments, the respective value is copied to the argument;
+     * null arguments are ignored.
+     */
+    void getDraggableArea(Rect* area, Point* padding = 0);
+
+    /**
+     * This method is called when the object is dragged.
+     *
+     * A GuiObject can be dragged if dragging has been enabled via
+     * setDraggable().
+     */
+    void drag(Point delta);
+
+protected:
+
+    /**
+     * This method allows to check and modify the delta before it is applied to
+     * the object when being dragged.
+     */
+    virtual void checkDragDelta(Point& delta);
+
+    /**
+     * Sets whether dragging continues to work when the mouse leaves this
+     * object's area without the object being able to follow.
+     * The ability of horizontal and vertical movement is specified separately,
+     * e.g. to allow for comfortable slider bars that follow mouse movement even
+     * if the mouse leaves the bar area (since it's really thin )
+     */
+    void setDraggableWhenNotContainingMouse(bool horizontal, bool vertical);
 
 private:
 
@@ -207,6 +273,10 @@ protected:
      */
     bool bContainsMouse_;
 
+    bool bIsDraggable_;
+
+    Point dragAreaPadding_;
+
 private:
 
     Rect rect_;
@@ -214,6 +284,16 @@ private:
     bool bIsInteractive_;
 
     bool bIsClickThrough_;
+
+    /**
+     * The area specifying where this GuiObject can be dragged to. If set to 0,
+     * the parent frames the area.
+     */
+    Rect* dragArea_;
+
+    bool bXDraggableWhenNotContainingMouse_;
+
+    bool bYDraggableWhenNotContainingMouse_;
 
 };
 

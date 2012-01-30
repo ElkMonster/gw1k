@@ -21,8 +21,13 @@ GuiObject::GuiObject()
     parent_(0),
     bIsEmbedded_(false),
     bContainsMouse_(false),
+    bIsDraggable_(false),
+    dragAreaPadding_(0, 0),
     bIsInteractive_(true),
-    bIsClickThrough_(false)
+    bIsClickThrough_(false),
+    dragArea_(0),
+    bXDraggableWhenNotContainingMouse_(false),
+    bYDraggableWhenNotContainingMouse_(false)
 {}
 
 
@@ -432,6 +437,91 @@ GuiObject::moveOnTop()
     {
         parent_->moveOnTop(this);
     }
+}
+
+
+void
+GuiObject::setDraggable(bool state)
+{
+    bIsDraggable_ = state;
+}
+
+
+bool
+GuiObject::isDraggable() const
+{
+    return bIsDraggable_;
+}
+
+
+void
+GuiObject::setDraggableArea(const Rect* area, const Point& padding)
+{
+    if (area)
+    {
+        if (dragArea_)
+        {
+            *dragArea_ = *area;
+        }
+        else
+        {
+            dragArea_ = new Rect(*area);
+        }
+    }
+    else
+    {
+        if (dragArea_)
+        {
+            delete dragArea_;
+            dragArea_ = 0;
+        }
+    }
+
+    dragAreaPadding_ = padding;
+}
+
+
+void
+GuiObject::getDraggableArea(Rect* area, Point* padding)
+{
+    if (area)
+    {
+        if (dragArea_)
+        {
+            *area = *dragArea_;
+        }
+        else
+        {
+            *area = parent_ ? parent_->rect_ : Rect();
+        }
+    }
+
+    if (padding)
+    {
+        *padding = dragAreaPadding_;
+    }
+}
+
+
+void
+GuiObject::drag(Point delta)
+{
+
+}
+
+
+void
+GuiObject::checkDragDelta(Point& delta)
+{
+    // Do nothing in default implementation
+}
+
+
+void
+GuiObject::setDraggableWhenNotContainingMouse(bool horizontal, bool vertical)
+{
+    bXDraggableWhenNotContainingMouse_ = horizontal;
+    bYDraggableWhenNotContainingMouse_ = vertical;
 }
 
 
