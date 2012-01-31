@@ -40,6 +40,7 @@ Slider::Slider(
 {
     addSubObject(&handle_);
 
+    handle_.setEmbedded();
     handle_.addMouseListener(this);
     addMouseListener(this);
 
