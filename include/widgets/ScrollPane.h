@@ -3,7 +3,7 @@
 
 #include "Box.h"
 #include "WiBox.h"
-#include "../listeners/SliderListener.h"
+#include "../listeners/ActionListener.h"
 #include "Slider.h"
 
 
@@ -31,7 +31,7 @@ class ClippingBox;
  * sub-objects which are intended to fully fill the ScrollPane in the according
  * dimension.
  */
-class ScrollPane : public WiBox, public SliderListener
+class ScrollPane : public WiBox, public ActionListener
 {
 
 public:
@@ -70,7 +70,7 @@ public:
      */
     virtual void removeSubObject(GuiObject* o);
 
-    virtual void sliderValueChanged(Slider* slider, float newVal, float delta);
+    virtual void actionPerformed(GuiObject* receiver);
 
     /**
      * Rearranges the layout of the ScrollPane to honor changed sub-object sizes.

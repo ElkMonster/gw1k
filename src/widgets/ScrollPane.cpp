@@ -27,8 +27,8 @@ ScrollPane::ScrollPane(
     GuiObject::addSubObject(hSlider_);
     GuiObject::addSubObject(pane_);
 
-    vSlider_->addListener(this);
-    hSlider_->addListener(this);
+    vSlider_->addActionListener(this);
+    hSlider_->addActionListener(this);
 
     updateSliders();
 
@@ -83,7 +83,7 @@ ScrollPane::removeSubObject(GuiObject* o)
 
 
 void
-ScrollPane::sliderValueChanged(Slider* slider, float newVal, float delta)
+ScrollPane::actionPerformed(GuiObject* receiver)
 {
     Point offset = pane_->getClippingOffset();
     const Point& paneSize = pane_->getSize();
@@ -91,13 +91,13 @@ ScrollPane::sliderValueChanged(Slider* slider, float newVal, float delta)
 
     Point range = realSize - paneSize;
 
-    if (slider == hSlider_)
+    if (receiver == hSlider_)
     {
-        offset.x = range.x * newVal;
+        offset.x = range.x * hSlider_->getValue();
     }
-    else if (slider == vSlider_)
+    else if (receiver == vSlider_)
     {
-        offset.y = range.y * newVal;
+        offset.y = range.y * vSlider_->getValue();
     }
     pane_->setClippingOffset(offset);
 }

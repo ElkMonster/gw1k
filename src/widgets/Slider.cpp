@@ -13,7 +13,13 @@
 #include <sstream>
 #endif
 
+namespace {
 
+
+const float defaultRange[] = { 0.f, 1.f };
+
+
+} // namespace
 
 
 namespace gw1k
@@ -25,38 +31,43 @@ Slider::Slider(
     const Point& size,
     bool vertical,
     const char* colorScheme)
-:   WiBox(pos, size),
-#if DEBUG_SLIDER
-    handle_(Point(1, 1), (vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2)), "0", 12),
-#else
+:   AbstractSliderBase(pos, size, defaultRange, MAP_LINEAR, colorScheme),
     handle_(Point(1, 1), (vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2))),
-#endif
     bVertical_(vertical),
     bEnabled_(true),
     value_(0.f),
     mouseWheelStep_(0.1f)
 {
-#if DEBUG_SLIDER
-    handle_.getTextWidget().setInteractive(false);
-#endif
-
     addSubObject(&handle_);
 
     handle_.addMouseListener(this);
     addMouseListener(this);
 
-    if ((vertical && (getSize().x > getSize().y))
-        || (!vertical && (getSize().x < getSize().y)))
-    {
-        Log::warning("Slider", Log::os()
-            << "Slider dimensions do not seem reasonable "
-            << "- confused horizontal and vertical? "
-            << "(Slider is " << (bVertical_ ? "vertical" : "horizontal")
-            << ", size is " << getSize() << ")");
-    }
+    setColors(colorScheme);
+}
+
+
+Slider::Slider(
+    const Point& pos,
+    const Point& size,
+    const float range[2],
+    bool vertical,
+    MapType mapType,
+    const char* colorScheme)
+:   AbstractSliderBase(pos, size, range, mapType_, colorScheme),
+    bVertical_(vertical),
+    bEnabled_(true),
+    value_(0.f),
+    mouseWheelStep_(0.1f)
+{
+    addSubObject(&handle_);
+
+    handle_.addMouseListener(this);
+    addMouseListener(this);
 
     setColors(colorScheme);
 }
+
 
 
 Slider::~Slider()
@@ -68,41 +79,20 @@ Slider::~Slider()
 float
 Slider::getValue() const
 {
-    return value_;
+    return getMappedValue(value_);
 }
 
 
 void
 Slider::setValue(float val)
 {
-    float oldValue = value_;
-    value_ = std::max(0.f, std::min(1.f, val));
+    float oldVal = value_;
+    value_ = std::min(getUnmappedValue(val), 1.f);
 
-    float hSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
-    float size = (bVertical_ ? getSize().y : getSize().x) - 2;
-    float z = value_ * (size - hSize) + 1;
-    Point newPos = handle_.getPos();
-
-    if (bVertical_)
+    if (value_ != oldVal)
     {
-        newPos.y = z;
+        informActionListeners(this);
     }
-    else
-    {
-        newPos.x = z;
-    }
-    handle_.setPos(newPos.x, newPos.y);
-
-    if (oldValue != value_)
-    {
-        informListeners(value_ - oldValue);
-    }
-
-#if DEBUG_SLIDER
-    std::stringstream ss;
-    ss << value_;
-    handle_.setText(ss.str());
-#endif
 }
 
 
@@ -150,19 +140,22 @@ Slider::mouseMoved(
         return;
     }
 
-    if (receiver == &handle_ && handle_.isClicked())
+    if ((receiver == &handle_) && handle_.isClicked())
     {
-        Point newPos = handle_.getPos();
+        int newPos = 0;
+        const Point& handlePos = handle_.getPos();
         if (bVertical_)
         {
-            newPos.y += delta.y;
+            newPos = handlePos.y + delta.y;
         }
         else
         {
-            newPos.x += delta.x;
+            newPos = handlePos.x + delta.x;
         }
 
         setHandlePosition(newPos);
+        calculateValue();
+        informActionListeners(this);
     }
 }
 
@@ -177,20 +170,21 @@ Slider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 
     if ((receiver == this) && (ev == GW1K_PRESSED))
     {
-        Point newPos = WManager::getInstance()->getMousePos() - getGlobalPos();
+        Point relPos = WManager::getInstance()->getMousePos() - getGlobalPos();
+        int newPos = 0;
 
         if (bVertical_)
         {
-            newPos.x = handle_.getPos().x;
-            newPos.y -= handle_.getSize().y / 2;
+            newPos = relPos.y - handle_.getSize().y / 2;
         }
         else
         {
-            newPos.x -= handle_.getSize().x / 2;
-            newPos.y = handle_.getPos().y;
+            newPos = relPos.x - handle_.getSize().x / 2;
         }
 
         setHandlePosition(newPos);
+        calculateValue();
+        informActionListeners(this);
     }
 }
 
@@ -203,26 +197,8 @@ Slider::mouseWheeled(int delta, GuiObject* receiver)
         // Sliders need to invert delta because a value of 0 = top/left, a value
         // of 1 = bottom/right, but deltas work the other way round
         setValue(value_ + (mouseWheelStep_ * -delta));
-    }
-}
-
-
-void
-Slider::addListener(SliderListener* sl)
-{
-    listeners_.push_back(sl);
-}
-
-
-void
-Slider::removeListener(SliderListener* sl)
-{
-    std::vector<SliderListener*>::iterator i =
-        std::find(listeners_.begin(), listeners_.end(), sl);
-
-    if (i != listeners_.end())
-    {
-        listeners_.erase(i);
+        setHandlePosition(calculateHandlePos());
+        informActionListeners(this);
     }
 }
 
@@ -230,11 +206,10 @@ Slider::removeListener(SliderListener* sl)
 void
 Slider::setColors(const char* colorScheme)
 {
-    ThemeManager* t = ThemeManager::getInstance();
-
     std::string baseName(colorScheme ? colorScheme : "Slider");
-    t->setColors(this, colorScheme, "Slider");
-    handle_.setColors((baseName + ".Handle").c_str());
+    AbstractSliderBase::setColors(baseName.c_str());
+    std::string hdlName = baseName + ".Handle";
+    handle_.setColors(hdlName.c_str());
 }
 
 
@@ -255,51 +230,39 @@ Slider::getMouseWheelStep() const
 void
 Slider::calculateValue()
 {
-    float hPos = (bVertical_ ? handle_.getPos().y : handle_.getPos().x) - 1;
-    float hSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
+    float handlePos = (bVertical_ ? handle_.getPos().y : handle_.getPos().x) - 1;
+    float handleSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
     float size = (bVertical_ ? getSize().y : getSize().x) - 2;
 
-    value_ = hPos / (size - hSize);
+    value_ = handlePos / (size - handleSize);
 }
 
 
 void
-Slider::setHandlePosition(Point newPos)
+Slider::setHandlePosition(int newPos)
 {
     Point maxPos = getSize() - handle_.getSize() - Point(1, 1);
+    Point p(1, 1);
     if (bVertical_)
     {
-        newPos.y = std::max(1, std::min(newPos.y, maxPos.y));
+        p.y = std::max(1, std::min(newPos, maxPos.y));
     }
     else
     {
-        newPos.x = std::max(1, std::min(newPos.x, maxPos.x));
+        p.x = std::max(1, std::min(newPos, maxPos.x));
     }
 
-    handle_.setPos(newPos.x, newPos.y);
-
-    float oldValue = value_;
-    calculateValue();
-    if (oldValue != value_)
-    {
-        informListeners(value_ - oldValue);
-    }
-
-#if DEBUG_SLIDER
-    std::stringstream ss;
-    ss << value_;
-    handle_.setText(ss.str());
-#endif
+    handle_.setPos(p.x, p.y);
 }
 
 
-void
-Slider::informListeners(float delta)
+int
+Slider::calculateHandlePos() const
 {
-    for (unsigned int i = 0; i != listeners_.size(); ++i)
-    {
-        listeners_[i]->sliderValueChanged(this, value_, delta);
-    }
+    float handleSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
+    float size = (bVertical_ ? getSize().y : getSize().x) - 2;
+
+    return value_ * (size - handleSize) + 1;
 }
 
 
