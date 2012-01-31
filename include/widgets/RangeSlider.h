@@ -8,7 +8,8 @@ namespace gw1k
 {
 
 
-class RangeSlider : public AbstractSliderBase, public ActionEventProvider
+class RangeSlider : public AbstractSliderBase, public ActionEventProvider,
+    public MouseListener
 {
 
 public:

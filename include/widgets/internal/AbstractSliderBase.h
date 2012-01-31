@@ -30,7 +30,7 @@ namespace gw1k
  *
  *  A..B
  */
-class AbstractSliderBase : public WiBox, public MouseListener
+class AbstractSliderBase : public WiBox
 {
 
 public:
@@ -49,18 +49,9 @@ public:
 
     const float* getRange() const;
 
-    virtual void mouseMoved(MouseMovedEvent ev,
-                    const Point& pos,
-                    const Point& delta,
-                    GuiObject* receiver) = 0;
-
-    virtual void mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver) = 0;
-
-    virtual void mouseWheeled(int delta, GuiObject* receiver) = 0;
-
 protected:
 
-    /** internalVal should from the range [0, 1]. */
+    /** internalVal should be from the range [0, 1]. */
     float getMappedValue(float internalVal) const;
 
     float getUnmappedValue(float rangeVal) const;
