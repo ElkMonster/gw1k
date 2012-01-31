@@ -185,7 +185,7 @@ RangeSlider::mouseMoved(
     {
         if ((receiver == lHandle_) || (receiver == rHandle_))
         {
-            setHandlePos(dynamic_cast<WiBox*>(receiver),
+            setHandlePos(static_cast<WiBox*>(receiver),
                 receiver->getPos() + delta);
             restoreConsistency();
             calculateValues();
