@@ -1,37 +1,36 @@
 #ifndef GW1K_SLIDER_H_
 #define GW1K_SLIDER_H_
 
-
-/**
- * If set to any non-0 value, the slider handle is made of a Label and displays
- * the slider value in the handle.
- */
-#define DEBUG_SLIDER 0
-
 #include "WiBox.h"
-#include "../listeners/SliderListener.h"
-#include "../listeners/MouseListener.h"
-
-#if DEBUG_SLIDER
-#include "Label.h"
-#endif
-
-
-
-
+#include "internal/AbstractSliderBase.h"
+#include "../providers/ActionEventProvider.h"
 
 namespace gw1k
 {
 
 
-class Slider : public WiBox, public MouseListener
+class Slider : public AbstractSliderBase, public ActionEventProvider,
+    public MouseListener
 {
 
 public:
 
+    /**
+     * Creates a Slider with a default range of [0, 1] and linear mapping.
+     */
     Slider(const Point& pos,
            const Point& size,
            bool vertical = false,
+           const char* colorScheme = 0);
+
+    /**
+     * Creates a Slider with the given range and settings.
+     */
+    Slider(const Point& pos,
+           const Point& size,
+           const float range[2],
+           bool vertical = false,
+           MapType mapType = MAP_LINEAR,
            const char* colorScheme = 0);
 
     ~Slider();
@@ -47,17 +46,13 @@ public:
     void setHandleSize(float size);
 
     virtual void mouseMoved(MouseMovedEvent ev,
-                    const Point& pos,
-                    const Point& delta,
-                    GuiObject* receiver);
+                            const Point& pos,
+                            const Point& delta,
+                            GuiObject* receiver);
 
     virtual void mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver);
 
     virtual void mouseWheeled(int delta, GuiObject* receiver);
-
-    void addListener(SliderListener* sl);
-
-    void removeListener(SliderListener* sl);
 
     virtual void setColors(const char* colorScheme);
 
@@ -65,21 +60,17 @@ public:
 
     float getMouseWheelStep() const;
 
-protected:
+private:
 
     void calculateValue();
 
-    void setHandlePosition(Point newPos);
+    void setHandlePosition(int newPos);
 
-    void informListeners(float delta);
+    int calculateHandlePos() const;
 
 protected:
 
-#if DEBUG_SLIDER
-    Label handle_;
-#else
     WiBox handle_;
-#endif
 
     bool bVertical_;
 
@@ -94,7 +85,6 @@ protected:
      */
     float mouseWheelStep_;
 
-    std::vector<SliderListener*> listeners_;
 };
 
 
