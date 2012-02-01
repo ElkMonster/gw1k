@@ -296,7 +296,7 @@ Point
 OGLView::glUnitToPx(const geom::Point2D& p) const
 {
     geom::Point2D q = p / pxToGLFactor_;
-    return Point(round(q.x), round(-q.y));
+    return Point(round(q.x), round(q.y));
 }
 
 
