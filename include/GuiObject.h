@@ -3,6 +3,7 @@
 
 #include "providers/MouseEventProvider.h"
 #include "providers/KeyEventProvider.h"
+#include "providers/DraggedEventProvider.h"
 #include "listeners/TimerListener.h"
 #include "Point.h"
 #include "Rect.h"
@@ -15,7 +16,7 @@ namespace gw1k
 
 
 class GuiObject : public MouseEventProvider, public KeyEventProvider,
-    public TimerListener
+    public DraggedEventProvider, public TimerListener
 {
 
 public:
@@ -113,6 +114,8 @@ public:
 
     void triggerMouseWheelEvent(int delta);
 
+    void triggerDraggedEvent(const Point& delta);
+
     virtual void addSubObject(GuiObject* o);
 
     virtual void removeSubObject(GuiObject* o);
@@ -179,6 +182,21 @@ public:
     virtual void timerExpired(int token);
 
     /**
+     * Sets the coordinate of a click into this GuiObject.
+     *
+     * p should be a coordinate local to this GuiObject, i.e., it should be
+     * greater than or equal to (0,0) and less than the GuiObject's size.
+     * However, no check for this is performed as this method is for gw1k's
+     * internal use only.
+     */
+    void setClickedPos(const Point& p);
+
+    /**
+     * Gets the point last clicked in this GuiObject.
+     */
+    const Point& getClickedPos() const;
+
+    /**
      * Sets whether this object can be dragged.
      *
      * If not specified otherwise before via setDraggableArea(), the object's
@@ -215,20 +233,34 @@ public:
     void getDraggableArea(Rect* area, Point* padding = 0);
 
     /**
+     * Sets the GuiObject whose checkDragDelta() method is called to modify drag
+     * deltas before they're applied.
+     *
+     * This can be used to let another GuiObject govern drag actions if this
+     * GuiObject cannot decide about drag deltas itself. The dragChecker must
+     * override the checkDragDelta() method for this to work.
+     */
+    void setDragChecker(const GuiObject* dragChecker);
+
+    /**
      * This method is called when the object is dragged.
      *
      * A GuiObject can be dragged if dragging has been enabled via
      * setDraggable().
      */
-    void drag(Point delta);
+    Point drag(Point mouseDelta, const Point& relMousePos, MouseButton b);
 
 protected:
 
     /**
      * This method allows to check and modify the delta before it is applied to
      * the object when being dragged.
+     *
+     * Setting delta to (0,0) will inhibit drag actions.
      */
-    virtual void checkDragDelta(Point& delta);
+    virtual void checkDragDelta(Point& delta,
+                                MouseButton b,
+                                const GuiObject* dragReceiver);
 
     /**
      * Sets whether dragging continues to work when the mouse leaves this
@@ -277,6 +309,8 @@ protected:
 
     Point dragAreaPadding_;
 
+    Point clickedPos_;
+
 private:
 
     Rect rect_;
@@ -294,6 +328,8 @@ private:
     bool bXDraggableWhenNotContainingMouse_;
 
     bool bYDraggableWhenNotContainingMouse_;
+
+    GuiObject* dragChecker_;
 
 };
 

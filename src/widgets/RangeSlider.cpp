@@ -26,23 +26,28 @@ RangeSlider::RangeSlider(
 
     lHandle_ = new WiBox(Point(1, 1), hdlSize);
     rHandle_ = new WiBox(Point(size.x - 1 - hdlSize.x, 1), hdlSize);
+
+    GuiObject* obj[] = { lHandle_, rHandle_ };
+    for (int i = 0; i != 2; ++i)
+    {
+        obj[i]->addDraggedListener(this);
+        obj[i]->setDraggable();
+        obj[i]->setDraggableArea(0, Point(1, 1));
+    }
+
     rangeBar_ = new WiBox(Point(), Point());
 
-    addSubObject(rangeBar_);
-    addSubObject(lHandle_);
-    addSubObject(rHandle_);
+    GuiObject* obj2[] = { rangeBar_, lHandle_, rHandle_ };
+    for (int i = 0; i != 3; ++i)
+    {
+        addSubObject(obj2[i]);
+        obj2[i]->setEmbedded();
+        obj2[i]->addMouseListener(this);
+    }
 
-    lHandle_->setEmbedded();
-    rHandle_->setEmbedded();
-    rangeBar_->setEmbedded();
-
-    lHandle_->addMouseListener(this);
-    rHandle_->addMouseListener(this);
-    rangeBar_->addMouseListener(this);
     addMouseListener(this);
 
     updateRangeBar();
-
     setColors(colorScheme);
 }
 
@@ -175,31 +180,6 @@ RangeSlider::setSize(float width, float height)
 
 
 void
-RangeSlider::mouseMoved(
-    MouseMovedEvent ev,
-    const Point& pos,
-    const Point& delta,
-    GuiObject* receiver)
-{
-    if (receiver->isClicked())
-    {
-        if ((receiver == lHandle_) || (receiver == rHandle_))
-        {
-            setHandlePos(static_cast<WiBox*>(receiver),
-                receiver->getPos() + delta);
-            restoreConsistency();
-            calculateValues();
-            informActionListeners(this);
-        }
-        else if (receiver == rangeBar_)
-        {
-
-        }
-    }
-}
-
-
-void
 RangeSlider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 {
     if ((ev == GW1K_PRESSED) && ((receiver == this) || (receiver == rangeBar_)))
@@ -218,9 +198,14 @@ RangeSlider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 
 
 void
-RangeSlider::mouseWheeled(int delta, GuiObject* receiver)
+RangeSlider::dragged(const Point& delta, GuiObject* receiver)
 {
-
+    if ((receiver == lHandle_) || (receiver == rHandle_))
+    {
+        restoreConsistency();
+        calculateValues();
+        informActionListeners(this);
+    }
 }
 
 

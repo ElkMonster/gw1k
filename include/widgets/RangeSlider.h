@@ -3,13 +3,15 @@
 
 #include "internal/AbstractSliderBase.h"
 #include "../providers/ActionEventProvider.h"
+#include "../listeners/MouseListenerImpl.h"
+#include "../listeners/DraggedListener.h"
 
 namespace gw1k
 {
 
 
 class RangeSlider : public AbstractSliderBase, public ActionEventProvider,
-    public MouseListener
+    public MouseListenerImpl, public DraggedListener
 {
 
 public:
@@ -36,14 +38,9 @@ public:
 
     virtual const Point& setSize(float width, float height);
 
-    virtual void mouseMoved(MouseMovedEvent ev,
-                            const Point& pos,
-                            const Point& delta,
-                            GuiObject* receiver);
-
     virtual void mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver);
 
-    virtual void mouseWheeled(int delta, GuiObject* receiver);
+    virtual void dragged(const Point& delta, GuiObject* receiver);
 
     virtual void setColors(const char* colorScheme);
 

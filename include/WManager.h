@@ -157,6 +157,8 @@ private:
 
     std::list<Timer*> timerList_;
 
+    MouseButton lastMouseButton_;
+
 };
 
 } // namespace gw1k

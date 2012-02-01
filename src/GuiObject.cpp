@@ -27,7 +27,8 @@ GuiObject::GuiObject()
     bIsClickThrough_(false),
     dragArea_(0),
     bXDraggableWhenNotContainingMouse_(false),
-    bYDraggableWhenNotContainingMouse_(false)
+    bYDraggableWhenNotContainingMouse_(false),
+    dragChecker_(0)
 {}
 
 
@@ -247,10 +248,7 @@ GuiObject::triggerMouseMovedEvent(
         bIsHovered_ = true;
     }
 
-    for (MouseListnrIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
-    {
-        (*i)->mouseMoved(ev, pos, delta, this);
-    }
+    informMouseListenersMoved(ev, pos, delta, this);
 }
 
 
@@ -272,20 +270,21 @@ GuiObject::triggerMouseButtonEvent(MouseButton b, StateEvent ev)
         bIsClicked_ = false;
     }
 
-    for (MouseListnrIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
-    {
-        (*i)->mouseClicked(b, ev, this);
-    }
+    informMouseListenersClicked(b, ev, this);
 }
 
 
 void
 GuiObject::triggerMouseWheelEvent(int delta)
 {
-    for (MouseListnrIter i = mouseListeners_.begin(); i != mouseListeners_.end(); ++i)
-    {
-        (*i)->mouseWheeled(delta, this);
-    }
+    informMouseListenersWheeled(delta, this);
+}
+
+
+void
+GuiObject::triggerDraggedEvent(const Point& delta)
+{
+    informDraggedListeners(delta, this);
 }
 
 
@@ -441,6 +440,20 @@ GuiObject::moveOnTop()
 
 
 void
+GuiObject::setClickedPos(const Point& p)
+{
+    clickedPos_ = p;
+}
+
+
+const Point&
+GuiObject::getClickedPos() const
+{
+    return clickedPos_;
+}
+
+
+void
 GuiObject::setDraggable(bool state)
 {
     bIsDraggable_ = state;
@@ -503,15 +516,44 @@ GuiObject::getDraggableArea(Rect* area, Point* padding)
 }
 
 
-void
-GuiObject::drag(Point delta)
+Point
+GuiObject::drag(Point mouseDelta, const Point& relMousePos, MouseButton b)
 {
+    // We want to move the object such that clickedPos becomes identical to
+    // relMousePos; for this, we need to move the object by aspiredDelta
+    Point aspiredDelta = relMousePos - clickedPos_;
 
+    (dragChecker_ ? dragChecker_ : this)->checkDragDelta(aspiredDelta, b, this);
+
+    Point newPos = getPos() + aspiredDelta;
+    Point newEnd = getEnd() + aspiredDelta;
+
+    const Rect area = dragArea_ ? *dragArea_ : Rect(Point(), parent_->rect_.size());
+    bool moveOK = area.containsPoint(newPos - dragAreaPadding_)
+        && area.containsPoint(newEnd + dragAreaPadding_);
+
+    Point appliedDelta = aspiredDelta;
+    if (!moveOK)
+    {
+        Point p = area.pos() + dragAreaPadding_;
+        Point e = area.end() - getSize() - dragAreaPadding_;
+
+        appliedDelta = max(p, min(newPos, e)) - getPos();
+
+        newPos = getPos() + appliedDelta;
+    }
+
+    setPos(newPos.x, newPos.y);
+
+    return appliedDelta;
 }
 
 
 void
-GuiObject::checkDragDelta(Point& delta)
+GuiObject::checkDragDelta(
+    Point& delta,
+    MouseButton b,
+    const GuiObject* dragReceiver)
 {
     // Do nothing in default implementation
 }

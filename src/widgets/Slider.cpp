@@ -9,10 +9,6 @@
 #include <algorithm>
 #include <iostream>
 
-#if DEBUG_SLIDER
-#include <sstream>
-#endif
-
 namespace {
 
 
@@ -32,19 +28,12 @@ Slider::Slider(
     bool vertical,
     const char* colorScheme)
 :   AbstractSliderBase(pos, size, defaultRange, MAP_LINEAR, colorScheme),
-    handle_(Point(1, 1), (vertical ? Point(size.x - 2, 40) : Point(40, size.y - 2))),
     bVertical_(vertical),
     bEnabled_(true),
     value_(0.f),
     mouseWheelStep_(0.1f)
 {
-    addSubObject(&handle_);
-
-    handle_.setEmbedded();
-    handle_.addMouseListener(this);
-    addMouseListener(this);
-
-    setColors(colorScheme);
+    init(colorScheme);
 }
 
 
@@ -61,19 +50,14 @@ Slider::Slider(
     value_(0.f),
     mouseWheelStep_(0.1f)
 {
-    addSubObject(&handle_);
-
-    handle_.addMouseListener(this);
-    addMouseListener(this);
-
-    setColors(colorScheme);
+    init(colorScheme);
 }
 
 
 
 Slider::~Slider()
 {
-
+    delete handle_;
 }
 
 
@@ -101,7 +85,7 @@ void
 Slider::setEnabled(bool enabled)
 {
     bEnabled_ = enabled;
-    handle_.setVisible(enabled);
+    handle_->setVisible(enabled);
 }
 
 
@@ -118,7 +102,7 @@ Slider::setHandleSize(float size)
             actualSize = (sliderSize.y - 2) * size;
         }
 
-        handle_.setSize(handle_.getSize().x, round_pos(actualSize));
+        handle_->setSize(handle_->getSize().x, round_pos(actualSize));
     }
     else
     {
@@ -127,36 +111,7 @@ Slider::setHandleSize(float size)
             actualSize = (sliderSize.x - 2) * size;
         }
 
-        handle_.setSize(round_pos(actualSize), handle_.getSize().y);
-    }
-}
-
-
-void
-Slider::mouseMoved(
-    MouseMovedEvent ev, const Point& pos, const Point& delta, GuiObject* receiver)
-{
-    if (!bEnabled_)
-    {
-        return;
-    }
-
-    if ((receiver == &handle_) && handle_.isClicked())
-    {
-        int newPos = 0;
-        const Point& handlePos = handle_.getPos();
-        if (bVertical_)
-        {
-            newPos = handlePos.y + delta.y;
-        }
-        else
-        {
-            newPos = handlePos.x + delta.x;
-        }
-
-        setHandlePosition(newPos);
-        calculateValue();
-        informActionListeners(this);
+        handle_->setSize(round_pos(actualSize), handle_->getSize().y);
     }
 }
 
@@ -176,11 +131,11 @@ Slider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 
         if (bVertical_)
         {
-            newPos = relPos.y - handle_.getSize().y / 2;
+            newPos = relPos.y - handle_->getSize().y / 2;
         }
         else
         {
-            newPos = relPos.x - handle_.getSize().x / 2;
+            newPos = relPos.x - handle_->getSize().x / 2;
         }
 
         setHandlePosition(newPos);
@@ -193,7 +148,7 @@ Slider::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 void
 Slider::mouseWheeled(int delta, GuiObject* receiver)
 {
-    if ((receiver == &handle_) || (receiver == this))
+    if (receiver == this)
     {
         // Sliders need to invert delta because a value of 0 = top/left, a value
         // of 1 = bottom/right, but deltas work the other way round
@@ -205,12 +160,26 @@ Slider::mouseWheeled(int delta, GuiObject* receiver)
 
 
 void
+Slider::dragged(const Point& delta, GuiObject* receiver)
+{
+    if (bEnabled_)
+    {
+        if (receiver == handle_)
+        {
+            calculateValue();
+            informActionListeners(this);
+        }
+    }
+}
+
+
+void
 Slider::setColors(const char* colorScheme)
 {
     std::string baseName(colorScheme ? colorScheme : "Slider");
     AbstractSliderBase::setColors(baseName.c_str());
     std::string hdlName = baseName + ".Handle";
-    handle_.setColors(hdlName.c_str());
+    handle_->setColors(hdlName.c_str());
 }
 
 
@@ -229,10 +198,31 @@ Slider::getMouseWheelStep() const
 
 
 void
+Slider::init(const char* colorScheme)
+{
+    const Point& size = getSize();
+    handle_ = new WiBox(Point(1, 1),
+        bVertical_ ? Point(size.x - 2, 40) : Point(40, size.y - 2));
+
+    addSubObject(handle_);
+
+    handle_->setEmbedded();
+    handle_->addDraggedListener(this);
+    handle_->setDraggable();
+    handle_->setDraggableArea(0, Point(1, 1));
+
+    handle_->addMouseListener(this);
+    addMouseListener(this);
+
+    setColors(colorScheme);
+}
+
+
+void
 Slider::calculateValue()
 {
-    float handlePos = (bVertical_ ? handle_.getPos().y : handle_.getPos().x) - 1;
-    float handleSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
+    float handlePos = (bVertical_ ? handle_->getPos().y : handle_->getPos().x) - 1;
+    float handleSize = (bVertical_ ? handle_->getSize().y : handle_->getSize().x);
     float size = (bVertical_ ? getSize().y : getSize().x) - 2;
 
     value_ = handlePos / (size - handleSize);
@@ -242,7 +232,7 @@ Slider::calculateValue()
 void
 Slider::setHandlePosition(int newPos)
 {
-    Point maxPos = getSize() - handle_.getSize() - Point(1, 1);
+    Point maxPos = getSize() - handle_->getSize() - Point(1, 1);
     Point p(1, 1);
     if (bVertical_)
     {
@@ -253,14 +243,14 @@ Slider::setHandlePosition(int newPos)
         p.x = std::max(1, std::min(newPos, maxPos.x));
     }
 
-    handle_.setPos(p.x, p.y);
+    handle_->setPos(p.x, p.y);
 }
 
 
 int
 Slider::calculateHandlePos() const
 {
-    float handleSize = (bVertical_ ? handle_.getSize().y : handle_.getSize().x);
+    float handleSize = (bVertical_ ? handle_->getSize().y : handle_->getSize().x);
     float size = (bVertical_ ? getSize().y : getSize().x) - 2;
 
     return value_ * (size - handleSize) + 1;

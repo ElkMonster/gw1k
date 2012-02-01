@@ -75,6 +75,11 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
     {
         // Refresh the containsMouse status to prevent that objects claim to
         // contain the mouse when they actually don't
+        // TODO If clickedObj doesn't contain mouse anymore, because mouse has jumped
+        // somewhere, what is the status of all the objects in the hierarchy
+        // below clickedObj that have their containsMouse status set to true and
+        // clickedObj itself? -> containsMouse status should be reset top-down,
+        // starting with clickedObj and going down its parent list.
         mainWin_->getContainingObject(pos);
 
         MSG("WManager::feedMouseMoveInternal: clickedObj_ = " << (void*)clickedObj_);
@@ -91,6 +96,15 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
                 p = p->isEmbedded() ? p->getParent() : 0;
             }
         }
+
+        if (clickedObj_->isDraggable())
+        {
+            Point relMousePos = mousePos_ - clickedObj_->getGlobalPos();
+            Point realDelta = clickedObj_->drag(delta, relMousePos, lastMouseButton_);
+            clickedObj_->triggerDraggedEvent(realDelta);
+        }
+
+
     }
     else
     {
@@ -210,6 +224,7 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
 {
     MSG("WManager::feedMouseClick [begin]: ev = " << (ev == GW1K_RELEASED ? "RELEASED" : "PRESSED"));
     bool eventHandled = false;
+    lastMouseButton_ = b;
 
     // Trigger Release for object that was previously clicked (this makes sure
     // that the object is released even if it has moved away when it was clicked)
@@ -255,6 +270,7 @@ WManager::feedMouseClick(MouseButton b, StateEvent ev)
         // method in case that the clicked object is removed due to being
         // clicked (i.e., indicateRemovedObject() is called for it)
         clickedObj_ = currHoveredObj;
+        clickedObj_->setClickedPos(mousePos_ - clickedObj_->getGlobalPos());
         MSG("WManager::feedMouseClick: clickedObj_ = " << (void*)clickedObj_);
         currHoveredObj->triggerMouseButtonEvent(b, ev);
 

@@ -4,13 +4,15 @@
 #include "WiBox.h"
 #include "internal/AbstractSliderBase.h"
 #include "../providers/ActionEventProvider.h"
+#include "../listeners/MouseListenerImpl.h"
+#include "../listeners/DraggedListener.h"
 
 namespace gw1k
 {
 
 
 class Slider : public AbstractSliderBase, public ActionEventProvider,
-    public MouseListener
+    public MouseListenerImpl, public DraggedListener
 {
 
 public:
@@ -45,14 +47,11 @@ public:
 
     void setHandleSize(float size);
 
-    virtual void mouseMoved(MouseMovedEvent ev,
-                            const Point& pos,
-                            const Point& delta,
-                            GuiObject* receiver);
-
     virtual void mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver);
 
     virtual void mouseWheeled(int delta, GuiObject* receiver);
+
+    virtual void dragged(const Point& delta, GuiObject* receiver);
 
     virtual void setColors(const char* colorScheme);
 
@@ -62,6 +61,8 @@ public:
 
 private:
 
+    void init(const char* colorScheme);
+
     void calculateValue();
 
     void setHandlePosition(int newPos);
@@ -70,7 +71,7 @@ private:
 
 protected:
 
-    WiBox handle_;
+    WiBox* handle_;
 
     bool bVertical_;
 

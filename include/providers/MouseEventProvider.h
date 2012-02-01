@@ -29,6 +29,19 @@ public:
 
 protected:
 
+    void informMouseListenersMoved(MouseMovedEvent ev,
+                                   const Point& pos,
+                                   const Point& delta,
+                                   GuiObject* receiver);
+
+    void informMouseListenersClicked(MouseButton b,
+                                     StateEvent ev,
+                                     GuiObject* receiver);
+
+    void informMouseListenersWheeled(int delta, GuiObject* receiver);
+
+protected:
+
     std::list<MouseListener*> mouseListeners_;
 
 };
