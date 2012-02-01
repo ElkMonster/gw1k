@@ -64,11 +64,13 @@
 		<Unit filename="include/WManager.h" />
 		<Unit filename="include/WindowStack.h" />
 		<Unit filename="include/listeners/ActionListener.h" />
+		<Unit filename="include/listeners/DraggedListener.h" />
 		<Unit filename="include/listeners/KeyListener.h" />
 		<Unit filename="include/listeners/MouseListener.h" />
 		<Unit filename="include/listeners/MouseListenerImpl.h" />
 		<Unit filename="include/listeners/TimerListener.h" />
 		<Unit filename="include/providers/ActionEventProvider.h" />
+		<Unit filename="include/providers/DraggedEventProvider.h" />
 		<Unit filename="include/providers/KeyEventProvider.h" />
 		<Unit filename="include/providers/MouseEventProvider.h" />
 		<Unit filename="include/utils/FloatMapper.h" />
@@ -110,6 +112,7 @@
 		<Unit filename="src/WManager.cpp" />
 		<Unit filename="src/WindowStack.cpp" />
 		<Unit filename="src/providers/ActionEventProvider.cpp" />
+		<Unit filename="src/providers/DraggedEventProvider.cpp" />
 		<Unit filename="src/providers/KeyEventProvider.cpp" />
 		<Unit filename="src/providers/MouseEventProvider.cpp" />
 		<Unit filename="src/utils/FloatMapper.cpp" />
