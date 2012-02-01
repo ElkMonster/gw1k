@@ -517,7 +517,7 @@ GuiObject::getDraggableArea(Rect* area, Point* padding)
 
 
 Point
-GuiObject::drag(Point mouseDelta, const Point& relMousePos, MouseButton b)
+GuiObject::drag(const Point& relMousePos, MouseButton b)
 {
     // We want to move the object such that clickedPos becomes identical to
     // relMousePos; for this, we need to move the object by aspiredDelta
@@ -533,14 +533,17 @@ GuiObject::drag(Point mouseDelta, const Point& relMousePos, MouseButton b)
         && area.containsPoint(newEnd + dragAreaPadding_);
 
     Point appliedDelta = aspiredDelta;
+
+
     if (!moveOK)
     {
+        // We're reaching a border, so check how far we can move and use that as
+        // our new position
         Point p = area.pos() + dragAreaPadding_;
         Point e = area.end() - getSize() - dragAreaPadding_;
 
-        appliedDelta = max(p, min(newPos, e)) - getPos();
-
-        newPos = getPos() + appliedDelta;
+        newPos = max(p, min(newPos, e));
+        appliedDelta = newPos - getPos();
     }
 
     setPos(newPos.x, newPos.y);

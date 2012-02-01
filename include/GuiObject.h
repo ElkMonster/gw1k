@@ -247,8 +247,12 @@ public:
      *
      * A GuiObject can be dragged if dragging has been enabled via
      * setDraggable().
+     *
+     * \param relMousePos the mouse position relative to this GuiObject's
+     *                    coordinate system
+     * \param b the mouse button currently pressed
      */
-    Point drag(Point mouseDelta, const Point& relMousePos, MouseButton b);
+    Point drag(const Point& relMousePos, MouseButton b);
 
 protected:
 
@@ -256,7 +260,7 @@ protected:
      * This method allows to check and modify the delta before it is applied to
      * the object when being dragged.
      *
-     * Setting delta to (0,0) will inhibit drag actions.
+     * Setting delta to (0,0) inside this method will inhibit drag actions.
      */
     virtual void checkDragDelta(Point& delta,
                                 MouseButton b,

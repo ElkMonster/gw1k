@@ -100,7 +100,7 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
         if (clickedObj_->isDraggable())
         {
             Point relMousePos = mousePos_ - clickedObj_->getGlobalPos();
-            Point realDelta = clickedObj_->drag(delta, relMousePos, lastMouseButton_);
+            Point realDelta = clickedObj_->drag(relMousePos, lastMouseButton_);
             clickedObj_->triggerDraggedEvent(realDelta);
         }
 
