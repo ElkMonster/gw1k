@@ -2,9 +2,9 @@
 
 #include <cmath>
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
+#include <OpenGL/glew.h>
 #else
-#include <GL/gl.h>
+#include <GL/glew.h>
 #endif
 
 //#define GW1K_ENABLE_GL_ERROR_CHECKS

@@ -4,9 +4,9 @@
 #include "OGLView.h"
 
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
+#include <OpenGL/glew.h>
 #else
-#include <GL/gl.h>
+#include <GL/glew.h>
 #endif
 
 namespace gw1k

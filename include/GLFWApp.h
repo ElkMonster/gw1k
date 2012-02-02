@@ -1,6 +1,7 @@
 #ifndef GW1K_GLFWAPP_H_
 #define GW1K_GLFWAPP_H_
 
+#include <GL/glew.h>
 #include <GL/glfw.h>
 
 #include "Point.h"

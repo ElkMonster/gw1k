@@ -1,7 +1,7 @@
 #include "WManager.h"
 
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
+#include <OpenGL/glew.h>
 #else
 #include <GL/gl.h>
 #endif
