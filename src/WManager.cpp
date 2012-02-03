@@ -3,7 +3,7 @@
 #ifdef __APPLE__
 #include <OpenGL/glew.h>
 #else
-#include <GL/gl.h>
+#include <GL/glew.h>
 #endif
 
 #include <iostream>
@@ -11,6 +11,9 @@
 
 //#define MSG(x) std::cout << x << std::endl
 #define MSG(x)
+
+#define GW1K_ENABLE_GL_ERROR_CHECKS
+#include "GLErrorCheck.h"
 
 
 namespace gw1k
@@ -408,7 +411,7 @@ WManager::render()
         delete *i;
     }
     preRenderDeleteQueue_.clear();
-
+PRINT_IF_GL_ERROR;
     // Use iterator instead of index access here so to make sure that additional
     // preRenderUpdate targets added during processing of the queue will also
     // be processed
@@ -418,7 +421,7 @@ WManager::render()
         (*i)->preRenderUpdate();
     }
     preRenderUpdateQueue_.clear();
-
+PRINT_IF_GL_ERROR;
     mainWin_->render(mainWin_->getPos());
 }
 
