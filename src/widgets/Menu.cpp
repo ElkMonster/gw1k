@@ -133,7 +133,7 @@ Menu::mouseClicked(MouseButton b, StateEvent ev, GuiObject* receiver)
 {
     for (unsigned int i = 0; i != entries_.size(); ++i)
     {
-        if (receiver == entries_[i])
+        if ((receiver == entries_[i]) && (ev == GW1K_PRESSED))
         {
             selectEntry(entries_[i]);
             informActionListeners(this);
