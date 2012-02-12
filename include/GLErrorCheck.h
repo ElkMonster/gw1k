@@ -1,6 +1,8 @@
 #ifndef GW1K_GLERRORCHECK_H_
 #define GW1K_GLERRORCHECK_H_
 
+#include "utils/StringHelpers.h"
+
 #ifdef __APPLE__
 #include <OpenGL/glew.h>
 #else
@@ -79,7 +81,9 @@ inline bool checkGLError()
         glErrorMsg = "GL_TABLE_TOO_LARGE";
         return true;
     default:
-        return false;
+
+        glErrorMsg = std::string("Unknown error ") + toString(err);
+        return true;
     }
 }
 
