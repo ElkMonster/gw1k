@@ -1,5 +1,7 @@
 #include "WManager.h"
 
+#include "Log.h"
+
 #ifdef __APPLE__
 #include <OpenGL/glew.h>
 #else
@@ -69,7 +71,7 @@ WManager::feedMouseMove(int x, int y)
 void
 WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject* o)
 {
-    MSG("WManager::feedMouseMoveInternal [begin]: o = " << (void*)o);
+    //MSG("WManager::feedMouseMoveInternal [begin]: o = " << (void*)o);
 
     // A clicked object receives all the mouse movement events regardless of the
     // mouse leaving it. This allows for things like sliders which will follow
@@ -133,7 +135,7 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
         feedMouseMoveHandleNewHoveredObj(pos, delta);
     }
 
-    MSG("WManager::feedMouseMoveInternal [end]");
+    //MSG("WManager::feedMouseMoveInternal [end]");
 }
 
 
@@ -397,10 +399,7 @@ WManager::render()
 
     checkTimers();
 
-    // Use iterator instead of index access here so to make sure that additional
-    // preRenderDeletion targets added during processing of the queue will also
-    // be processed
-    for (std::vector<GuiObject*>::iterator i = preRenderDeleteQueue_.begin();
+    for (std::list<GuiObject*>::iterator i = preRenderDeleteQueue_.begin();
         i != preRenderDeleteQueue_.end(); ++i)
     {
         GuiObject* p = (*i)->getParent();
@@ -411,18 +410,17 @@ WManager::render()
         delete *i;
     }
     preRenderDeleteQueue_.clear();
-PRINT_IF_GL_ERROR;
-    // Use iterator instead of index access here so to make sure that additional
-    // preRenderUpdate targets added during processing of the queue will also
-    // be processed
-    for (std::vector<GuiObject*>::iterator i = preRenderUpdateQueue_.begin();
+
+    for (std::list<GuiObject*>::iterator i = preRenderUpdateQueue_.begin();
         i != preRenderUpdateQueue_.end(); ++i)
     {
         (*i)->preRenderUpdate();
     }
     preRenderUpdateQueue_.clear();
-PRINT_IF_GL_ERROR;
+
+    PRINT_IF_GL_ERROR;
     mainWin_->render(mainWin_->getPos());
+    PRINT_IF_GL_ERROR;
 }
 
 
@@ -436,7 +434,14 @@ WManager::registerForPreRenderUpdate(GuiObject* o)
 void
 WManager::markForDeletion(GuiObject* o)
 {
-    preRenderDeleteQueue_.push_back(o);
+    if (o == 0)
+    {
+        Log::warning("WManager", "Passed null object to markForDeletion()");
+    }
+    else
+    {
+        preRenderDeleteQueue_.push_back(o);
+    }
 }
 
 

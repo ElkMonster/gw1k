@@ -35,6 +35,13 @@ GuiObject::GuiObject()
 GuiObject::~GuiObject()
 {
     MSG("~GuiObject: " << (void*) this);
+    // Make sure subobjects don't reference this GuiObject when it is already
+    // deleted
+    for (unsigned int i = 0; i != subObjects_.size(); ++i)
+    {
+        subObjects_[i]->parent_ = 0;
+    }
+
     // Make sure that widget is not referenced anymore in case it was clicked or
     // hovered (especially important when the "click" removes and deletes the
     // widget, since no "release" must be trigger for it)

@@ -8,7 +8,7 @@
 #include "Timer.h"
 #include "listeners/TimerListener.h"
 
-#include <vector>
+#include <list>
 
 namespace gw1k
 {
@@ -151,9 +151,9 @@ private:
 
     int mouseWheelPos_;
 
-    std::vector<GuiObject*> preRenderUpdateQueue_;
+    std::list<GuiObject*> preRenderUpdateQueue_;
 
-    std::vector<GuiObject*> preRenderDeleteQueue_;
+    std::list<GuiObject*> preRenderDeleteQueue_;
 
     std::list<Timer*> timerList_;
 
