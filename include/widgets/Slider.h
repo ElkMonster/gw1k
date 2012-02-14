@@ -63,6 +63,8 @@ private:
 
     void init(const char* colorScheme);
 
+    void setValueInternal(float val);
+
     void calculateValue();
 
     void setHandlePosition(int newPos);

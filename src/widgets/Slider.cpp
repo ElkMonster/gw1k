@@ -72,12 +72,13 @@ void
 Slider::setValue(float val)
 {
     float oldVal = value_;
-    value_ = std::min(getUnmappedValue(val), 1.f);
-
+    setValueInternal(val);
+    setHandlePosition(calculateHandlePos());
     if (value_ != oldVal)
     {
         informActionListeners(this);
     }
+
 }
 
 
@@ -152,7 +153,7 @@ Slider::mouseWheeled(int delta, GuiObject* receiver)
     {
         // Sliders need to invert delta because a value of 0 = top/left, a value
         // of 1 = bottom/right, but deltas work the other way round
-        setValue(value_ + (mouseWheelStep_ * -delta));
+        setValueInternal(value_ + (mouseWheelStep_ * -delta));
         setHandlePosition(calculateHandlePos());
         informActionListeners(this);
     }
@@ -215,6 +216,13 @@ Slider::init(const char* colorScheme)
     addMouseListener(this);
 
     setColors(colorScheme);
+}
+
+
+void
+Slider::setValueInternal(float val)
+{
+    value_ = std::min(getUnmappedValue(val), 1.f);
 }
 
 
