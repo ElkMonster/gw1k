@@ -40,7 +40,7 @@
 			<Add directory="/usr/include/freetype2" />
 		</Compiler>
 		<Linker>
-			<Add library="../geometry/bin/Debug/libgeometry.so" />
+			<Add library="../geometry/libgeometry.a" />
 			<Add library="lua" />
 		</Linker>
 		<Unit filename="include/Color4i.h" />
