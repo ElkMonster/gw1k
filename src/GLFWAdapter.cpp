@@ -65,8 +65,10 @@ int glfwToGw1kKeyCodes(int glfwKey)
     case GLFW_KEY_RCTRL: return GW1K_KEY_RCTRL;
     case GLFW_KEY_LALT: return GW1K_KEY_LALT;
     case GLFW_KEY_RALT: return GW1K_KEY_RALT;
+#ifndef GW1K_GLFW_IS_VERSION_2_6
     case GLFW_KEY_LSUPER: return GW1K_KEY_LSUPER;
     case GLFW_KEY_RSUPER: return GW1K_KEY_RSUPER;
+#endif
     case GLFW_KEY_TAB: return GW1K_KEY_TAB;
     case GLFW_KEY_ENTER: return GW1K_KEY_ENTER;
     case GLFW_KEY_BACKSPACE: return GW1K_KEY_BACKSPACE;
@@ -93,11 +95,13 @@ int glfwToGw1kKeyCodes(int glfwKey)
     case GLFW_KEY_KP_DECIMAL: return GW1K_KEY_KP_DECIMAL;
     case GLFW_KEY_KP_EQUAL: return GW1K_KEY_KP_EQUAL;
     case GLFW_KEY_KP_ENTER: return GW1K_KEY_KP_ENTER;
+#ifndef GW1K_GLFW_IS_VERSION_2_6
     case GLFW_KEY_KP_NUM_LOCK: return GW1K_KEY_KP_NUM_LOCK;
     case GLFW_KEY_CAPS_LOCK: return GW1K_KEY_CAPS_LOCK;
     case GLFW_KEY_SCROLL_LOCK: return GW1K_KEY_SCROLL_LOCK;
     case GLFW_KEY_PAUSE: return GW1K_KEY_PAUSE;
     case GLFW_KEY_MENU: return GW1K_KEY_MENU;
+#endif
     default: return GW1K_KEY_OTHER;
     }
 

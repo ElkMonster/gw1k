@@ -3,6 +3,8 @@
 #include "utils/StringHelpers.h"
 #include "Math.h"
 
+#include <cstdlib>
+
 namespace gw1k
 {
 

@@ -4,6 +4,7 @@
 #include "Math.h"
 
 #include <iostream>
+#include <cstdlib>
 
 namespace gw1k
 {
