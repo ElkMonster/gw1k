@@ -93,6 +93,10 @@ private:
 
 private:
 
+    /**
+     * A box enclosing the Text widget in order to prevent that text is draw
+     * over the Label's border.
+     */
     Box textBox_;
 
     Point padding_;
