@@ -35,11 +35,19 @@ GuiObject::GuiObject()
 GuiObject::~GuiObject()
 {
     MSG("~GuiObject: " << (void*) this);
+
+    DELETE_PTR(dragArea_);
+
     // Make sure subobjects don't reference this GuiObject when it is already
     // deleted
-    for (unsigned int i = 0; i != subObjects_.size(); ++i)
+    if (subObjects_.size() != 0)
     {
-        subObjects_[i]->parent_ = 0;
+        Log::error("~GuiObject()", Log::os()
+            << "Destroying GuiObject that still contains sub-objects. Deleting "
+            << "these for you now. If this is not what you intended, or if it "
+            << "crashes your application, fix your code to properly remove all "
+            << "sub-objects in the respective destructor.");
+        removeAndDeleteAllSubObjects();
     }
 
     // Make sure that widget is not referenced anymore in case it was clicked or
@@ -336,6 +344,28 @@ GuiObject::removeSubObject(GuiObject* o)
 }
 
 
+void
+GuiObject::removeAndDeleteSubObject(GuiObject* o)
+{
+    if (o)
+    {
+        removeSubObject(o);
+        delete o;
+    }
+}
+
+
+void
+GuiObject::removeAndDeleteAllSubObjects()
+{
+    for (unsigned int i = 0; i != subObjects_.size(); ++i)
+    {
+        delete subObjects_[i];
+    }
+    subObjects_.clear();
+}
+
+
 GuiObject*
 GuiObject::getContainingObject(const Point& p)
 {
@@ -396,8 +426,9 @@ GuiObject::setParent(GuiObject* parent)
         }
         if (!parent)
         {
-            // TODO better exception
-            throw "Embedded object has no non-embedded parent!";
+            Log::error("GuiObject", Log::os()
+                << "Embedded object has no non-embedded parent "
+                << "(or no parent at all)! Your application might crash now.");
         }
     }
 }

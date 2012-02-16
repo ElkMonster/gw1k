@@ -120,6 +120,24 @@ public:
 
     virtual void removeSubObject(GuiObject* o);
 
+    /**
+     * Calls removeSubObject() with the given o and deletes it.
+     *
+     * If o is already null when this method is called, it simply returns
+     * without doing anything.
+     */
+    void removeAndDeleteSubObject(GuiObject* o);
+
+    /**
+     * Deletes all sub-objects of this GuiObject.
+     *
+     * This method should be used with care: If a sub-object is referenced
+     * elsewhere, the application will probably crash at some point after
+     * calling this method. For this reason, gw1k's default widgets only use
+     * removeAndDeleteSubObject().
+     */
+    void removeAndDeleteAllSubObjects();
+
     virtual GuiObject* getContainingObject(const Point& p);
 
     int getNumSubObjects() const;
