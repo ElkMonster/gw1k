@@ -135,8 +135,14 @@ public:
      * elsewhere, the application will probably crash at some point after
      * calling this method. For this reason, gw1k's default widgets only use
      * removeAndDeleteSubObject().
+     * Note that order is important when dealing with nested GuiObjects:
+     * Innermost objects must be removed first, then their parent objects, etc.
+     * It is therefore recommended to remove objects individually via
+     * removeAndDeleteSubObject() in nested setups, and to use
+     * removeAndDeleteAllSubObjects() for "simpler" setups where nothing can go
+     * wrong.
      */
-    void removeAndDeleteAllSubObjects();
+    virtual void removeAndDeleteAllSubObjects();
 
     virtual GuiObject* getContainingObject(const Point& p);
 
