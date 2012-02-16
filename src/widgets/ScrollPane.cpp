@@ -83,6 +83,15 @@ ScrollPane::removeSubObject(GuiObject* o)
 
 
 void
+ScrollPane::removeAndDeleteAllSubObjects()
+{
+    Point objsFit = pane_->getAccommodationStatus();
+    pane_->removeAndDeleteAllSubObjects();
+    revalidatePaneAndSliders(objsFit != pane_->getAccommodationStatus());
+}
+
+
+void
 ScrollPane::actionPerformed(GuiObject* receiver)
 {
     Point offset = pane_->getClippingOffset();

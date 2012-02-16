@@ -70,6 +70,11 @@ public:
      */
     virtual void removeSubObject(GuiObject* o);
 
+    /**
+     * See removeSubObject()
+     */
+    virtual void removeAndDeleteAllSubObjects();
+
     virtual void actionPerformed(GuiObject* receiver);
 
     /**
