@@ -360,7 +360,7 @@ WManager::addObject(GuiObject* o)
 void
 WManager::removeObject(GuiObject* o)
 {
-    mainWin_->addSubObject(o);
+    mainWin_->removeSubObject(o);
 }
 
 
