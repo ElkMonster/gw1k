@@ -73,10 +73,8 @@ CheckBox::CheckBox(
 
 CheckBox::~CheckBox()
 {
-    removeSubObject(checkField_);
-    removeSubObject(label_);
-    delete checkField_;
-    delete label_;
+    removeAndDeleteSubObject(checkField_);
+    removeAndDeleteSubObject(label_);
 }
 
 

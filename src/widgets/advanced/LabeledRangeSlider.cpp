@@ -40,13 +40,9 @@ LabeledRangeSlider::LabeledRangeSlider(
 
 LabeledRangeSlider::~LabeledRangeSlider()
 {
-    removeSubObject(slider_);
-    removeSubObject(lLabel_);
-    removeSubObject(rLabel_);
-
-    delete slider_;
-    delete lLabel_;
-    delete rLabel_;
+    removeAndDeleteSubObject(slider_);
+    removeAndDeleteSubObject(lLabel_);
+    removeAndDeleteSubObject(rLabel_);
 }
 
 

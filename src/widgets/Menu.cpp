@@ -17,9 +17,10 @@ Menu::Menu(int width, const Point& padding, const char* colorScheme)
 
 Menu::~Menu()
 {
+    removeAndDeleteSubObject(title_);
     for (unsigned int i = 0; i != entries_.size(); ++i)
     {
-        delete entries_[i];
+        removeAndDeleteSubObject(entries_[i]);
     }
 }
 

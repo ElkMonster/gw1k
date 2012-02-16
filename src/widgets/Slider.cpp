@@ -57,7 +57,7 @@ Slider::Slider(
 
 Slider::~Slider()
 {
-    delete handle_;
+    removeAndDeleteSubObject(handle_);
 }
 
 

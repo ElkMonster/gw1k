@@ -62,8 +62,7 @@ OGLViewWiBox::OGLViewWiBox(
 
 OGLViewWiBox::~OGLViewWiBox()
 {
-    removeSubObject(oglRenderer_);
-    delete oglRenderer_;
+    removeAndDeleteSubObject(oglRenderer_);
 }
 
 

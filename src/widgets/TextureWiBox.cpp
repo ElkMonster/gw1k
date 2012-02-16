@@ -35,8 +35,7 @@ TextureWiBox::TextureWiBox(
 
 TextureWiBox::~TextureWiBox()
 {
-    removeSubObject(texView_);
-    delete texView_;
+    removeAndDeleteSubObject(texView_);
 }
 
 

@@ -55,9 +55,9 @@ RangeSlider::RangeSlider(
 
 RangeSlider::~RangeSlider()
 {
-    delete lHandle_;
-    delete rHandle_;
-    delete rangeBar_;
+    removeAndDeleteSubObject(lHandle_);
+    removeAndDeleteSubObject(rHandle_);
+    removeAndDeleteSubObject(rangeBar_);
 }
 
 
