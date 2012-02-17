@@ -37,37 +37,37 @@ public:
 
     void setColors(Renderable* r,
                    const char* colorScheme,
-                   const char* fallbackScheme);
+                   const char* fallbackScheme) const;
 
     void setColors(ColorTable& ct,
                    const char* colorScheme,
-                   const char* fallbackScheme);
+                   const char* fallbackScheme) const;
 
     void setColors(Renderable* r, const ColorTable& ct) const;
 
     const Color4i* getFgColor(const char* colorScheme,
-                              const char* fallbackScheme);
+                              const char* fallbackScheme) const;
 
     const Color4i* getBgColor(const char* colorScheme,
-                              const char* fallbackScheme);
+                              const char* fallbackScheme) const;
 
     const Color4i* getHoveredFgColor(const char* colorScheme,
-                                     const char* fallbackScheme);
+                                     const char* fallbackScheme) const;
 
     const Color4i* getHoveredBgColor(const char* colorScheme,
-                                     const char* fallbackScheme);
+                                     const char* fallbackScheme) const;
 
     const Color4i* getClickedFgColor(const char* colorScheme,
-                                     const char* fallbackScheme);
+                                     const char* fallbackScheme) const;
 
     const Color4i* getClickedBgColor(const char* colorScheme,
-                                     const char* fallbackScheme);
+                                     const char* fallbackScheme) const;
 
 private:
 
     const Color4i* getColor(const char* modespec,
                           const char* colorScheme,
-                          const char* fallbackScheme);
+                          const char* fallbackScheme) const;
 
     bool loadLua();
 

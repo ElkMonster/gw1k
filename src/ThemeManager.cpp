@@ -86,7 +86,7 @@ void
 ThemeManager::setColors(
     Renderable* r,
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     r->setFgColor(getFgColor(colorScheme, fallbackScheme));
     r->setBgColor(getBgColor(colorScheme, fallbackScheme));
@@ -101,7 +101,7 @@ void
 ThemeManager::setColors(
     ColorTable& ct,
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     setColor(getFgColor(colorScheme, fallbackScheme), ct.fgCol);
     setColor(getBgColor(colorScheme, fallbackScheme), ct.bgCol);
@@ -127,7 +127,7 @@ ThemeManager::setColors(Renderable* r, const ColorTable& ct) const
 const Color4i*
 ThemeManager::getFgColor(
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     return getColor("fg", colorScheme, fallbackScheme);
 }
@@ -136,7 +136,7 @@ ThemeManager::getFgColor(
 const Color4i*
 ThemeManager::getBgColor(
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     return getColor("bg", colorScheme, fallbackScheme);
 }
@@ -145,7 +145,7 @@ ThemeManager::getBgColor(
 const Color4i*
 ThemeManager::getHoveredFgColor(
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     return getColor("hfg", colorScheme, fallbackScheme);
 }
@@ -154,7 +154,7 @@ ThemeManager::getHoveredFgColor(
 const Color4i*
 ThemeManager::getHoveredBgColor(
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     return getColor("hbg", colorScheme, fallbackScheme);
 }
@@ -163,7 +163,7 @@ ThemeManager::getHoveredBgColor(
 const Color4i*
 ThemeManager::getClickedFgColor(
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     return getColor("cfg", colorScheme, fallbackScheme);
 }
@@ -172,7 +172,7 @@ ThemeManager::getClickedFgColor(
 const Color4i*
 ThemeManager::getClickedBgColor(
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     return getColor("cbg", colorScheme, fallbackScheme);
 }
@@ -182,7 +182,7 @@ const Color4i*
 ThemeManager::getColor(
     const char* modespec,
     const char* colorScheme,
-    const char* fallbackScheme)
+    const char* fallbackScheme) const
 {
     const char* scheme = (colorScheme ? colorScheme : fallbackScheme);
 
@@ -193,7 +193,7 @@ ThemeManager::getColor(
 
         //std::cout << "ThemeManager: request for key " << key << (colorMap_[key] ? "(success)" : "(fail)") << std::endl;
 
-        std::map<std::string, Color4i*>::iterator it = colorMap_.find(key);
+        std::map<std::string, Color4i*>::const_iterator it = colorMap_.find(key);
         return (it != colorMap_.end()) ? it->second : 0;
     }
     else
