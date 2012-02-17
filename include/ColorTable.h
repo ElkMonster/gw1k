@@ -15,8 +15,14 @@ struct ColorTable
 
     enum ColorState { STATE_NORMAL, STATE_HOVERED, STATE_CLICKED };
 
+    /**
+     * Creates a ColorTable with all colors fields set to null (i.e., no color).
+     */
     ColorTable();
 
+    /**
+     * Creates of copy of the given ColorTable.
+     */
     ColorTable(const ColorTable& ct);
 
     ~ColorTable();
