@@ -2,6 +2,7 @@
 #define GW1K_COLOR4I_H_
 
 #include "utils/Helpers.h"
+#include "Math.h"
 
 
 #define F_FAC (1.f / 255.f)
@@ -54,7 +55,7 @@ struct Color4i
  * - col != 0, dest == 0: Create new Color4i in dest and copy col's values
  * - col == 0, dest != 0: Delete dest and set it to 0 as well
  * - col != 0, dest != 0: Copy col's values to dest
- *
+ * If dest is 0, the method will simply return.
  */
 inline void
 setColor(const Color4i* col, Color4i*& dest)
@@ -71,6 +72,22 @@ setColor(const Color4i* col, Color4i*& dest)
     else if (col && dest)
     {
         *dest = *col;
+    }
+}
+
+
+inline void
+multiplyColors(gw1k::Color4i* target, const gw1k::Color4i* mult)
+{
+    if ((target != 0) && (mult != 0))
+    {
+        Color4i t(
+            round(target->rf * mult->rf * 255.f),
+            round(target->gf * mult->gf * 255.f),
+            round(target->bf * mult->bf * 255.f),
+            round(target->af * mult->af * 255.f)
+        );
+        *target = t;
     }
 }
 
