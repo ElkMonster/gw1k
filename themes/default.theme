@@ -257,6 +257,13 @@
 GlobalBackground = Black
 
 
+-- No colors
+-- =========
+-- This can be used to prevent that a custom widget falls back to default colors
+-- (e.g., a widget derived from WiBox that doesn't specify a color scheme falls
+-- back to WiBox' color scheme).
+None = { #, #, #, #, #, # }
+
 -- Text widget
 -- ===========
 -- Needs foreground color only, rest will be ignored by gw1k (Text widget is
@@ -336,19 +343,54 @@ ScrollPane = {
 -- CheckBox widget
 -- ===============
 CheckBox = {
-    --Label = Label,
-    Wibox
+    Label = {
+        Text = Label.Text,
+        WiBox
+    },
+    CheckField = {
+        WiBox
+
+    },
+    DarkGreen:a(0.3), DarkGreen:alpha(0.1)
 }
 
+
+-- TextureView widget
+-- ==================
+-- Since there's no frame in TextureView, it doesn't need any colours itself,
+-- but one can assign it colours to multiply the texture with. This allows to
+-- shade the texture, giving it a colour-tinted look or modifying its opacity.
+-- Note that multiply colours have to be specified as foreground colours.
+-- If not TexMul colours are specified, gw1k defaults to white.
+TextureView = {
+    TexMul = { White, #, White, #, White }
+}
+
+-- RangeSlider widget
+--[[ ==================
+RangeSlider = {
+    Handle = {
+        Orange, Green,
+        Yellow, Yellow,
+        Red, Red
+    },
+    RangeBar = {
+        Green:a(0.5), Green:a(0.5),
+        #,#, Red, Yellow
+    },
+    White
+}]]
 
 -- RangeSlider widget
 -- ==================
 RangeSlider = {
     Handle = {
+        Yellow, Yellow
     },
     RangeBar = {
+        Yellow:a(100), Yellow:a(100)
     },
-    Wibox
+    Yellow:a(100)
 }
 
 
