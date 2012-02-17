@@ -112,6 +112,18 @@ ThemeManager::setColors(
 }
 
 
+void
+ThemeManager::setColors(Renderable* r, const ColorTable& ct) const
+{
+    r->setFgColor(ct.fgCol);
+    r->setBgColor(ct.bgCol);
+    r->setHoveredFgColor(ct.hoveredFgCol);
+    r->setHoveredBgColor(ct.hoveredBgCol);
+    r->setClickedFgColor(ct.clickedFgCol);
+    r->setClickedBgColor(ct.clickedBgCol);
+}
+
+
 const Color4i*
 ThemeManager::getFgColor(
     const char* colorScheme,

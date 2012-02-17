@@ -43,6 +43,8 @@ public:
                    const char* colorScheme,
                    const char* fallbackScheme);
 
+    void setColors(Renderable* r, const ColorTable& ct) const;
+
     const Color4i* getFgColor(const char* colorScheme,
                               const char* fallbackScheme);
 
