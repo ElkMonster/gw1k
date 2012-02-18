@@ -15,7 +15,7 @@ class ClippingBox;
 
 /**
  * ScrollPane can auto-resize sub-objects to let them fit into the ScrollPane in
- * one dimension. When specifying ADJUST_HORIZ or ADJUST_VERT, the sub-objects'
+ * one dimension. When specifying ADJUST_WIDTH or ADJUST_HEIGHT, the sub-objects'
  * width or height, respectively, will be adjusted such that it will never
  * exceed the ScrollPane's size in that dimension. This means that no slider
  * will ever appear for that dimension. If a slider appears for the other
@@ -36,7 +36,7 @@ class ScrollPane : public WiBox, public ActionListener
 
 public:
 
-    enum AutoAdjustSize { ADJUST_HORIZ, ADJUST_VERT, ADJUST_NONE };
+    enum AutoAdjustSize { ADJUST_WIDTH, ADJUST_HEIGHT, ADJUST_NONE };
 
     /**
      * @param stickySliders if true, sliders will always be shown

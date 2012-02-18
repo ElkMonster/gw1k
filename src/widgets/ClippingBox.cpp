@@ -40,11 +40,11 @@ ClippingBox::setSize(float width, float height)
     if (autoAdjustSize_ != ScrollPane::ADJUST_NONE)
     {
         autoAdjustSubObjs();
-        if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
+        if (autoAdjustSize_ == ScrollPane::ADJUST_WIDTH)
         {
             realSize_.x = width;
         }
-        else // autoAdjustSize == ScrollPane::ADJUST_VERT
+        else // autoAdjustSize == ScrollPane::ADJUST_HEIGHT
         {
             realSize_.y = height;
         }
@@ -118,12 +118,12 @@ ClippingBox::addSubObject(GuiObject* o)
     Point newRealOrigin(min(o->getPos(), realOrigin_));
     Point newRealSize = Point(max(getEnd(), max(o->getEnd(), realEnd))) - newRealOrigin;
 
-    if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
+    if (autoAdjustSize_ == ScrollPane::ADJUST_WIDTH)
     {
         newRealOrigin.x = 0;
         newRealSize.x = getSize().x;
     }
-    else if (autoAdjustSize_ == ScrollPane::ADJUST_VERT)
+    else if (autoAdjustSize_ == ScrollPane::ADJUST_HEIGHT)
     {
         newRealOrigin.y = 0;
         newRealSize.y = getSize().y;
@@ -252,7 +252,7 @@ ClippingBox::autoAdjustSubObj(GuiObject* o)
     Point adjustedSize = oSize;
     bool bNeedsAdjustment = false;
 
-    if (autoAdjustSize_ == ScrollPane::ADJUST_HORIZ)
+    if (autoAdjustSize_ == ScrollPane::ADJUST_WIDTH)
     {
         if (oPos.x + oSize.x != end.x)
         {
@@ -260,7 +260,7 @@ ClippingBox::autoAdjustSubObj(GuiObject* o)
             bNeedsAdjustment = true;
         }
     }
-    else // ADJUST_VERT
+    else // ADJUST_HEIGHT
     {
         if (oPos.y + oSize.y != end.y)
         {
