@@ -105,6 +105,8 @@ public:
      */
     void setSliderMargin(int margin);
 
+    virtual int getNumSubObjects() const;
+
 protected:
 
     /**

@@ -146,7 +146,14 @@ public:
 
     virtual GuiObject* getContainingObject(const Point& p);
 
-    int getNumSubObjects() const;
+    /**
+     * Returns the number of "user" sub-objects added to this GuiObject.
+     *
+     * Widgets composed of one or more sub-objects should override this method
+     * such that only user-added sub-objects are counted in to the number
+     * returned.
+     */
+    virtual int getNumSubObjects() const;
 
     /**
      * Sets the objects parent, overwriting any previously set parent.

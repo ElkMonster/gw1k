@@ -170,6 +170,13 @@ ScrollPane::setSliderMargin(int margin)
 }
 
 
+int
+ScrollPane::getNumSubObjects() const
+{
+    return pane_->getNumSubObjects();
+}
+
+
 void
 ScrollPane::resizePaneAndSliders()
 {
