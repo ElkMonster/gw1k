@@ -20,6 +20,7 @@ TextureView::TextureView(
 :   OGLView(pos, size, shadeColorScheme),
     filename_(filename),
     pTex_(0),
+    imgSize_(0, 0),
     pImgData_(0),
     bReqLoadTexture_(false),
     aspectRatioAutoAdapt_(AR_NO_ADAPT)
@@ -61,6 +62,7 @@ TextureView::loadTexture(const std::string& filename)
     {
         glDeleteTextures(1, pTex_);
         delete pTex_;
+        pTex_ = 0;
     }
 
     if (loadPngTexture(filename.c_str(), imgSize_.x, imgSize_.y, imgAlpha_, pImgData_))
@@ -174,19 +176,33 @@ TextureView::setSize(float width, float height)
     // Get pixel-size first
     const Point& newSize = OGLView::setSize(width, height);
 
+    if (!pTex_ && aspectRatioAutoAdapt_ != AR_NO_ADAPT)
+    {
+        Log::warning("TextureView", Log::os()
+            << "No size auto-adaptation due to missing texture");
+        return newSize;
+    }
+
     switch (aspectRatioAutoAdapt_)
     {
     case AR_ADAPT_WIDTH:
     {
-        float w = static_cast<float>(newSize.y * imgSize_.x) / imgSize_.y;
-        return OGLView::setSize(w, newSize.y);
+        if (pTex_)
+        {
+            float w = static_cast<float>(newSize.y * imgSize_.x) / imgSize_.y;
+            return OGLView::setSize(w, newSize.y);
+        }
     }
     case AR_ADAPT_HEIGHT:
     {
-        float h = static_cast<float>(newSize.x * imgSize_.y) / imgSize_.x;
-        return OGLView::setSize(newSize.x, h);
+        if (pTex_)
+        {
+            float h = static_cast<float>(newSize.x * imgSize_.y) / imgSize_.x;
+            return OGLView::setSize(newSize.x, h);
+        }
     }
     case AR_NO_ADAPT:
+    default:
         break;
     }
 
