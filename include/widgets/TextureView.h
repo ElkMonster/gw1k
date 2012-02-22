@@ -53,16 +53,11 @@ public:
     void setAspectRatioAutoResize(AspectRatioAutoAdapt a);
 
     /**
-     * Loads the given image file and enqueues this TextureView in WManager's
-     * preRenderUpdate() list. Thus, a texture will only be created from the
-     * image when the OpenGL state is ready for it.
-     * (See http://www.opengl.org/wiki/Common_Mistakes for details)
+     * Loads the given image file and generates a texture for it.
      */
     bool loadTexture(const std::string& filename);
 
     const Point& getTextureSize() const;
-
-    virtual void preRenderUpdate();
 
     virtual void renderOGLContent() const;
 
@@ -88,9 +83,6 @@ private:
     bool imgAlpha_;
 
     unsigned char* pImgData_;
-
-    /** If this is true, a call to preRenderUpdate() will create the texture */
-    bool bReqLoadTexture_;
 
     AspectRatioAutoAdapt aspectRatioAutoAdapt_;
 };

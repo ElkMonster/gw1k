@@ -22,7 +22,6 @@ TextureView::TextureView(
     pTex_(0),
     imgSize_(0, 0),
     pImgData_(0),
-    bReqLoadTexture_(false),
     aspectRatioAutoAdapt_(AR_NO_ADAPT)
 {
     loadTexture(filename);
@@ -78,8 +77,7 @@ TextureView::loadTexture(const std::string& filename)
             }
         }
 
-        bReqLoadTexture_ = true;
-        WManager::getInstance()->registerForPreRenderUpdate(this);
+        createTexture();
         return true;
     }
     return false;
@@ -121,17 +119,6 @@ const Point&
 TextureView::getTextureSize() const
 {
     return imgSize_;
-}
-
-
-void
-TextureView::preRenderUpdate()
-{
-    if (bReqLoadTexture_)
-    {
-        createTexture();
-        bReqLoadTexture_ = false;
-    }
 }
 
 
