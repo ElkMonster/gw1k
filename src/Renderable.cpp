@@ -1,10 +1,6 @@
 #include "Renderable.h"
 
-#ifdef __APPLE__
-#include <OpenGL/glew.h>
-#else
 #include <GL/glew.h>
-#endif
 
 #include "utils/Helpers.h"
 #include "ThemeManager.h"

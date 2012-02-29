@@ -5,11 +5,7 @@
 #define GW1K_ENABLE_GL_ERROR_CHECKS
 #include "GLErrorCheck.h"
 
-#ifdef __APPLE__
-#include <OpenGL/glew.h>
-#else
 #include <GL/glew.h>
-#endif
 
 #include <iostream>
 

@@ -3,11 +3,7 @@
 
 #include "OGLView.h"
 
-#ifdef __APPLE__
-#include <OpenGL/glew.h>
-#else
 #include <GL/glew.h>
-#endif
 
 namespace gw1k
 {
