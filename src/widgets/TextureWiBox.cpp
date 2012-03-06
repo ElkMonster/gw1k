@@ -20,8 +20,7 @@ TextureWiBox::TextureWiBox(
 
     texView_ = new TextureView(Point(1, 1), size - Point(2, 2), filename,
         bResizeToImageSize, colorScheme ? sShadeScheme.c_str() : 0);
-    //texView_->setEmbedded();
-    texView_->setClickThrough();
+    texView_->setInteractive(false);
     texView_->setAdaptMode(Renderable::ADAPT_PARENT);
     addSubObject(texView_);
 
