@@ -517,6 +517,7 @@ WManager::removeTimers(TimerListener* target)
     {
         if ((*i)->target == target)
         {
+            delete *i;
             i = timerList_.erase(i);
         }
         else
@@ -535,6 +536,7 @@ WManager::removeTimers(TimerListener* target, int token)
     {
         if (((*i)->target == target) && ((*i)->token == token))
         {
+            delete *i;
             i = timerList_.erase(i);
         }
         else
@@ -556,6 +558,7 @@ WManager::checkTimers()
         Timer* t = timerList_.front();
         t->target->timerExpired(t->token);
         timerList_.pop_front();
+        delete t;
     }
 }
 
