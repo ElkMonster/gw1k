@@ -333,6 +333,11 @@ GuiObject::removeSubObject(GuiObject* o)
         {
             subObjects_.erase(i);
             o->parent_ = 0;
+            if (o->bContainsMouse_)
+            {
+                o->bContainsMouse_ = false;
+                o->resetSubObjContainsMouseStatus();
+            }
             return;
         }
     }
