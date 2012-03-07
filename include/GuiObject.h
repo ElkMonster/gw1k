@@ -297,15 +297,6 @@ protected:
                                 MouseButton b,
                                 const GuiObject* dragReceiver);
 
-    /**
-     * Sets whether dragging continues to work when the mouse leaves this
-     * object's area without the object being able to follow.
-     * The ability of horizontal and vertical movement is specified separately,
-     * e.g. to allow for comfortable slider bars that follow mouse movement even
-     * if the mouse leaves the bar area (since it's really thin )
-     */
-    void setDraggableWhenNotContainingMouse(bool horizontal, bool vertical);
-
 private:
 
     /**
@@ -359,10 +350,6 @@ private:
      * the parent frames the area.
      */
     Rect* dragArea_;
-
-    bool bXDraggableWhenNotContainingMouse_;
-
-    bool bYDraggableWhenNotContainingMouse_;
 
     GuiObject* dragChecker_;
 

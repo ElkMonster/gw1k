@@ -26,8 +26,6 @@ GuiObject::GuiObject()
     bIsInteractive_(true),
     bIsClickThrough_(false),
     dragArea_(0),
-    bXDraggableWhenNotContainingMouse_(false),
-    bYDraggableWhenNotContainingMouse_(false),
     dragChecker_(0)
 {}
 
@@ -521,11 +519,7 @@ GuiObject::setDraggableArea(const Rect* area, const Point& padding)
     }
     else
     {
-        if (dragArea_)
-        {
-            delete dragArea_;
-            dragArea_ = 0;
-        }
+        DELETE_PTR(dragArea_);
     }
 
     dragAreaPadding_ = padding;
@@ -537,14 +531,7 @@ GuiObject::getDraggableArea(Rect* area, Point* padding)
 {
     if (area)
     {
-        if (dragArea_)
-        {
-            *area = *dragArea_;
-        }
-        else
-        {
-            *area = parent_ ? parent_->rect_ : Rect();
-        }
+        *area = (dragArea_ ? *dragArea_ : (parent_ ? parent_->rect_ : Rect()));
     }
 
     if (padding)
@@ -597,14 +584,6 @@ GuiObject::checkDragDelta(
     const GuiObject* dragReceiver)
 {
     // Do nothing in default implementation
-}
-
-
-void
-GuiObject::setDraggableWhenNotContainingMouse(bool horizontal, bool vertical)
-{
-    bXDraggableWhenNotContainingMouse_ = horizontal;
-    bYDraggableWhenNotContainingMouse_ = vertical;
 }
 
 
