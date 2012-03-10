@@ -86,7 +86,7 @@ Timer::operator>(const timeval& time) const
     {
         return true;
     }
-    else if (tvEnd_.tv_sec > time.tv_sec)
+    else if (tvEnd_.tv_sec < time.tv_sec)
     {
         return false;
     }
