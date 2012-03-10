@@ -41,11 +41,13 @@ public:
 
     virtual const Point& setSize(float width, float height);
 
+protected:
+
+    TextureView* texView_;
+
 private:
 
     Point padding_;
-
-    TextureView* texView_;
 
 };
 
