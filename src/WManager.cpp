@@ -474,6 +474,7 @@ WManager::indicateRemovedObject(const GuiObject* o)
         // Cast to void* since we're comparing TimerListener* and GuiObject*
         if ((*i)->target == o)
         {
+            delete *i;
             i = timerList_.erase(i);
         }
         else
@@ -485,26 +486,29 @@ WManager::indicateRemovedObject(const GuiObject* o)
 
 
 void
-WManager::addTimer(double seconds, TimerListener* target, int userdata)
+WManager::addTimer(double seconds, TimerListener* target, int token)
 {
-    Timer* timer = new Timer(seconds, target, userdata);
+    Timer* timer = new Timer(seconds, target, token);
 
-    if (timerList_.size() == 0)
+    if ((timerList_.size() == 0)
+        || (*timer >= timerList_.back()->getExpirationTime()))
     {
         timerList_.push_back(timer);
     }
     else
     {
-        for (std::list<Timer*>::iterator i = timerList_.begin();
-            i != timerList_.end(); ++i)
+        std::list<Timer*>::iterator i = timerList_.end();
+        for (--i; i != timerList_.begin(); --i)
         {
-            if (*timer >= (*i)->getExpirationTime())
+            if (**i >= timer->getExpirationTime())
             {
                 // Insert before i
                 timerList_.insert(i, timer);
-                break;
+                return;
             }
         }
+
+        timerList_.push_front(timer);
     }
 }
 
