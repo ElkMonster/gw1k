@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#define MSG(x) std::cout << x << std::endl
+#define MSG(x) //std::cout << x << std::endl
 
 namespace gw1k
 {
