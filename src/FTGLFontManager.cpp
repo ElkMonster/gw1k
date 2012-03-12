@@ -60,8 +60,8 @@ FTGLFontManager::GetFont(const char *filename, int size)
     FontList::iterator result = fonts_.find(fontKey);
     if(result != fonts_.end())
     {
-        Log::info("FTGLFontManager", Log::os() << "Found font " << filename
-            << " in list");
+        //Log::info("FTGLFontManager", Log::os() << "Found font " << filename
+        //    << " in list");
         return result->second;
     }
 
