@@ -151,6 +151,9 @@ OGLView::renderContent(const Point& offset) const
 {
     glPushMatrix();
     {
+        // TODO Actually, we should undo the glTranslatef(0.375f, 0.375f, 0.f)
+        // from GLFWApp here because this widget is not about pixel coordinates
+
         // Translate so GL coordinate (0,0) is at top-left corner of our widget
         Point pos = getPos() + offset;
         glTranslatef(pos.x, pos.y, 0);
