@@ -6,7 +6,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libgw1k" prefix_auto="1" extension_auto="1" />
+				<Option output="gw1k" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Debug/" />
 				<Option type="2" />
@@ -18,7 +18,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libgw1k" prefix_auto="1" extension_auto="1" />
+				<Option output="gw1k" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release/" />
 				<Option type="2" />
@@ -54,7 +54,7 @@
 		<Unit filename="include/Gw1kConstants.h" />
 		<Unit filename="include/Gw1kSettings.h" />
 		<Unit filename="include/Log.h" />
-		<Unit filename="include/Math.h" />
+		<Unit filename="include/MathHelper.h" />
 		<Unit filename="include/Point.h" />
 		<Unit filename="include/Rect.h" />
 		<Unit filename="include/Render.h" />
