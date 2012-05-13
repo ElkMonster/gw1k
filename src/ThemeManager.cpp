@@ -206,7 +206,7 @@ ThemeManager::getColor(
 bool
 ThemeManager::loadLua()
 {
-    l_ = lua_open();
+    l_ = luaL_newstate();
     luaL_openlibs(l_);
 
     return true;
