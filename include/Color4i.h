@@ -2,7 +2,7 @@
 #define GW1K_COLOR4I_H_
 
 #include "utils/Helpers.h"
-#include "Math.h"
+#include "MathHelper.h"
 
 
 #define F_FAC (1.f / 255.f)

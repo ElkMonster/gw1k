@@ -1,7 +1,7 @@
 #include "widgets/advanced/LabeledRangeSlider.h"
 
 #include "utils/StringHelpers.h"
-#include "Math.h"
+#include "MathHelper.h"
 
 #include <cstdlib>
 

@@ -1,5 +1,5 @@
-#ifndef GW1K_MATH_H_
-#define GW1K_MATH_H_
+#ifndef GW1K_MATHHELPER_H_
+#define GW1K_MATHHELPER_H_
 
 #include <cmath>
 
@@ -42,4 +42,4 @@ inline bool is_fraction(float f)
 
 } // namespace gw1k
 
-#endif // GW1K_MATH_H_
+#endif // GW1K_MATHHELPER_H_

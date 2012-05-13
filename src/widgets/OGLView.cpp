@@ -2,7 +2,7 @@
 
 #include "Render.h"
 #include "utils/Helpers.h"
-#include "Math.h"
+#include "MathHelper.h"
 #include "ThemeManager.h"
 
 #include <GL/glew.h>

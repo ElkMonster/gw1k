@@ -1,6 +1,6 @@
 #include "widgets/Slider.h"
 
-#include "Math.h"
+#include "MathHelper.h"
 #include "WManager.h"
 #include "Color4i.h"
 #include "ThemeManager.h"

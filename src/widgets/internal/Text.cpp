@@ -5,7 +5,7 @@
 #include "utils/Helpers.h"
 #include "WManager.h"
 #include "ThemeManager.h"
-#include "Math.h"
+#include "MathHelper.h"
 
 #include <GL/glew.h>
 

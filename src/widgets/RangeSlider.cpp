@@ -1,7 +1,7 @@
 #include "widgets/RangeSlider.h"
 
 #include "WManager.h"
-#include "Math.h"
+#include "MathHelper.h"
 
 #include <iostream>
 #include <cstdlib>

@@ -1,7 +1,7 @@
 #include "widgets/internal/AbstractSliderBase.h"
 
 #include "Log.h"
-#include "Math.h"
+#include "MathHelper.h"
 
 namespace gw1k
 {

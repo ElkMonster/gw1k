@@ -2,7 +2,7 @@
 
 #include "Gw1kSettings.h"
 #include "Gw1kConstants.h"
-#include "Math.h"
+#include "MathHelper.h"
 #include "Color4i.h"
 #include "ThemeManager.h"
 

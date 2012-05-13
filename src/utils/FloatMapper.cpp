@@ -1,6 +1,6 @@
 #include "utils/FloatMapper.h"
 
-#include "Math.h"
+#include "MathHelper.h"
 
 namespace gw1k
 {
