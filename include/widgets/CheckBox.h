@@ -3,7 +3,7 @@
 
 #include "WiBox.h"
 #include "../providers/ActionEventProvider.h"
-#include "../listeners/MouseListener.h"
+#include "../listeners/MouseListenerImpl.h"
 #include "../listeners/ActionListener.h"
 #include "Label.h"
 
@@ -13,7 +13,8 @@ namespace gw1k
 
 class CheckField;
 
-class CheckBox : public WiBox, public MouseListener, public ActionEventProvider
+class CheckBox : public WiBox, public MouseListenerImpl,
+    public ActionEventProvider
 {
 
 public:
@@ -42,16 +43,9 @@ public:
 
     virtual void setColors(const char* colorScheme);
 
-    virtual void mouseMoved(MouseMovedEvent ev,
-                            const Point& pos,
-                            const Point& delta,
-                            GuiObject* receiver);
-
     virtual void mouseClicked(MouseButton b,
                               StateEvent ev,
                               GuiObject* receiver);
-
-    virtual void mouseWheeled(int delta, GuiObject* receiver);
 
 private:
 

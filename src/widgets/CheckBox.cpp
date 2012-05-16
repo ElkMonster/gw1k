@@ -136,17 +136,6 @@ CheckBox::getContainingObject(const Point& p)
 
 
 void
-CheckBox::mouseMoved(
-    MouseMovedEvent ev,
-    const Point& pos,
-    const Point& delta,
-    GuiObject* receiver)
-{
-
-}
-
-
-void
 CheckBox::mouseClicked(
     MouseButton b,
     StateEvent ev,
@@ -158,13 +147,6 @@ CheckBox::mouseClicked(
 
         informActionListeners(this);
     }
-}
-
-
-void
-CheckBox::mouseWheeled(int delta, GuiObject* receiver)
-{
-
 }
 
 
