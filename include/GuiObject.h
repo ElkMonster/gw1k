@@ -261,7 +261,7 @@ public:
      * For non-null arguments, the respective value is copied to the argument;
      * null arguments are ignored.
      */
-    void getDraggableArea(Rect* area, Point* padding = 0);
+    void getDraggableArea(Rect* area, Point* padding = 0) const;
 
     /**
      * Sets the GuiObject whose checkDragDelta() method is called to modify drag

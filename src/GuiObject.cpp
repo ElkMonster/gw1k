@@ -532,7 +532,7 @@ GuiObject::setDraggableArea(const Rect* area, const Point& padding)
 
 
 void
-GuiObject::getDraggableArea(Rect* area, Point* padding)
+GuiObject::getDraggableArea(Rect* area, Point* padding) const
 {
     if (area)
     {
