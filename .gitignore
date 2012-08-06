@@ -1,0 +1,10 @@
+# binaries
+bin/*
+obj/*
+
+# code::blocks-specific
+*.save
+*.layout
+*.depend
+*.cbp
+
