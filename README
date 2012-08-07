@@ -1,0 +1,25 @@
+gw1k Readme
+===========
+
+gw1k is an OpenGL based widget toolkit written in C++ and Lua.
+
+It was born as a university project, that's why it's unfinished, unpolished,
+lacks documentation, and is generally not recommended for anyone to use unless
+you have a lot of time and the will to work your way through the code.
+
+gw1k was created because I needed a flexible widget toolkit based on OpenGL, but
+none of the existing projects seemed to fit my needs -- and also at the time, I
+didn't even know what I would really need. Therefore, I decided it write my own
+toolkit so I would be able to design and customise everything as needed.
+
+Some of the anti-features that make gw1k the widget toolkit you don't want to
+use (although these things are expected to change/be fixed in the future):
+    - Building the library requires the Code::Blocks IDE
+    - There's no tutorial on how to use all the widgets...
+    - ...only slight traces of comments in the code
+    - There're unfinished or abandoned features and code paths
+    - There's leftover code, experimental code, superfluous code
+
+gw1k was used in my master's thesis, developed under pressure of time and not
+intended to be used by anyone but me. So please forgive the bad shape of the
+code and the project in general.
