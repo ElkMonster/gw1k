@@ -1,6 +1,6 @@
 #include "widgets/CheckBox.h"
 
-#include <geometry/include/Point2D.h>
+#include <Point2D.h>
 #include "ThemeManager.h"
 #include "Render.h"
 
