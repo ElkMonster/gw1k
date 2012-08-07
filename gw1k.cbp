@@ -16,6 +16,9 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add library="../Point2D/bin/Debug/libPoint2D.so" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="gw1k" prefix_auto="1" extension_auto="1" />
@@ -25,11 +28,12 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-O2" />
+					<Add option="-Wall" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="../Point2D/bin/Release/libPoint2D.so" />
 				</Linker>
 			</Target>
 		</Build>
@@ -38,9 +42,9 @@
 			<Add directory="include" />
 			<Add directory="../" />
 			<Add directory="/usr/include/freetype2" />
+			<Add directory="../Point2D" />
 		</Compiler>
 		<Linker>
-			<Add library="../geometry/libgeometry.a" />
 			<Add library="lua" />
 		</Linker>
 		<Unit filename="include/Color4i.h" />
