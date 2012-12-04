@@ -122,6 +122,10 @@ private:
                                const Point& delta,
                                GuiObject* o = 0);
 
+    void feedMouseMoveInternal_handleClickedObj(const Point& pos,
+                                                const Point& delta);
+
+
     void feedMouseMoveHandleOldHoveredObj(const Point& pos,
                                           const Point& delta,
                                           const GuiObject* newHoveredObj) const;

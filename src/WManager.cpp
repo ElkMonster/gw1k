@@ -74,38 +74,7 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
     // mouse movement even if their area is left.
     if (clickedObj_)
     {
-        // Refresh the containsMouse status to prevent that objects claim to
-        // contain the mouse when they actually don't
-        // TODO If clickedObj doesn't contain mouse anymore, because mouse has jumped
-        // somewhere, what is the status of all the objects in the hierarchy
-        // below clickedObj that have their containsMouse status set to true and
-        // clickedObj itself? -> containsMouse status should be reset top-down,
-        // starting with clickedObj and going down its parent list.
-        mainWin_->getContainingObject(pos);
-
-        MSG("WManager::feedMouseMoveInternal: clickedObj_ = " << (void*)clickedObj_);
-        clickedObj_->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
-
-        if (clickedObj_->isEmbedded())
-        {
-            // Trigger mouse event for all embedded parents and the first non-
-            // embedded parent
-            GuiObject* p = clickedObj_->getParent();
-            while (p)
-            {
-                p->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
-                p = p->isEmbedded() ? p->getParent() : 0;
-            }
-        }
-
-        if (clickedObj_->isDraggable())
-        {
-            Point relMousePos = mousePos_ - clickedObj_->getGlobalPos();
-            Point realDelta = clickedObj_->drag(relMousePos, lastMouseButton_);
-            clickedObj_->triggerDraggedEvent(realDelta);
-        }
-
-
+        feedMouseMoveInternal_handleClickedObj(pos, delta);
     }
     else
     {
@@ -132,6 +101,44 @@ WManager::feedMouseMoveInternal(const Point& pos, const Point& delta, GuiObject*
     }
 
     //MSG("WManager::feedMouseMoveInternal [end]");
+}
+
+
+void
+WManager::feedMouseMoveInternal_handleClickedObj(
+    const Point& pos,
+    const Point& delta)
+{
+    // Refresh the containsMouse status to prevent that objects claim to
+    // contain the mouse when they actually don't
+    // TODO If clickedObj doesn't contain mouse anymore, because mouse has jumped
+    // somewhere, what is the status of all the objects in the hierarchy
+    // below clickedObj that have their containsMouse status set to true and
+    // clickedObj itself? -> containsMouse status should be reset top-down,
+    // starting with clickedObj and going down its parent list.
+    mainWin_->getContainingObject(pos);
+
+    MSG("WManager::feedMouseMoveInternal: clickedObj_ = " << (void*)clickedObj_);
+    clickedObj_->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
+
+    if (clickedObj_->isEmbedded())
+    {
+        // Trigger mouse event for all embedded parents and the first non-
+        // embedded parent
+        GuiObject* p = clickedObj_->getParent();
+        while (p)
+        {
+            p->triggerMouseMovedEvent(GW1K_M_HOVERED, pos, delta);
+            p = p->isEmbedded() ? p->getParent() : 0;
+        }
+    }
+
+    if (clickedObj_->isDraggable())
+    {
+        Point relMousePos = mousePos_ - clickedObj_->getGlobalPos();
+        Point realDelta = clickedObj_->drag(relMousePos, lastMouseButton_);
+        clickedObj_->triggerDraggedEvent(realDelta);
+    }
 }
 
 
