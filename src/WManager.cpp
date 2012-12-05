@@ -133,9 +133,14 @@ WManager::feedMouseMoveInternal_handleClickedObj(
         }
     }
 
-    if (clickedObj_->isDraggable())
+    Point relMousePos = mousePos_ - clickedObj_->getGlobalPos();
+    if (clickedObj_->isInResizeMode())
     {
-        Point relMousePos = mousePos_ - clickedObj_->getGlobalPos();
+        Point realDelta = clickedObj_->resize(relMousePos);
+        clickedObj_->triggerResizedEvent(realDelta);
+    }
+    else if (clickedObj_->isDraggable())
+    {
         Point realDelta = clickedObj_->drag(relMousePos, lastMouseButton_);
         clickedObj_->triggerDraggedEvent(realDelta);
     }

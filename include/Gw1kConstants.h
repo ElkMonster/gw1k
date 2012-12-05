@@ -91,6 +91,23 @@ enum TextProperty {
 };
 
 
+/**
+ * Provides constants for eight possible orientations. The constants
+ * values express the orientation as a time on the clock. E.g., GW1K_TOP's
+ * value is 1200 (12 o'clock).
+ */
+enum Orientation {
+    GW1K_TOP = 1200,
+    GW1K_TOPRIGHT = 130,
+    GW1K_RIGHT = 300,
+    GW1K_BOTTOMRIGHT = 450,
+    GW1K_BOTTOM = 600,
+    GW1K_BOTTOMLEFT = 730,
+    GW1K_LEFT = 900,
+    GW1K_TOPLEFT = 1030
+};
+
+
 } // namespace gw1k
 
 #endif // GW1K_GW1KCONSTANTS_H_

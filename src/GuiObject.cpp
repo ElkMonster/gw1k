@@ -7,8 +7,23 @@
 #include "Exception.h"
 #include "Log.h"
 #include <iostream>
+#include <limits>
 
 #define MSG(x) //std::cout << x << std::endl
+
+
+namespace
+{
+
+
+const int LEFT = 1;
+const int RIGHT = 2;
+const int TOP = 4;
+const int BOTTOM = 8;
+
+
+} // namespace
+
 
 namespace gw1k
 {
@@ -26,7 +41,13 @@ GuiObject::GuiObject()
     bIsInteractive_(true),
     bIsClickThrough_(false),
     dragArea_(0),
-    dragChecker_(0)
+    dragChecker_(0),
+    bIsResizeable_(false),
+    bIsInResizeMode_(false),
+    resizeFrameTopLeft_(3, 3),
+    resizeFrameBottomRight_(3, 3),
+    minSize_(6, 6),
+    maxSize_(std::numeric_limits<int>::max(), std::numeric_limits<int>::max())
 {}
 
 
@@ -276,11 +297,19 @@ GuiObject::triggerMouseButtonEvent(MouseButton b, StateEvent ev)
     {
         MSG("clicked\t\t" << (void*)this);
         bIsClicked_ = true;
+        if (bIsResizeable_)
+        {
+            checkForResizeMode();
+        }
     }
     else
     {
         MSG("released\t" << (void*)this);
         bIsClicked_ = false;
+        if (bIsResizeable_ && bIsInResizeMode_)
+        {
+            bIsInResizeMode_ = false;
+        }
     }
 
     informMouseListenersClicked(b, ev, this);
@@ -300,6 +329,12 @@ GuiObject::triggerDraggedEvent(const Point& delta)
     informDraggedListeners(delta, this);
 }
 
+
+void
+GuiObject::triggerResizedEvent(const Point& delta)
+{
+    informResizedListeners(delta, clickedOrientation_, this);
+}
 
 void
 GuiObject::addSubObject(GuiObject* o)
@@ -582,6 +617,110 @@ GuiObject::drag(const Point& relMousePos, MouseButton b)
 }
 
 
+bool
+GuiObject::isResizeable() const
+{
+    return bIsResizeable_;
+}
+
+
+void
+GuiObject::setResizeable(bool state)
+{
+    bIsResizeable_ = state;
+}
+
+
+bool
+GuiObject::isInResizeMode() const
+{
+    return bIsResizeable_ && bIsInResizeMode_;
+}
+
+
+Point
+GuiObject::resize(const Point& relMousePos)
+{
+    // We want to resize the object such that clickedPos becomes identical to
+    // relMousePos; for this, we need to resize the object by aspiredDelta
+    Point aspiredDelta = relMousePos - clickedPos_;
+
+    // Get which sides are affected, and invert delta in case left and top sides
+    // are affected (since, for example, moving the mouse in positive x
+    // direction with left side clicked means making the object smaller)
+    int affectedSides = 0;
+    switch (clickedOrientation_)
+    {
+    case GW1K_LEFT:
+    case GW1K_TOPLEFT:
+    case GW1K_BOTTOMLEFT:
+        affectedSides |= LEFT;
+        aspiredDelta.x = -aspiredDelta.x;
+        break;
+    case GW1K_RIGHT:
+    case GW1K_TOPRIGHT:
+    case GW1K_BOTTOMRIGHT:
+        affectedSides |= RIGHT;
+        break;
+    default:
+        break;
+    }
+    switch (clickedOrientation_)
+    {
+    case GW1K_TOPLEFT:
+    case GW1K_TOP:
+    case GW1K_TOPRIGHT:
+        affectedSides |= TOP;
+        aspiredDelta.y = -aspiredDelta.y;
+        break;
+    case GW1K_BOTTOMLEFT:
+    case GW1K_BOTTOM:
+    case GW1K_BOTTOMRIGHT:
+        affectedSides |= BOTTOM;
+        break;
+    default:
+        break;
+    }
+
+    // Clear delta for unaffected dimension
+    if (!(affectedSides & (LEFT | RIGHT)))
+    {
+        aspiredDelta.x = 0;
+    }
+    if (!(affectedSides & (TOP | BOTTOM)))
+    {
+        aspiredDelta.y = 0;
+    }
+
+    const Point& currSize = getSize();
+    Point newSize = currSize + aspiredDelta;
+    newSize = max(minSize_, min(maxSize_, newSize));
+    Point appliedDelta = newSize - currSize;
+
+    setSize(newSize.x, newSize.y);
+    if (affectedSides & (LEFT | TOP))
+    {
+        moveBy(-appliedDelta);
+    }
+
+    return appliedDelta;
+}
+
+
+void
+GuiObject::setMinSize(const Point& minSize)
+{
+
+}
+
+
+void
+GuiObject::setMaxSize(const Point& maxSize)
+{
+
+}
+
+
 void
 GuiObject::checkDragDelta(
     Point& delta,
@@ -625,6 +764,49 @@ GuiObject::moveOnTop(GuiObject* newTopSubObj)
         }
         subObjects_[c] = newTopSubObj;
     }
+}
+
+
+void
+GuiObject::checkForResizeMode()
+{
+    const Point& size = getSize();
+    int left = LEFT * (clickedPos_.x < resizeFrameTopLeft_.x);
+    int right = RIGHT * (clickedPos_.x >= size.x - resizeFrameBottomRight_.x);
+    int top = TOP * (clickedPos_.y < resizeFrameTopLeft_.y);
+    int bottom = BOTTOM * (clickedPos_.y >= size.y - resizeFrameBottomRight_.y);
+
+    switch (left | right | top | bottom)
+    {
+    case TOP:
+        clickedOrientation_ = GW1K_TOP;
+        break;
+    case TOP | RIGHT:
+        clickedOrientation_ = GW1K_TOPRIGHT;
+        break;
+    case RIGHT:
+        clickedOrientation_ = GW1K_RIGHT;
+        break;
+    case BOTTOM | RIGHT:
+        clickedOrientation_ = GW1K_BOTTOMRIGHT;
+        break;
+    case BOTTOM:
+        clickedOrientation_ = GW1K_BOTTOM;
+        break;
+    case BOTTOM | LEFT:
+        clickedOrientation_ = GW1K_BOTTOMLEFT;
+        break;
+    case LEFT:
+        clickedOrientation_ = GW1K_LEFT;
+        break;
+    case TOP | LEFT:
+        clickedOrientation_ = GW1K_TOPLEFT;
+        break;
+    default:
+        return;
+    }
+
+    bIsInResizeMode_ = true;
 }
 
 

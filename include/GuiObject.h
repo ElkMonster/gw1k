@@ -4,6 +4,7 @@
 #include "providers/MouseEventProvider.h"
 #include "providers/KeyEventProvider.h"
 #include "providers/DraggedEventProvider.h"
+#include "providers/ResizedEventProvider.h"
 #include "listeners/TimerListener.h"
 #include "Point.h"
 #include "Rect.h"
@@ -16,7 +17,8 @@ namespace gw1k
 
 
 class GuiObject : public MouseEventProvider, public KeyEventProvider,
-    public DraggedEventProvider, public TimerListener
+        public DraggedEventProvider, public ResizedEventProvider,
+        public TimerListener
 {
 
 public:
@@ -110,11 +112,18 @@ public:
                                 const Point& pos,
                                 const Point& delta);
 
+    /**
+     * In order to have resizing working correctly, calls to
+     * setClickedPos() should be performed previous to calling this
+     * method.
+     */
     void triggerMouseButtonEvent(MouseButton b, StateEvent ev);
 
     void triggerMouseWheelEvent(int delta);
 
     void triggerDraggedEvent(const Point& delta);
+
+    void triggerResizedEvent(const Point& delta);
 
     virtual void addSubObject(GuiObject* o);
 
@@ -282,8 +291,31 @@ public:
      * \param relMousePos the mouse position relative to this GuiObject's
      *                    coordinate system
      * \param b the mouse button currently pressed
+     * \return the actual change in position resulting from calling this function
      */
     Point drag(const Point& relMousePos, MouseButton b);
+
+    bool isResizeable() const;
+
+    void setResizeable(bool state = true);
+
+    bool isInResizeMode() const;
+
+    /**
+     * This method is called when the object is resized (via mouse).
+     *
+     * A GuiObject can be resized if resizing has been enabled via
+     * setResizeable().
+     *
+     * \param relMousePos the mouse position relative to this GuiObject's
+     *                    coordinate system
+     * \return the actual change in size resulting from calling this function
+     */
+    Point resize(const Point& relMousePos);
+
+    void setMinSize(const Point& minSize);
+
+    void setMaxSize(const Point& maxSize);
 
 protected:
 
@@ -309,6 +341,12 @@ private:
      * sub-objects behind it closer to the front.
      */
     void moveOnTop(GuiObject* newTopSubObj);
+
+    /**
+     * This should be called only when a click has occured on the widget
+     * and the widget's clickedPos has been set.
+     */
+    void checkForResizeMode();
 
 protected:
 
@@ -353,6 +391,27 @@ private:
 
     GuiObject* dragChecker_;
 
+    bool bIsResizeable_;
+
+    bool bIsInResizeMode_;
+
+    /**
+     * Determines the size of the top and left resize frame. Any values
+     * less than 0 are ignored.
+     */
+    Point resizeFrameTopLeft_;
+
+    /**
+     * Determines the size of the bottom and right resize frame. Any
+     * values less than 0 are ignored.
+     */
+    Point resizeFrameBottomRight_;
+
+    Orientation clickedOrientation_;
+
+    Point minSize_;
+
+    Point maxSize_;
 };
 
 
