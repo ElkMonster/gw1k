@@ -698,9 +698,14 @@ GuiObject::resize(const Point& relMousePos)
     Point appliedDelta = newSize - currSize;
 
     setSize(newSize.x, newSize.y);
+
     if (affectedSides & (LEFT | TOP))
     {
         moveBy(-appliedDelta);
+    }
+    if (affectedSides & (RIGHT | BOTTOM))
+    {
+        clickedPos_ += appliedDelta;
     }
 
     return appliedDelta;
@@ -806,6 +811,7 @@ GuiObject::checkForResizeMode()
         return;
     }
 
+    MSG("checkForResizeMode: clickedOrientation = " << clickedOrientation_);
     bIsInResizeMode_ = true;
 }
 
