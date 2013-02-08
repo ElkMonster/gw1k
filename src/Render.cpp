@@ -204,7 +204,11 @@ void fillEllipse(
 void
 setGLColor(const Color4i* c)
 {
-    glColor4f(c->rf, c->gf, c->bf, c->af);
+    // Checking for 0 so we don't crash if theme initialisation went wrong and
+    // colours are not set up correctly
+    if (c) {
+        glColor4f(c->rf, c->gf, c->bf, c->af);
+    }
 }
 
 
