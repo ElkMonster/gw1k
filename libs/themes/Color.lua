@@ -149,6 +149,8 @@ Color = {
         -- This is our new instance; rgba will hold the actual color values
         local obj = { rgba = {} }
 
+        local arg = {...}
+
         -- Check for copy constructor use
         if #arg == 1 and type(arg[1]) == "table" and arg[1].rgba then
             arg = arg[1].rgba
