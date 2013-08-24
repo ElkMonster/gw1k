@@ -36,6 +36,8 @@ GLFWApp::~GLFWApp()
 int
 GLFWApp::init()
 {
+    glfwSetErrorCallback(errorCallback);
+
     if (glfwInit() != GL_TRUE)
     {
         // TODO handle
@@ -71,7 +73,7 @@ GLFWApp::mainLoop()
         beforeRender();
         setupGLForRender();
         render();
-        glfwSwapBuffers();
+        glfwSwapBuffers(glfwGetCurrentContext());
         afterRender();
         running = !isMainLoopEndRequested();
     }
@@ -106,13 +108,23 @@ GLFWApp::setupGLForRender()
     // and
     // http://www.opengl.org/wiki/Viewing_and_Transformations
     glMatrixMode(GL_PROJECTION);
+    PRINT_IF_GL_ERROR;
     glLoadIdentity();
-    const Point& size = WManager::getInstance()->getWindowSize();
-    glOrtho(0, size.x, size.y, 0, -1, 1);
+    PRINT_IF_GL_ERROR;
+    //const Point& size = WManager::getInstance()->getWindowSize();
+    int w, h;
+    glfwGetWindowSize(glfwWindow_, &w, &h);
+
+    PRINT_IF_GL_ERROR;
+    glOrtho(0, w, h, 0, -1, 1);
+    PRINT_IF_GL_ERROR;
     //gluOrtho2D(0, winSize_.x, 0, winSize_.y);
     glMatrixMode(GL_MODELVIEW);
+    PRINT_IF_GL_ERROR;
     glLoadIdentity();
+    PRINT_IF_GL_ERROR;
     glTranslatef(0.375f, 0.375f, 0.f);
+    PRINT_IF_GL_ERROR;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +149,8 @@ GLFWApp::afterRender()
 bool
 GLFWApp::isMainLoopEndRequested()
 {
-    return glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
+    GLFWwindow* w = glfwGetCurrentContext();
+    return glfwGetKey(w, GLFW_KEY_ESCAPE) || glfwWindowShouldClose(w);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,9 +166,8 @@ GLFWApp::postMainLoop()
 const Point
 GLFWApp::getInitialWindowSize()
 {
-    GLFWvidmode vm;
-    glfwGetDesktopMode(&vm);
-    return Point(vm.Width / 2, vm.Height / 2);
+    const GLFWvidmode* vm = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    return Point(vm->width / 2, vm->height / 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,10 +203,10 @@ GLFWApp::resizeWindowEvent(int width, int height)
 
 
 void
-GLFWApp::keyEvent(int key, int event)
+GLFWApp::keyEvent(int key, int action)
 {
     int k = glfwToGw1kKeyCodes(key);
-    StateEvent ev = glfwToGw1kStateEvent(event);
+    StateEvent ev = glfwToGw1kStateEvent(action);
     WManager::getInstance()->feedKey(k, ev);
 }
 
@@ -211,10 +223,10 @@ GLFWApp::mouseMoveEvent(int x, int y)
 
 
 void
-GLFWApp::mouseButtonEvent(int identifier, int event)
+GLFWApp::mouseButtonEvent(int button, int action)
 {
-    MouseButton b = glfwToGw1kMouseButton(identifier);
-    StateEvent ev = glfwToGw1kStateEvent(event);
+    MouseButton b = glfwToGw1kMouseButton(button);
+    StateEvent ev = glfwToGw1kStateEvent(action);
     WManager::getInstance()->feedMouseClick(b, ev);
 }
 
@@ -230,20 +242,39 @@ GLFWApp::mouseWheelEvent(int pos)
 ////////////////////////////////////////////////////////////////////////////////
 
 
+void
+GLFWApp::windowCloseRequestEvent()
+{}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
 int
 GLFWApp::setupGLFW()
 {
     const Point& size = getInitialWindowSize();
+// TODO remove
     setupWindowHints();
 
     int r, g, b, a, depthBits, stencilBits;
     getWindowParams(r, g, b, a, depthBits, stencilBits);
 
-    if (glfwOpenWindow(size.x, size.y, r, g, b, a, depthBits, stencilBits, GLFW_WINDOW) != GL_TRUE)
+    glfwWindowHint(GLFW_RED_BITS, r);
+    glfwWindowHint(GLFW_GREEN_BITS, g);
+    glfwWindowHint(GLFW_BLUE_BITS, b);
+    glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
+    glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+    glfwWindow_ = glfwCreateWindow(size.x, size.y, "GLFWApp", /*windowed mode*/0, /*no share*/0);
+
+    if (!glfwWindow_)
     {
         // TODO handle
         return 1;
     }
+    glfwMakeContextCurrent(glfwWindow_);
 
     registerGLFWCallbacks();
 
@@ -263,11 +294,13 @@ GLFWApp::setupGLFW()
 void
 GLFWApp::registerGLFWCallbacks()
 {
-    glfwSetWindowSizeCallback(resizeWindowCallback);
-    glfwSetKeyCallback(keyCallback);
-    glfwSetMousePosCallback(mousePosCallback);
-    glfwSetMouseButtonCallback(mouseButtonCallback);
-    glfwSetMouseWheelCallback(mouseWheelCallback);
+    GLFWwindow* w = glfwGetCurrentContext();
+    glfwSetWindowSizeCallback(w, resizeWindowCallback);
+    glfwSetKeyCallback(w, keyCallback);
+    glfwSetCursorPosCallback(w, mousePosCallback);
+    glfwSetMouseButtonCallback(w, mouseButtonCallback);
+    glfwSetScrollCallback(w, mouseWheelCallback);
+    glfwSetWindowCloseCallback(w, windowCloseRequestCallback);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -275,8 +308,19 @@ GLFWApp::registerGLFWCallbacks()
 
 /*static*/
 void
-GLFWApp::resizeWindowCallback(int width, int height)
+GLFWApp::errorCallback(int error, const char* msg)
 {
+    std::cout << "GLFW error: " << error << ", '" << msg << "'" << std::endl;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+/*static*/
+void
+GLFWApp::resizeWindowCallback(GLFWwindow* win, int width, int height)
+{
+    std::cout << "resize window callback" << std::endl;
     pInstance_->resizeWindowEvent(width, height);
 }
 
@@ -285,9 +329,9 @@ GLFWApp::resizeWindowCallback(int width, int height)
 
 /*static*/
 void
-GLFWApp::keyCallback(int key, int event)
+GLFWApp::keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods)
 {
-    pInstance_->keyEvent(key, event);
+    pInstance_->keyEvent(key, action);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -295,7 +339,7 @@ GLFWApp::keyCallback(int key, int event)
 
 /*static*/
 void
-GLFWApp::mousePosCallback(int x, int y)
+GLFWApp::mousePosCallback(GLFWwindow* win, double x, double y)
 {
     pInstance_->mouseMoveEvent(x, y);
 }
@@ -305,9 +349,9 @@ GLFWApp::mousePosCallback(int x, int y)
 
 /*static*/
 void
-GLFWApp::mouseButtonCallback(int identifier, int event)
+GLFWApp::mouseButtonCallback(GLFWwindow* win, int button, int action, int mods)
 {
-    pInstance_->mouseButtonEvent(identifier, event);
+    pInstance_->mouseButtonEvent(button, action);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -315,11 +359,21 @@ GLFWApp::mouseButtonCallback(int identifier, int event)
 
 /*static*/
 void
-GLFWApp::mouseWheelCallback(int pos)
+GLFWApp::mouseWheelCallback(GLFWwindow* win, double xoffset, double yoffset)
 {
-    pInstance_->mouseWheelEvent(pos);
+    pInstance_->mouseWheelEvent(yoffset);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+/*static*/
+void
+GLFWApp::windowCloseRequestCallback(GLFWwindow* win)
+{
+    pInstance_->windowCloseRequestEvent();
+}
 
 
 } // namespace gw1k

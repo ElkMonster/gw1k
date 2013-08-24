@@ -2,7 +2,7 @@
 #define GW1K_GLFWAPP_H_
 
 #include <GL/glew.h>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 
 #include "Point.h"
 
@@ -71,8 +71,7 @@ public:
      * 6. postMainLoop() [once after leaving loop]
      * Each of these methods can be replaced or extended by overriding the
      * default implementation. After render() and before afterRender(),
-     * glfwSwapBuffers() is called, triggering the GLFW callback system if
-     * GLFW_AUTO_POLL_EVENTS is enabled.
+     * glfwSwapBuffers() is called.
      */
     void mainLoop();
 
@@ -110,10 +109,8 @@ protected:
 
     /**
      * Override this to perform post-render actions (similar to beforeRender()).
-     * If GLFW_AUTO_POLL_EVENTS is disabled, this is the recommended place to
-     * call glfwPollEvents() or to poll individual input events.
-     * The default implementation is empty (and expects glfwPollEvents() to be
-     * called by glfwSwapBuffers() inside mainLoop()).
+     * This is the recommended place to call glfwPollEvents() or to poll
+     * individual input events. The default implementation is empty.
      */
     virtual void afterRender();
 
@@ -161,7 +158,7 @@ protected:
      * Calls WManager::feedKey().
      * Override this method to implement a custom key event handler.
      */
-    virtual void keyEvent(int key, int event);
+    virtual void keyEvent(int key, int action);
 
     /**
      * Calls WManager::feedMouseMove().
@@ -173,13 +170,22 @@ protected:
      * Calls WManager::feedMouseClick().
      * Override this method to implement a custom mouse click handler.
      */
-    virtual void mouseButtonEvent(int identifier, int event);
+    virtual void mouseButtonEvent(int button, int action);
 
     /**
      * Calls WManager::feedMouseWheelEvent().
      * Override this method to implement a custom mouse wheel handler.
      */
     virtual void mouseWheelEvent(int pos);
+
+    /**
+     * Does nothing in the default implementation.
+     * Override this method to implement a custom reaction to a close request.
+     * Note that this event will only occur if the window's close button
+     * (provided by the OS or window manager) is pressed, or the OS' keys for
+     * closing an application are pressed (like ALT+F4 in Windows).
+     */
+    virtual void windowCloseRequestEvent();
 
 private:
 
@@ -196,17 +202,25 @@ private:
      */
     void registerGLFWCallbacks();
 
+protected:
+
+    GLFWwindow* glfwWindow_;
+
 public:
 
-    static void GLFWCALL resizeWindowCallback(int width, int height);
+    static void errorCallback(int error, const char* msg);
 
-    static void GLFWCALL keyCallback(int key, int event);
+    static void resizeWindowCallback(GLFWwindow* win, int width, int height);
 
-    static void GLFWCALL mousePosCallback(int x, int y);
+    static void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods);
 
-    static void GLFWCALL mouseButtonCallback(int identifier, int event);
+    static void mousePosCallback(GLFWwindow* win, double x, double y);
 
-    static void GLFWCALL mouseWheelCallback(int pos);
+    static void mouseButtonCallback(GLFWwindow* win, int button, int action, int mods);
+
+    static void mouseWheelCallback(GLFWwindow* win, double xoffset, double yoffset);
+
+    static void windowCloseRequestCallback(GLFWwindow* win);
 
 private:
 

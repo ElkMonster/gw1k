@@ -2,7 +2,7 @@
 #define GW1K_GLFW_ADAPTER_H_
 
 #include "Gw1kConstants.h"
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 
 
 namespace gw1k

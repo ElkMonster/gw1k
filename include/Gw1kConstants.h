@@ -6,7 +6,7 @@ namespace gw1k
 {
 
 
-enum StateEvent { GW1K_PRESSED, GW1K_RELEASED };
+enum StateEvent { GW1K_PRESSED, GW1K_REPEATED, GW1K_RELEASED };
 
 enum MouseButton {
     GW1K_MB_LEFT,
