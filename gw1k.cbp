@@ -72,11 +72,13 @@
 		<Unit filename="include/listeners/KeyListener.h" />
 		<Unit filename="include/listeners/MouseListener.h" />
 		<Unit filename="include/listeners/MouseListenerImpl.h" />
+		<Unit filename="include/listeners/ResizedListener.h" />
 		<Unit filename="include/listeners/TimerListener.h" />
 		<Unit filename="include/providers/ActionEventProvider.h" />
 		<Unit filename="include/providers/DraggedEventProvider.h" />
 		<Unit filename="include/providers/KeyEventProvider.h" />
 		<Unit filename="include/providers/MouseEventProvider.h" />
+		<Unit filename="include/providers/ResizedEventProvider.h" />
 		<Unit filename="include/utils/FloatMapper.h" />
 		<Unit filename="include/utils/Helpers.h" />
 		<Unit filename="include/utils/PNGLoader.h" />
@@ -119,6 +121,7 @@
 		<Unit filename="src/providers/DraggedEventProvider.cpp" />
 		<Unit filename="src/providers/KeyEventProvider.cpp" />
 		<Unit filename="src/providers/MouseEventProvider.cpp" />
+		<Unit filename="src/providers/ResizedEventProvider.cpp" />
 		<Unit filename="src/utils/FloatMapper.cpp" />
 		<Unit filename="src/utils/PNGLoader.cpp" />
 		<Unit filename="src/widgets/Box.cpp" />
@@ -145,6 +148,15 @@
 			<code_completion />
 			<debugger />
 			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

@@ -317,6 +317,8 @@ public:
 
     void setMaxSize(const Point& maxSize);
 
+    void setResizeFrame(int top, int left, int bottom, int right);
+
 protected:
 
     /**

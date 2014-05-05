@@ -9,6 +9,7 @@
 #include <png.h>
 #include <cstdio>
 #include <iostream>
+#include <cstring>
 
 
 namespace gw1k

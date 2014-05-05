@@ -715,14 +715,24 @@ GuiObject::resize(const Point& relMousePos)
 void
 GuiObject::setMinSize(const Point& minSize)
 {
-
+    minSize_ = minSize;
 }
 
 
 void
 GuiObject::setMaxSize(const Point& maxSize)
 {
+    maxSize_ = maxSize;
+}
 
+
+void
+GuiObject::setResizeFrame(int top, int left, int bottom, int right)
+{
+    resizeFrameTopLeft_.x = left;
+    resizeFrameTopLeft_.y = top;
+    resizeFrameBottomRight_.x = right;
+    resizeFrameBottomRight_.y = bottom;
 }
 
 
